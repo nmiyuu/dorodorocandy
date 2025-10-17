@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class pikuseru : MonoBehaviour
+public class player : MonoBehaviour
 {
     public float moveUnit = 1.0f; // 1マス = 1ユニット（64px相当）
     private bool isMoving = false;
