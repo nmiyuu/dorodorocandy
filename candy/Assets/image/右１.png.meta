@@ -1,14 +1,10 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:candy/Assets/image/正面.png.meta
-guid: 88ed2cdb7b084e845a33a3a6d45134b3
-=======
-guid: a608c1f806b35934d9ea73aba7461c2b
->>>>>>> c3443c24cf30810c7aea3e397bedc47e115e56dc:candy/Assets/Teranishi/image/正面.png.meta
+guid: 9afc48debedf7334794c104e8744368b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2805063345330826716
-    second: "\u6B63\u9762_0"
+      213: -1386254791782544737
+    second: "\u53F3\uFF11_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -104,19 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u6B63\u9762_0"
+      name: "\u53F3\uFF11_0"
       rect:
         serializedVersion: 2
-<<<<<<< HEAD:candy/Assets/image/正面.png.meta
-        x: 8
-        y: 2
-        width: 80
-=======
-        x: 7
-        y: 2
-        width: 82
->>>>>>> c3443c24cf30810c7aea3e397bedc47e115e56dc:candy/Assets/Teranishi/image/正面.png.meta
-        height: 94
+        x: 22
+        y: 0
+        width: 48
+        height: 95
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -125,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cdda9ee20469de620800000000000000
-      internalID: 2805063345330826716
+      spriteID: f9a4e9f8c9803cce0800000000000000
+      internalID: -1386254791782544737
       vertices: []
       indices: 
       edges: []
@@ -145,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\u6B63\u9762_0": 2805063345330826716
+      "\u53F3\uFF11_0": -1386254791782544737
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
