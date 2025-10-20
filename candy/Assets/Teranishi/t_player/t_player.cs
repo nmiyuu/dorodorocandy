@@ -1,18 +1,43 @@
 using UnityEngine;
-using System.Collections;
+using System.Collections; // コルーチン (IEnumerator) に必須
 
 public class t_player : MonoBehaviour
 {
     // --- パラメータ設定 (Inspectorで設定) ---
     public float moveUnit = 1.0f;       // 1回の移動で進む距離（1マス分）
     public float moveSpeed = 5f;        // 移動スピード
-    public LayerMask obstacleLayer;     // 壁・障害物のレイヤー (Tilemapと同じレイヤーにチェックを入れる)
+    public LayerMask obstacleLayer;     // 壁・障害物のレイヤー (ObstacleとMoveBlockにチェックを入れる)
 
     // --- 内部状態 ---
     private bool isMoving = false;
     private Vector3 targetPos;
     private BoxCollider2D playerCollider;
 
+
+    public class SceneDataTransfer : MonoBehaviour
+    {
+        // 静的インスタンス (シングルトンパターン)
+        public static SceneDataTransfer Instance;
+
+        // シーンをまたいで引き継ぎたいデータ（プレイヤーの位置）
+        public Vector3 playerPositionToLoad = Vector3.zero;
+
+        void Awake()
+        {
+            // 既にインスタンスが存在し、それが自分自身ではない場合、新しいインスタンスは破棄
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            // 初めてのインスタンスであれば、自分自身をインスタンスとして設定
+            Instance = this;
+
+            // シーンを切り替えてもこのオブジェクトは破棄されないようにする
+            DontDestroyOnLoad(gameObject);
+        }
+    }
     void Start()
     {
         // 必須コンポーネントの取得
@@ -23,7 +48,14 @@ public class t_player : MonoBehaviour
             return;
         }
 
-        // 初期位置をターゲット位置に設定
+        // --- シーン切り替え時の位置ロード処理（以前の回答で提案） ---
+        // SceneDataTransfer.Instanceが設定されていれば、そこから位置をロード
+        if (SceneDataTransfer.Instance != null && SceneDataTransfer.Instance.playerPositionToLoad != Vector3.zero)
+        {
+            transform.position = SceneDataTransfer.Instance.playerPositionToLoad;
+        }
+
+        // 初期位置をターゲット位置に設定 (位置ロードがない場合は現在の位置)
         targetPos = transform.position;
     }
 
@@ -35,7 +67,7 @@ public class t_player : MonoBehaviour
         Vector3 dir = Vector3.zero;
 
         // --- 1. 入力検知 ---
-        // 押されたキーに応じて移動方向を決定
+        // 押されたキーに応じて移動方向を決定（斜め移動なし）
         if (Input.GetKeyDown(KeyCode.RightArrow)) dir = Vector3.right;
         else if (Input.GetKeyDown(KeyCode.LeftArrow)) dir = Vector3.left;
         else if (Input.GetKeyDown(KeyCode.UpArrow)) dir = Vector3.up;
@@ -47,28 +79,56 @@ public class t_player : MonoBehaviour
             // --- 2. BoxCastによる壁の事前チェック ---
 
             // BoxCastの判定に必要な情報をColliderから取得
-            // 始点は「現在の位置 + Colliderのオフセット」
             Vector2 origin = (Vector2)transform.position + playerCollider.offset;
-            // サイズはColliderのサイズ
             Vector2 size = playerCollider.size;
             float angle = 0f;
 
-            // チェック距離: 移動距離 (moveUnit) よりわずかに長く設定する
-            // 誤差やタイルの境界線によるすり抜けを防ぐための必須の調整
-            float checkDistance = moveUnit * 1.01f; // 1.01倍の余裕を持たせる
+            // チェック距離: 移動距離 (moveUnit) よりわずかに長く設定
+            float checkDistance = moveUnit * 1.01f;
 
-            // Physics2D.BoxCastを実行:
-            // プレイヤーのColliderと同じ形状・サイズで、移動先まで障害物がないかを確認する
+            // Physics2D.BoxCastを実行: プレイヤーの移動先に何か（壁またはブロック）があるかを確認
             RaycastHit2D hit = Physics2D.BoxCast(origin, size, angle, dir, checkDistance, obstacleLayer);
 
-            // hit.collider が null（何も衝突しなかった）の場合のみ移動を実行
+            // =========================================================================
+            // ★★★ 衝突判定とブロック押し処理のロジック ★★★
+            // =========================================================================
+
+            // 衝突しなかった場合 (移動先に何もない)
             if (hit.collider == null)
             {
-                // 壁がなければ目的地を更新し、コルーチンで滑らかに移動を開始
+                // 移動を実行
                 targetPos = transform.position + dir * moveUnit;
                 StartCoroutine(MoveToPosition(targetPos));
             }
-            // else の場合は壁があるため、処理を終了（移動せずにその場に留まる = 壁に当たって止まる）
+            else
+            {
+                // 何かに衝突した場合
+                GameObject hitObject = hit.collider.gameObject;
+
+                // MoveBlock のレイヤー番号を取得
+                int moveBlockLayerIndex = LayerMask.NameToLayer("MoveBlock");
+
+                // 衝突したオブジェクトのレイヤーが "MoveBlock" と一致するか確認
+                if (hitObject.layer == moveBlockLayerIndex)
+                {
+                    // 衝突したのが動くブロックの場合、MoveBlockコンポーネントを探す
+                    // （MoveBlock.csという名前のスクリプトがある前提）
+                    MoveBlock blockToPush = hitObject.GetComponent<MoveBlock>();
+
+                    if (blockToPush != null)
+                    {
+                        // ブロックを移動させるメソッドを呼び出す
+                        if (blockToPush.TryMove(dir))
+                        {
+                            // ブロックの移動が成功したら、プレイヤーも移動を開始する
+                            targetPos = transform.position + dir * moveUnit;
+                            StartCoroutine(MoveToPosition(targetPos));
+                        }
+                        // ブロックの移動が失敗した場合は、プレイヤーも停止。
+                    }
+                }
+                // 当たったのがMoveBlockではない（動かない壁など）場合は、プレイヤーは停止。
+            }
         }
     }
 
@@ -77,10 +137,10 @@ public class t_player : MonoBehaviour
     {
         isMoving = true;
 
-        // ターゲットに近づくまで（距離の二乗が0.001fより大きい間）ループ
+        // ターゲットに近づくまでループ
         while ((transform.position - target).sqrMagnitude > 0.001f)
         {
-            // ターゲットに向けて移動 (フレームレートに依存しないようにTime.deltaTimeを使用)
+            // ターゲットに向けて移動 (Time.deltaTimeを使用)
             transform.position = Vector3.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
             yield return null; // 1フレーム待機
         }
