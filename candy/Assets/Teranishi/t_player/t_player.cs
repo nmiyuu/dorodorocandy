@@ -69,6 +69,7 @@ public class t_player : MonoBehaviour
         {
             transform.position = Vector3.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
             yield return null;
+            Debug.Log("a");
         }
 
         transform.position = target;
