@@ -1,82 +1,92 @@
 using UnityEngine;
-using System.Collections; // IEnumeratorのために必要です
+using System.Collections;
 
 public class t_player : MonoBehaviour
 {
-    public float moveUnit = 1.0f;      // 1回の移動で進む距離（1マス分）
-    public float moveSpeed = 5f;       // 移動スピード
-    public LayerMask Obstacle;         // 壁・障害物のレイヤー
+    // --- パラメータ設定 (Inspectorで設定) ---
+    public float moveUnit = 1.0f;       // 1回の移動で進む距離（1マス分）
+    public float moveSpeed = 5f;        // 移動スピード
+    public LayerMask obstacleLayer;     // 壁・障害物のレイヤー (Tilemapと同じレイヤーにチェックを入れる)
 
+    // --- 内部状態 ---
     private bool isMoving = false;
     private Vector3 targetPos;
-
-    // BoxCollider2DをStartで取得し、繰り返しGetComponentを避ける
     private BoxCollider2D playerCollider;
 
     void Start()
     {
-        // Startで一度だけBoxColliderを取得
+        // 必須コンポーネントの取得
         playerCollider = GetComponent<BoxCollider2D>();
         if (playerCollider == null)
         {
             Debug.LogError("PlayerオブジェクトにBoxCollider2Dが見つかりません！");
+            return;
         }
 
+        // 初期位置をターゲット位置に設定
         targetPos = transform.position;
     }
 
     void Update()
     {
+        // 移動中は新しい入力を受け付けない
         if (isMoving) return;
 
         Vector3 dir = Vector3.zero;
 
-        // 方向キー入力を検知
+        // --- 1. 入力検知 ---
+        // 押されたキーに応じて移動方向を決定
         if (Input.GetKeyDown(KeyCode.RightArrow)) dir = Vector3.right;
         else if (Input.GetKeyDown(KeyCode.LeftArrow)) dir = Vector3.left;
         else if (Input.GetKeyDown(KeyCode.UpArrow)) dir = Vector3.up;
         else if (Input.GetKeyDown(KeyCode.DownArrow)) dir = Vector3.down;
 
+        // 方向入力があった場合のみ処理
         if (dir != Vector3.zero)
         {
-            // BoxCastの判定に必要な情報を取得
-            Vector2 origin = (Vector2)transform.position + playerCollider.offset; // 始点をオフセット分調整
+            // --- 2. BoxCastによる壁の事前チェック ---
+
+            // BoxCastの判定に必要な情報をColliderから取得
+            // 始点は「現在の位置 + Colliderのオフセット」
+            Vector2 origin = (Vector2)transform.position + playerCollider.offset;
+            // サイズはColliderのサイズ
             Vector2 size = playerCollider.size;
-            float angle = 0f; // プレイヤーの回転がない前提
+            float angle = 0f;
 
-            // BoxCastを使い、壁があるかチェック
-            // BoxCastAllを使うと、複数の当たり判定（タイルマップの複数のタイル）も正確に検出できます
-            // 距離は moveUnit - 許容誤差(epsilon) に設定することで、ピッタリ隣接した壁にぶつかるのを防ぎます
-            float distance = moveUnit;
+            // チェック距離: 移動距離 (moveUnit) よりわずかに長く設定する
+            // 誤差やタイルの境界線によるすり抜けを防ぐための必須の調整
+            float checkDistance = moveUnit * 1.01f; // 1.01倍の余裕を持たせる
 
-            // BoxCastを使って壁判定
-            // BoxCastが true を返した場合（何かに当たった場合）は移動しない
-            if (!Physics2D.BoxCast(origin, size, angle, dir, distance, Obstacle))
+            // Physics2D.BoxCastを実行:
+            // プレイヤーのColliderと同じ形状・サイズで、移動先まで障害物がないかを確認する
+            RaycastHit2D hit = Physics2D.BoxCast(origin, size, angle, dir, checkDistance, obstacleLayer);
+
+            // hit.collider が null（何も衝突しなかった）の場合のみ移動を実行
+            if (hit.collider == null)
             {
-                // 壁がなければ目的地を更新して移動を開始
+                // 壁がなければ目的地を更新し、コルーチンで滑らかに移動を開始
                 targetPos = transform.position + dir * moveUnit;
                 StartCoroutine(MoveToPosition(targetPos));
             }
+            // else の場合は壁があるため、処理を終了（移動せずにその場に留まる = 壁に当たって止まる）
         }
     }
 
-    // プレイヤーをターゲットの位置まで滑らかに移動させる処理（IEnumeratorはSystem.Collectionsにあります）
+    // プレイヤーをターゲットの位置まで滑らかに移動させるコルーチン
     IEnumerator MoveToPosition(Vector3 target)
     {
         isMoving = true;
 
+        // ターゲットに近づくまで（距離の二乗が0.001fより大きい間）ループ
         while ((transform.position - target).sqrMagnitude > 0.001f)
         {
+            // ターゲットに向けて移動 (フレームレートに依存しないようにTime.deltaTimeを使用)
             transform.position = Vector3.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
-            yield return null;
-            Debug.Log("a");
+            yield return null; // 1フレーム待機
         }
 
+        // 最後の仕上げ: 誤差をなくすため、正確なターゲット位置に固定する
         transform.position = target;
         isMoving = false;
-    }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        Debug.Log("a");
     }
 }
