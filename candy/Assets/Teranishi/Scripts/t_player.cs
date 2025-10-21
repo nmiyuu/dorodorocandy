@@ -1,44 +1,32 @@
 using UnityEngine;
-using System.Collections; // コルーチン (IEnumerator) に必須
+using System.Collections;
 
 public class t_player : MonoBehaviour
 {
     // --- パラメータ設定 (Inspectorで設定) ---
     public float moveUnit = 1.0f;       // 1回の移動で進む距離（1マス分）
     public float moveSpeed = 5f;        // 移動スピード
-    public LayerMask obstacleLayer;     // 壁・障害物のレイヤー (ObstacleとMoveBlockにチェックを入れる)
+    public LayerMask obstacleLayer;     // 衝突判定を行うレイヤー（壁、ブロックなど）
 
     // --- 内部状態 ---
+    [SerializeField]
     private bool isMoving = false;
     private Vector3 targetPos;
     private BoxCollider2D playerCollider;
-
-
-    public class SceneDataTransfer : MonoBehaviour
+    // TimeTravelControllerがアクセスするための公開プロパティ
+    public Vector3 CurrentTargetPosition
     {
-        // 静的インスタンス (シングルトンパターン)
-        public static SceneDataTransfer Instance;
-
-        // シーンをまたいで引き継ぎたいデータ（プレイヤーの位置）
-        public Vector3 playerPositionToLoad = Vector3.zero;
-
-        void Awake()
-        {
-            // 既にインスタンスが存在し、それが自分自身ではない場合、新しいインスタンスは破棄
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            // 初めてのインスタンスであれば、自分自身をインスタンスとして設定
-            Instance = this;
-
-            // シーンを切り替えてもこのオブジェクトは破棄されないようにする
-            DontDestroyOnLoad(gameObject);
-        }
+        get { return targetPos; }
     }
-    void Start()
+
+    // プレイヤーが移動中かどうかを外部から確認するためのプロパティ
+    public bool IsPlayerMoving
+    {
+        get { return isMoving; }
+    }
+
+    // Start()よりも早く実行されるAwake()で初期化と位置ロードを行う
+    void Awake()
     {
         // 必須コンポーネントの取得
         playerCollider = GetComponent<BoxCollider2D>();
@@ -48,15 +36,27 @@ public class t_player : MonoBehaviour
             return;
         }
 
-        // --- シーン切り替え時の位置ロード処理（以前の回答で提案） ---
-        // SceneDataTransfer.Instanceが設定されていれば、そこから位置をロード
-        if (SceneDataTransfer.Instance != null && SceneDataTransfer.Instance.playerPositionToLoad != Vector3.zero)
+        // --- シーン切り替え時の位置ロード処理 ---
+        if (SceneDataTransfer.Instance != null)
         {
-            transform.position = SceneDataTransfer.Instance.playerPositionToLoad;
+            Vector3 loadPosition = SceneDataTransfer.Instance.playerPositionToLoad;
+
+            // Vector3.zero 以外（データが保存されていた場合）のみ位置をロードする
+            if (loadPosition != Vector3.zero)
+            {
+                transform.position = loadPosition;
+                targetPos = loadPosition;
+                return;
+            }
         }
 
-        // 初期位置をターゲット位置に設定 (位置ロードがない場合は現在の位置)
+        // ロードされなかった場合（初回起動時など）は、現在のHierarchy上の位置をターゲットに設定
         targetPos = transform.position;
+    }
+
+    void Start()
+    {
+        // Awake()でほとんどの初期化を終えているため、Start()は空で問題ありません。
     }
 
     void Update()
@@ -89,9 +89,8 @@ public class t_player : MonoBehaviour
             // Physics2D.BoxCastを実行: プレイヤーの移動先に何か（壁またはブロック）があるかを確認
             RaycastHit2D hit = Physics2D.BoxCast(origin, size, angle, dir, checkDistance, obstacleLayer);
 
-            // =========================================================================
-            // ★★★ 衝突判定とブロック押し処理のロジック ★★★
-            // =========================================================================
+            
+            //衝突判定とブロック押し処理
 
             // 衝突しなかった場合 (移動先に何もない)
             if (hit.collider == null)

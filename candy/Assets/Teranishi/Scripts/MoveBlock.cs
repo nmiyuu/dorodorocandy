@@ -5,6 +5,10 @@ public class MoveBlock : MonoBehaviour
 {
     public float moveUnit = 1.0f; // プレイヤーの moveUnit と一致させる
     public float moveSpeed = 5f;
+
+    // ブロックを一意に識別するためのID (SceneDataTransferで使用)
+    public string blockID;
+
     public LayerMask pushBlockerLayer; // ブロックの移動を妨げる障害物（動かない壁や別のブロック）
 
     private bool isMoving = false;
