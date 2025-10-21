@@ -1000,7 +1000,14 @@ GameObject:
   - component: {fileID: 1455407996}
   - component: {fileID: 1455407995}
   - component: {fileID: 1455408000}
+<<<<<<< HEAD:candy/Assets/Scenes/Stage1_Past.unity
   m_Layer: 6
+=======
+  - component: {fileID: 1455408002}
+  - component: {fileID: 1455408001}
+  - component: {fileID: 1455408003}
+  m_Layer: 0
+>>>>>>> ca227fa4579c636f477ea6aa56f25cd668013069:candy/Assets/Scenes/Stage1.5.unity
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -1159,6 +1166,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1455407994}
   m_Enabled: 1
   m_EditorHideFlags: 0
+<<<<<<< HEAD:candy/Assets/Scenes/Stage1_Past.unity
   m_Script: {fileID: 11500000, guid: fd2ab45ae9e69e44bb6b420465528137, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
@@ -1168,6 +1176,67 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 136
   isMoving: 0
+=======
+  m_Script: {fileID: 11500000, guid: 98739939e3929354c86f05bb76b11998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 0}
+  upSprite: {fileID: -5372438342267549016, guid: 6a0770bed6f5a8142bb8a555f4955746, type: 3}
+  downSprite: {fileID: 2496601910337322718, guid: f40d4456a1e7f9d4ba8d48deaf15c898, type: 3}
+  leftSprite: {fileID: 3216050827638603415, guid: 26f80e658539c2b48877624e5fc82416, type: 3}
+  rightSprite: {fileID: -1386254791782544737, guid: 9afc48debedf7334794c104e8744368b, type: 3}
+--- !u!114 &1455408001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455407994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98739939e3929354c86f05bb76b11998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 0}
+  upSprite: {fileID: 2496601910337322718, guid: f40d4456a1e7f9d4ba8d48deaf15c898, type: 3}
+  downSprite: {fileID: -5372438342267549016, guid: 6a0770bed6f5a8142bb8a555f4955746, type: 3}
+  leftSprite: {fileID: 3216050827638603415, guid: 26f80e658539c2b48877624e5fc82416, type: 3}
+  rightSprite: {fileID: -1386254791782544737, guid: 9afc48debedf7334794c104e8744368b, type: 3}
+--- !u!114 &1455408002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455407994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98739939e3929354c86f05bb76b11998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 0}
+  upSprite: {fileID: 2496601910337322718, guid: f40d4456a1e7f9d4ba8d48deaf15c898, type: 3}
+  downSprite: {fileID: -5372438342267549016, guid: 6a0770bed6f5a8142bb8a555f4955746, type: 3}
+  leftSprite: {fileID: 3216050827638603415, guid: 26f80e658539c2b48877624e5fc82416, type: 3}
+  rightSprite: {fileID: -1386254791782544737, guid: 9afc48debedf7334794c104e8744368b, type: 3}
+--- !u!114 &1455408003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455407994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98739939e3929354c86f05bb76b11998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteRenderer: {fileID: 0}
+  upSprite: {fileID: 2496601910337322718, guid: f40d4456a1e7f9d4ba8d48deaf15c898, type: 3}
+  downSprite: {fileID: -5372438342267549016, guid: 6a0770bed6f5a8142bb8a555f4955746, type: 3}
+  leftSprite: {fileID: 3216050827638603415, guid: 26f80e658539c2b48877624e5fc82416, type: 3}
+  rightSprite: {fileID: -1386254791782544737, guid: 9afc48debedf7334794c104e8744368b, type: 3}
+>>>>>>> ca227fa4579c636f477ea6aa56f25cd668013069:candy/Assets/Scenes/Stage1.5.unity
 --- !u!1 &1575364769
 GameObject:
   m_ObjectHideFlags: 0
