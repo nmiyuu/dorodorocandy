@@ -16,5 +16,8 @@ public class hp : MonoBehaviour
     void Update()
     {
         
+        
+
+
     }
 }
