@@ -1,38 +1,83 @@
 using UnityEngine;
-using System.Collections; // ★修正点1: コルーチン(IEnumerator)を使うために必要
+using UnityEngine.SceneManagement;
+using System.Collections;
+using System.Linq;
 
 public class MoveBlock : MonoBehaviour
 {
-    public float moveUnit = 1.0f; // プレイヤーの moveUnit と一致させる
+    public float moveUnit = 1.0f;
     public float moveSpeed = 5f;
 
-    // ブロックを一意に識別するためのID (SceneDataTransferで使用)
+    [Tooltip("このブロックをシーンをまたいで識別するためのIDを設定")]
     public string blockID;
 
-    public LayerMask pushBlockerLayer; // ブロックの移動を妨げる障害物（動かない壁や別のブロック）
+    public LayerMask pushBlockerLayer;
 
     private bool isMoving = false;
     private Vector3 targetPos;
     private BoxCollider2D blockCollider;
 
-    void Start()
+    public string presentSceneName = "Stage1_now";
+
+    private Vector3 initialPosition;
+
+    void Awake()
     {
         blockCollider = GetComponent<BoxCollider2D>();
-        // Colliderが見つからない場合のエラーチェック
         if (blockCollider == null)
         {
-            Debug.LogError("MoveBlockオブジェクトにBoxCollider2Dが見つかりません！");
+            Debug.LogError($"MoveBlock '{gameObject.name}' に BoxCollider2D がアタッチされていません。");
         }
-        targetPos = transform.position;
+
+        initialPosition = new Vector3(
+            Mathf.Round(transform.position.x),
+            Mathf.Round(transform.position.y),
+            Mathf.Round(transform.position.z)
+        );
+
+        if (string.IsNullOrEmpty(blockID))
+        {
+            blockID = gameObject.name;
+            Debug.LogWarning($"MoveBlock '{gameObject.name}' に ID が設定されていません。オブジェクト名をIDとして使用します。");
+        }
     }
 
-    // プレイヤーから呼ばれる移動を試みるメソッド
+    void Start()
+    {
+        string currentSceneName = SceneManager.GetActiveScene().name;
+
+        if (currentSceneName == presentSceneName)
+        {
+            LoadBlockPosition();
+        }
+        else
+        {
+            transform.position = initialPosition;
+        }
+    }
+
+    private void LoadBlockPosition()
+    {
+        if (SceneDataTransfer.Instance == null) return;
+
+        BlockState? savedState = SceneDataTransfer.Instance.pastBlockStates
+            .Where(state => state.id == blockID)
+            .Cast<BlockState?>()
+            .FirstOrDefault();
+
+        if (savedState.HasValue)
+        {
+            Vector3 finalPosition = savedState.Value.finalPosition;
+
+            transform.position = finalPosition;
+            Debug.Log($"現代ブロック '{blockID}' を保存位置 {finalPosition} に配置しました。");
+        }
+    }
+
     public bool TryMove(Vector3 direction)
     {
-        // 処理の簡略化のため、TryMove内でのみNullチェックを実行
         if (isMoving || blockCollider == null) return false;
 
-        // ... (BoxCastの計算は省略) ...
         Vector2 origin = (Vector2)transform.position + blockCollider.offset;
         Vector2 size = blockCollider.size;
         float angle = 0f;
@@ -42,22 +87,16 @@ public class MoveBlock : MonoBehaviour
 
         if (hit.collider == null)
         {
-            // 移動先が空いているため、移動を開始
             targetPos = transform.position + direction * moveUnit;
-
-            // StartCoroutineの呼び出し
             StartCoroutine(MoveToPosition(targetPos));
-            return true; // 移動成功
+            return true;
         }
         else
         {
-            // 移動先に壁や別のブロックがあるため、移動失敗
             return false;
         }
     }
 
-    // ブロックをターゲットの位置まで滑らかに移動させるコルーチン
-    // ★修正点2: System.Collections. を外し、IEnumeratorのみにする
     IEnumerator MoveToPosition(Vector3 target)
     {
         isMoving = true;
@@ -71,4 +110,6 @@ public class MoveBlock : MonoBehaviour
         transform.position = target;
         isMoving = false;
     }
+
+    public bool IsMoving => isMoving;
 }
