@@ -24,30 +24,58 @@ public class DirectionalSpriteChanger : MonoBehaviour
 
         if (keyboard == null) return;
 
-        input = Vector2.zero;
-
-        if (keyboard.leftArrowKey.isPressed)
-            input.x = -1;
-        else if (keyboard.rightArrowKey.isPressed)
-            input.x = 1;
-
-        if (keyboard.upArrowKey.isPressed)
-            input.y = 1;
-        else if (keyboard.downArrowKey.isPressed)
-            input.y = -1;
-
-        if (input != Vector2.zero)
+        // 押された瞬間のキーをチェック
+        if (keyboard.upArrowKey.wasPressedThisFrame)
         {
-            lastDirection = input;
+            SetDirection(Vector2.up);
+        }
+        else if (keyboard.downArrowKey.wasPressedThisFrame)
+        {
+            SetDirection(Vector2.down);
+        }
+        else if (keyboard.leftArrowKey.wasPressedThisFrame)
+        {
+            SetDirection(Vector2.left);
+        }
+        else if (keyboard.rightArrowKey.wasPressedThisFrame)
+        {
+            SetDirection(Vector2.right);
+        }
 
-            if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+        // もし何も押されていなければ、押されているキーに合わせてスプライト更新（方向維持のため）
+        else
+        {
+            if (keyboard.upArrowKey.isPressed)
             {
-                spriteRenderer.sprite = input.x > 0 ? rightSprite : leftSprite;
+                SetDirection(Vector2.up);
             }
-            else
+            else if (keyboard.downArrowKey.isPressed)
             {
-                spriteRenderer.sprite = input.y > 0 ? upSprite : downSprite;
+                SetDirection(Vector2.down);
+            }
+            else if (keyboard.leftArrowKey.isPressed)
+            {
+                SetDirection(Vector2.left);
+            }
+            else if (keyboard.rightArrowKey.isPressed)
+            {
+                SetDirection(Vector2.right);
             }
         }
     }
+
+    void SetDirection(Vector2 dir)
+    {
+        lastDirection = dir;
+
+        if (dir == Vector2.up)
+            spriteRenderer.sprite = upSprite;
+        else if (dir == Vector2.down)
+            spriteRenderer.sprite = downSprite;
+        else if (dir == Vector2.left)
+            spriteRenderer.sprite = leftSprite;
+        else if (dir == Vector2.right)
+            spriteRenderer.sprite = rightSprite;
+    }
+
 }
