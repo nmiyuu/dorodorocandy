@@ -131,7 +131,8 @@ GameObject:
   - component: {fileID: 484314349}
   - component: {fileID: 484314348}
   - component: {fileID: 484314347}
-  m_Layer: 3
+  - component: {fileID: 484314351}
+  m_Layer: 8
   m_Name: "\u7A74_0"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -281,6 +282,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &484314351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 484314346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c3290c7f033eab4984a04d44a90ad7f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  filledHoleSprite: {fileID: 0}
 --- !u!1 &683191865
 GameObject:
   m_ObjectHideFlags: 0
@@ -1826,6 +1840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockID: Stage1_Rock
+  filledBlockSprite: {fileID: -6055678027684674222, guid: da779b5ee099ad242a4a988d8b7db62e, type: 3}
 --- !u!1 &2078912547
 GameObject:
   m_ObjectHideFlags: 0
