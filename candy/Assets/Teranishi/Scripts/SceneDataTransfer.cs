@@ -1,8 +1,9 @@
 using UnityEngine;
-using System.Collections.Generic; // Listを使うために必要
-using UnityEngine.SceneManagement; // DontDestroyOnLoadを使うためにSceneManagementをインポート（厳密には不要ですが念のため）
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+using System.Linq;
 
-// ブロックの状態を保存するための構造体を外部に定義（もしくはSceneDataTransferクラスの内部でも可）
+// ブロックの状態を保存するための構造体 (変更なし)
 [System.Serializable]
 public struct BlockState
 {
@@ -16,12 +17,18 @@ public class SceneDataTransfer : MonoBehaviour
     public static SceneDataTransfer Instance;
 
     // --- シーンをまたいで引き継ぎたいデータ ---
+    // プレイヤーの復帰位置 (既存)
     public Vector3 playerPositionToLoad = Vector3.zero;
+
+    // ★追加: プレイヤーの向きを保存する変数
+    public Vector2 playerDirectionToLoad = Vector2.down; // 初期値は正面
+
+    // 過去シーンで動かされたブロックの位置を保存するリスト (既存)
     public List<BlockState> pastBlockStates = new List<BlockState>();
 
     void Awake()
     {
-        // シングルトンパターンの確立
+        // シングルトンパターンの確立 (既存)
         if (Instance == null)
         {
             Instance = this;
@@ -35,19 +42,17 @@ public class SceneDataTransfer : MonoBehaviour
         }
     }
 
-    // 過去のブロックの最終位置を保存する関数
+    // 動くブロックの最終位置を保存する関数 (既存)
     public void SaveBlockPositions()
     {
         pastBlockStates.Clear();
 
-        // ★★★ 修正部分：FindObjectsOfType を FindObjectsByType に変更 ★★★
-        // FindObjectsSortMode.None を使うことで、より高速にオブジェクトを取得できます。
-        MoveBlock[] pastBlocks = FindObjectsByType<MoveBlock>(FindObjectsSortMode.None);
-        // ★★★ 修正部分 ここまで ★★★
+        // 現在のシーンにある MoveBlock をすべて検索
+        MoveBlock[] currentBlocks = FindObjectsByType<MoveBlock>(FindObjectsSortMode.None);
 
-        foreach (MoveBlock block in pastBlocks)
+        foreach (MoveBlock block in currentBlocks)
         {
-            // blockIDが設定されているか確認
+            // blockIDが設定されているブロックのみを処理
             if (!string.IsNullOrEmpty(block.blockID))
             {
                 BlockState state = new BlockState
@@ -63,6 +68,6 @@ public class SceneDataTransfer : MonoBehaviour
                 pastBlockStates.Add(state);
             }
         }
-        Debug.Log("過去のブロック位置を " + pastBlockStates.Count + " 個保存しました。");
+        Debug.Log("動くブロックの位置を " + pastBlockStates.Count + " 個保存しました。");
     }
 }
