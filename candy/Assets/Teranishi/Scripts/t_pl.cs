@@ -3,15 +3,12 @@ using UnityEngine.InputSystem;
 
 public class t_pl : MonoBehaviour
 {
-    // ★SpriteRendererとSpriteのpublicフィールドは不要です（手動で削除推奨）
-    // ただし、もしt_plのインスペクターにSpriteRendererが残っていても、このコードはエラーになりません。
-
-    private Animator animator; // ★Animatorへの参照
-    public Vector2 lastDirection = Vector2.down; // 最後に見ていた向き
+    private Animator animator;
+    // lastDirectionをint（インデックス）で保持
+    public int lastDirectionIndex = 1; // デフォルトは1（下）
 
     void Awake()
     {
-        // Animatorコンポーネントを取得
         animator = GetComponent<Animator>();
         if (animator == null)
         {
@@ -21,11 +18,25 @@ public class t_pl : MonoBehaviour
 
     void Start()
     {
-        // StartではAnimatorに現在の向きを設定する
-        // 復元データがある場合はTimeTravelControllerからのLoadDirectionに任せるため、ここではデフォルト設定のみ
-        if (SceneDataTransfer.Instance == null || SceneDataTransfer.Instance.playerDirectionToLoad == Vector2.zero)
+        // SceneDataTransferが存在し、かつ保存された向きのインデックスがある場合（0ではない場合）
+        if (SceneDataTransfer.Instance != null && SceneDataTransfer.Instance.playerDirectionIndexToLoad != 0)
         {
-            UpdateAnimator(lastDirection);
+            // ★★★ 復元データを即座にロードし、アニメーターを更新 ★★★
+
+            // 1. lastDirectionIndexをロードデータで上書き
+            lastDirectionIndex = SceneDataTransfer.Instance.playerDirectionIndexToLoad;
+
+            // 2. Animatorを更新（これにより、見た目がすぐに変わる）
+            UpdateAnimator(lastDirectionIndex);
+
+            // 補足: TimeTravelControllerの復元処理を待つ必要がなくなりますが、
+            // TimeTravelController側の復元処理は念のためそのまま残しておきます。
+        }
+        else
+        {
+            // SceneDataTransferがない、またはロードデータがない場合は、
+            // デフォルトの lastDirectionIndex (1:下) でAnimatorを初期化
+            UpdateAnimator(lastDirectionIndex);
         }
     }
 
@@ -34,65 +45,68 @@ public class t_pl : MonoBehaviour
         var keyboard = Keyboard.current;
         if (keyboard == null) return;
 
-        Vector2 inputDir = Vector2.zero;
+        int newIndex = 0;
 
-        // キーが押されているかをチェックし、入力方向を決定
-        // wasPressedThisFrame (瞬間) と isPressed (押しっぱなし) の両方に対応
-        if (keyboard.upArrowKey.isPressed)
+        // t_playerスクリプトの参照が有効か確認（念のため）
+        t_player playerMovementScript = GetComponent<t_player>();
+        bool isMoving = playerMovementScript != null && playerMovementScript.IsPlayerMoving;
+
+
+        // キー入力に応じてインデックスを決定
+        if (keyboard.downArrowKey.isPressed)
         {
-            inputDir = Vector2.up;
+            newIndex = 1; // 下 = 1
         }
-        else if (keyboard.downArrowKey.isPressed)
+        else if (keyboard.upArrowKey.isPressed)
         {
-            inputDir = Vector2.down;
-        }
-        else if (keyboard.leftArrowKey.isPressed)
-        {
-            inputDir = Vector2.left;
+            newIndex = 2; // 上 = 2
         }
         else if (keyboard.rightArrowKey.isPressed)
         {
-            inputDir = Vector2.right;
+            newIndex = 3; // 右 = 3
+        }
+        else if (keyboard.leftArrowKey.isPressed)
+        {
+            newIndex = 4; // 左 = 4
         }
 
-        if (inputDir != Vector2.zero)
+        // ★重要: 移動中か、新しい方向が検出された場合にのみlastDirectionIndexを更新する
+        if (newIndex != 0)
         {
-            SetDirection(inputDir);
+            SetDirection(newIndex);
         }
-        else
-        {
-            // キー入力がない場合でも、Animatorを更新し、最後の向きを維持させる
-            UpdateAnimator(lastDirection);
-        }
+
+        // ★アニメーターの更新は毎フレーム行う
+        //   これにより、Animatorが次のステートに切り替わった後、
+        //   そのステート（例: Idle_Right）を維持するためにDirection=3を送り続けます。
+        UpdateAnimator(lastDirectionIndex);
+
+        // ※ 従来の else ブロックは不要になりました。
     }
-
-    void SetDirection(Vector2 dir)
+    void SetDirection(int index)
     {
-        lastDirection = dir;
-        UpdateAnimator(dir);
+        lastDirectionIndex = index;
+        UpdateAnimator(index);
     }
 
-    // Animatorのパラメーターを更新するメソッド
-    void UpdateAnimator(Vector2 dir)
+    // AnimatorのIntパラメーターを更新するメソッド
+    void UpdateAnimator(int index)
     {
         if (animator == null) return;
 
-        // AnimatorのMoveXとMoveYに現在の向きの成分を設定し、画像を切り替える
-        // Animator Controllerで定義したパラメーター名("MoveX", "MoveY")と一致させる必要があります
-        animator.SetFloat("MoveX", dir.x);
-        animator.SetFloat("MoveY", dir.y);
+        // Intパラメーター"Direction"を設定
+        animator.SetInteger("Direction", index);
     }
 
     // 外部から向きを復元するためのPublicメソッド (TimeTravelControllerから呼ばれる)
-    public void LoadDirection(Vector2 direction)
+    public void LoadDirectionIndex(int index)
     {
-        // 向きを設定し、直ちにAnimatorに反映させる
-        SetDirection(direction);
+        SetDirection(index);
     }
 
-    // 現在の向きを取得するPublicプロパティ
-    public Vector2 CurrentDirection
+    // 現在の向きのインデックスを取得するPublicプロパティ
+    public int CurrentDirectionIndex
     {
-        get { return lastDirection; }
+        get { return lastDirectionIndex; }
     }
 }

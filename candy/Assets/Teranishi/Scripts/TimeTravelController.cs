@@ -11,37 +11,47 @@ public class TimeTravelController : MonoBehaviour
 
     private bool isSwitchingScene = false;
     private GameObject playerObject;
-    private t_pl playerScriptRef; // スプライト制御用
-    private t_player playerMovementScript; // ★追加: 移動制御用
+    private t_pl playerScriptRef; // スプライト制御用 (Intインデックス対応)
+    private t_player playerMovementScript; // 移動制御用
     private BoxCollider2D playerColliderRef;
     private LayerMask obstacleLayer;
 
+    // ★修正済みメソッド: 参照再取得のロジックを改善
     private bool TrySetPlayerReferences()
     {
+        // 1. プレイヤーオブジェクトの参照を確実に取得/再取得する
         if (playerObject == null)
         {
+            // 新しいシーンから「Player」タグを持つオブジェクトを探す
             playerObject = GameObject.FindGameObjectWithTag("Player");
         }
 
-        if (playerObject != null && playerScriptRef == null)
+        if (playerObject == null)
         {
-            playerScriptRef = playerObject.GetComponent<t_pl>();
-
-            // t_player（移動制御）の参照を取得
-            playerMovementScript = playerObject.GetComponent<t_player>();
-
-            if (playerScriptRef != null && playerMovementScript != null)
-            {
-                playerColliderRef = playerObject.GetComponent<BoxCollider2D>();
-                obstacleLayer = playerMovementScript.obstacleLayer; // t_playerからLayerMaskを取得
-            }
-            else
-            {
-                if (playerScriptRef == null) Debug.LogError($"Playerオブジェクト '{playerObject.name}' に t_pl スクリプトが見つかりません。");
-                if (playerMovementScript == null) Debug.LogError($"Playerオブジェクト '{playerObject.name}' に t_player スクリプト（移動制御）が見つかりません。移動中チェックは機能しません。");
-            }
+            return false;
         }
-        return playerObject != null && playerScriptRef != null && playerColliderRef != null && playerMovementScript != null;
+
+        // 2. プレイヤーオブジェクトが見つかった場合、すべてのコンポーネントを再取得する
+        playerScriptRef = playerObject.GetComponent<t_pl>();
+        playerMovementScript = playerObject.GetComponent<t_player>();
+        playerColliderRef = playerObject.GetComponent<BoxCollider2D>();
+
+        // 3. 全ての参照が取得できたかチェック
+        bool allReferencesSet = playerScriptRef != null && playerMovementScript != null && playerColliderRef != null;
+
+        if (allReferencesSet)
+        {
+            obstacleLayer = playerMovementScript.obstacleLayer;
+        }
+        else
+        {
+            // 参照が見つからなかった場合の詳細なエラー報告
+            if (playerScriptRef == null) Debug.LogError($"Playerオブジェクト '{playerObject.name}' に t_pl スクリプトが見つかりません。");
+            if (playerMovementScript == null) Debug.LogError($"Playerオブジェクト '{playerObject.name}' に t_player スクリプトが見つかりません。");
+            if (playerColliderRef == null) Debug.LogError($"Playerオブジェクト '{playerObject.name}' に BoxCollider2D が見つかりません。");
+        }
+
+        return allReferencesSet;
     }
 
     void Start()
@@ -56,9 +66,9 @@ public class TimeTravelController : MonoBehaviour
     void Update()
     {
         if (isSwitchingScene) return;
-        if (!TrySetPlayerReferences()) return;
+        if (!TrySetPlayerReferences()) return; // 参照が有効かチェック
 
-        // 移動中チェックを追加
+        // 移動中チェック
         if (playerMovementScript.IsPlayerMoving) return;
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -120,9 +130,8 @@ public class TimeTravelController : MonoBehaviour
         if (SceneDataTransfer.Instance != null)
         {
             SceneDataTransfer.Instance.playerPositionToLoad = nextPlayerPosition;
-
-            // ★修正: 現在の向きをデータ転送オブジェクトに保存
-            SceneDataTransfer.Instance.playerDirectionToLoad = playerScriptRef.CurrentDirection;
+            // ★修正: Vector2からIntインデックス（CurrentDirectionIndex）を保存
+            SceneDataTransfer.Instance.playerDirectionIndexToLoad = playerScriptRef.CurrentDirectionIndex;
         }
 
         // 1. 新しいシーンを非同期でロード
@@ -143,7 +152,7 @@ public class TimeTravelController : MonoBehaviour
         // 2. 新しいシーンの描画をすぐに抑制
         SetSceneRenderingEnabled(nextScene, false);
 
-        // 3. 新しいシーンをアクティブシーンに設定（Start() / Awake() が実行される）
+        // 3. 新しいシーンをアクティブシーンに設定
         SceneManager.SetActiveScene(nextScene);
 
         // 4. ブロックの配置と物理演算の安定を待つ
@@ -151,7 +160,7 @@ public class TimeTravelController : MonoBehaviour
         yield return new WaitForEndOfFrame();
         yield return null;
 
-        // 5. プレイヤー参照の再取得
+        // 5. プレイヤー参照の再取得のために参照をクリア
         playerObject = null;
         playerScriptRef = null;
         playerColliderRef = null;
@@ -159,7 +168,7 @@ public class TimeTravelController : MonoBehaviour
 
         if (!TrySetPlayerReferences())
         {
-            Debug.LogError("新しいシーンでプレイヤーオブジェクトが見つかりませんでした。");
+            // 参照再取得失敗: シーン切り替えを中止
             isSwitchingScene = false;
             yield break;
         }
@@ -196,7 +205,7 @@ public class TimeTravelController : MonoBehaviour
         }
 
         // 8. 成功した場合のみ、描画を有効にし、古いシーンをアンロード
-        SetSceneRenderingEnabled(nextScene, true); // 新しいシーンの描画を開始
+        SetSceneRenderingEnabled(nextScene, true);
 
         AsyncOperation unloadOldScene = SceneManager.UnloadSceneAsync(currentSceneName);
         while (!unloadOldScene.isDone)
@@ -205,15 +214,13 @@ public class TimeTravelController : MonoBehaviour
         }
 
         // 9. 完了後の最終処理
-
-        // ★修正: 復元処理をWaitForFixedUpdateの直後にすることで、t_pl.Start()やUpdate()の実行を確実に見送る
         yield return new WaitForFixedUpdate();
 
         if (SceneDataTransfer.Instance != null && playerScriptRef != null)
         {
-            // 保存された向きをロード
-            playerScriptRef.LoadDirection(SceneDataTransfer.Instance.playerDirectionToLoad);
-            Debug.Log($"プレイヤーの向きを {SceneDataTransfer.Instance.playerDirectionToLoad} に復元しました。");
+            // ★修正: Intインデックスをロードし、t_pl.LoadDirectionIndex()でアニメーションを復元
+            playerScriptRef.LoadDirectionIndex(SceneDataTransfer.Instance.playerDirectionIndexToLoad);
+            Debug.Log($"プレイヤーの向きを {SceneDataTransfer.Instance.playerDirectionIndexToLoad} (Int Index) に復元しました。");
         }
 
         isSwitchingScene = false;
