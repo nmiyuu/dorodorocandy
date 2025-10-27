@@ -340,7 +340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPositionToLoad: {x: 0, y: 0, z: 0}
-  playerDirectionToLoad: {x: 0, y: -1}
+  playerDirectionIndexToLoad: 1
   pastBlockStates:
   - id: 
     finalPosition: {x: 0, y: 0, z: 0}
@@ -1690,7 +1690,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22d5a5991ae187b45ad4d7ead68680ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lastDirection: {x: 0, y: -1}
+  lastDirectionIndex: 1
 --- !u!95 &1696110872
 Animator:
   serializedVersion: 7
@@ -1988,7 +1988,7 @@ GameObject:
   - component: {fileID: 2035907466}
   - component: {fileID: 2035907465}
   m_Layer: 0
-  m_Name: Item
+  m_Name: CostImage
   m_TagString: CostImage
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2001,7 +2001,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2035907464}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d26b1a44591a38c4585292932d54e71b, type: 3}
   m_Name: 
