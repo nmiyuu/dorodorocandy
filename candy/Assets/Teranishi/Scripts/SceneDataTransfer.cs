@@ -17,11 +17,13 @@ public class SceneDataTransfer : MonoBehaviour
     public static SceneDataTransfer Instance;
 
     // --- シーンをまたいで引き継ぎたいデータ ---
+
     // プレイヤーの復帰位置 (既存)
     public Vector3 playerPositionToLoad = Vector3.zero;
 
-    // ★追加: プレイヤーの向きを保存する変数
-    public Vector2 playerDirectionToLoad = Vector2.down; // 初期値は正面
+    // ★修正: プレイヤーの向きを保存する変数 (Int型インデックス)
+    // 下=1, 上=2, 右=3, 左=4 で保存
+    public int playerDirectionIndexToLoad = 1; // 初期値は1（下）
 
     // 過去シーンで動かされたブロックの位置を保存するリスト (既存)
     public List<BlockState> pastBlockStates = new List<BlockState>();
@@ -48,6 +50,7 @@ public class SceneDataTransfer : MonoBehaviour
         pastBlockStates.Clear();
 
         // 現在のシーンにある MoveBlock をすべて検索
+        // (MoveBlock スクリプトがProject内にあることを前提としています)
         MoveBlock[] currentBlocks = FindObjectsByType<MoveBlock>(FindObjectsSortMode.None);
 
         foreach (MoveBlock block in currentBlocks)

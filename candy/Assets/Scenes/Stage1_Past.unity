@@ -820,7 +820,6 @@ GameObject:
   m_Component:
   - component: {fileID: 692462660}
   - component: {fileID: 692462659}
-  - component: {fileID: 692462661}
   - component: {fileID: 692462662}
   - component: {fileID: 692462664}
   - component: {fileID: 692462663}
@@ -905,23 +904,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &692462661
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 692462658}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98739939e3929354c86f05bb76b11998, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spriteRenderer: {fileID: 0}
-  upSprite: {fileID: 2496601910337322718, guid: f2f9e7fca8451954ea81beeda433abb8, type: 3}
-  downSprite: {fileID: 2805063345330826716, guid: 21884369b3c6d78469b3cf0ea3d450a6, type: 3}
-  leftSprite: {fileID: 3216050827638603415, guid: c5e498da6ed4bb24bb431874d4e4de86, type: 3}
-  rightSprite: {fileID: -1386254791782544737, guid: 7b8112d6ff8fd4a498134970eb329f66, type: 3}
 --- !u!114 &692462662
 MonoBehaviour:
   m_ObjectHideFlags: 0
