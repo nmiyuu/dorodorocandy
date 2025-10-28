@@ -825,9 +825,6 @@ GameObject:
   - component: {fileID: 692462663}
   - component: {fileID: 692462665}
   - component: {fileID: 692462666}
-  - component: {fileID: 692462667}
-  - component: {fileID: 692462668}
-  - component: {fileID: 692462669}
   m_Layer: 6
   m_Name: "\u5F8C\u308D\uFF11_0"
   m_TagString: Player
@@ -1008,10 +1005,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22d5a5991ae187b45ad4d7ead68680ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-<<<<<<< HEAD
-  lastDirectionIndex: 1
-=======
->>>>>>> 638815e (キャラクターのアニメーション調整)
 --- !u!95 &692462666
 Animator:
   serializedVersion: 7
@@ -1034,42 +1027,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &692462667
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 692462658}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce1047ffe83de9940822d67e56c483b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &692462668
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 692462658}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce1047ffe83de9940822d67e56c483b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &692462669
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 692462658}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce1047ffe83de9940822d67e56c483b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1382360727
 GameObject:
   m_ObjectHideFlags: 0
