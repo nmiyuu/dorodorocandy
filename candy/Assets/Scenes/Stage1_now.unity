@@ -672,7 +672,7 @@ GameObject:
   - component: {fileID: 1436007582}
   - component: {fileID: 1436007581}
   - component: {fileID: 1436007583}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: BackGrond
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1487,7 +1487,6 @@ GameObject:
   - component: {fileID: 1696110865}
   - component: {fileID: 1696110869}
   - component: {fileID: 1696110868}
-  - component: {fileID: 1696110870}
   - component: {fileID: 1696110871}
   - component: {fileID: 1696110872}
   - component: {fileID: 1696110873}
@@ -1516,7 +1515,7 @@ MonoBehaviour:
   moveSpeed: 5
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 1416
+    m_Bits: 1928
   isMoving: 0
 --- !u!212 &1696110866
 SpriteRenderer:
@@ -1661,23 +1660,6 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.82, y: 0.94}
   m_EdgeRadius: 0
---- !u!114 &1696110870
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1696110864}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98739939e3929354c86f05bb76b11998, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spriteRenderer: {fileID: 0}
-  upSprite: {fileID: 2496601910337322718, guid: f2f9e7fca8451954ea81beeda433abb8, type: 3}
-  downSprite: {fileID: 2805063345330826716, guid: 21884369b3c6d78469b3cf0ea3d450a6, type: 3}
-  leftSprite: {fileID: 3216050827638603415, guid: c5e498da6ed4bb24bb431874d4e4de86, type: 3}
-  rightSprite: {fileID: -1386254791782544737, guid: 7b8112d6ff8fd4a498134970eb329f66, type: 3}
 --- !u!114 &1696110871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1690,7 +1672,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22d5a5991ae187b45ad4d7ead68680ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< HEAD
   lastDirectionIndex: 1
+=======
+>>>>>>> 638815e (キャラクターのアニメーション調整)
 --- !u!95 &1696110872
 Animator:
   serializedVersion: 7
@@ -1809,7 +1794,7 @@ GameObject:
   - component: {fileID: 2006861010}
   - component: {fileID: 2006861009}
   - component: {fileID: 2006861013}
-  m_Layer: 3
+  m_Layer: 9
   m_Name: Dontmove_rock
   m_TagString: Untagged
   m_Icon: {fileID: 0}

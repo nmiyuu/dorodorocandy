@@ -1008,7 +1008,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 22d5a5991ae187b45ad4d7ead68680ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< HEAD
   lastDirectionIndex: 1
+=======
+>>>>>>> 638815e (キャラクターのアニメーション調整)
 --- !u!95 &692462666
 Animator:
   serializedVersion: 7
