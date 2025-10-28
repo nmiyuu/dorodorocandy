@@ -1,144 +1,112 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Linq;
-using System.Collections.Generic;
 
-/// <summary>
-/// プレイヤーのアニメーションと向きを管理するスクリプトだ。
-/// 特徴: 複数キー同時押しの場合、「最後に押されたキー」の向きをアニメーションに反映させる。
-/// </summary>
 public class t_pl : MonoBehaviour
 {
-    // --- 定数とコンポーネント ---
-    private Animator _animator;
-    private const string DirectionParam = "Direction"; // AnimatorのIntパラメーター名
+    private Animator animator;
+    // lastDirectionをint（インデックス）で保持
+    public int lastDirectionIndex = 1; // デフォルトは1（下）
 
-    // --- 内部状態 ---
-    // 向きのインデックス (1:下, 2:上, 3:右, 4:左)
-    private int lastDirectionIndex = 1;
-
-    // 最後に押されたキーとタイムスタンプを格納する辞書 (InputSystem依存)
-    private Dictionary<int, float> lastKeyPressTime = new Dictionary<int, float>();
-
-    // --- 公開プロパティ (外部連携用) ---
-    // t_player.csがこのプロパティを参照することで、移動方向とアニメーション向きを同期させることが可能だ。
-    public int CurrentDirectionIndex => lastDirectionIndex;
-
-    // --- Unityライフサイクル ---
-
-    /// <summary>
-    /// 初期化処理。コンポーネント取得と辞書初期化をする。
-    /// </summary>
     void Awake()
     {
-        _animator = GetComponent<Animator>();
-        if (_animator == null)
+        animator = GetComponent<Animator>();
+        if (animator == null)
         {
-            Debug.LogError("[t_pl] Animatorコンポーネントが見つからない。", this);
+            Debug.LogError("Playerオブジェクトに Animator コンポーネントが見つかりません。");
         }
-
-        // 辞書に方向インデックスを初期設定
-        lastKeyPressTime.Add(1, 0f); // 下
-        lastKeyPressTime.Add(2, 0f); // 上
-        lastKeyPressTime.Add(3, 0f); // 右
-        lastKeyPressTime.Add(4, 0f); // 左
     }
 
-    /// <summary>
-    /// シーンロード時の向き復元処理。
-    /// </summary>
     void Start()
     {
-        // シーンデータ転送クラスから、保存された向きインデックスをロードする
+        // SceneDataTransferが存在し、かつ保存された向きのインデックスがある場合（0ではない場合）
         if (SceneDataTransfer.Instance != null && SceneDataTransfer.Instance.playerDirectionIndexToLoad != 0)
         {
+            // ★★★ 復元データを即座にロードし、アニメーターを更新 ★★★
+
+            // 1. lastDirectionIndexをロードデータで上書き
             lastDirectionIndex = SceneDataTransfer.Instance.playerDirectionIndexToLoad;
+
+            // 2. Animatorを更新（これにより、見た目がすぐに変わる）
             UpdateAnimator(lastDirectionIndex);
+
+            // 補足: TimeTravelControllerの復元処理を待つ必要がなくなりますが、
+            // TimeTravelController側の復元処理は念のためそのまま残しておきます。
         }
         else
         {
-            // データがない場合はAwakeで設定されたデフォルト値を使用する
+            // SceneDataTransferがない、またはロードデータがない場合は、
+            // デフォルトの lastDirectionIndex (1:下) でAnimatorを初期化
             UpdateAnimator(lastDirectionIndex);
         }
     }
 
-    /// <summary>
-    /// 毎フレームの向き計算とアニメーション更新処理。
-    /// </summary>
     void Update()
     {
-        if (_animator == null) return;
-        var keyboard = Keyboard.current; // InputSystemに依存
+        var keyboard = Keyboard.current;
         if (keyboard == null) return;
 
-        // 1. 押されているキーをチェックし、タイムスタンプを更新する
-        List<int> pressedDirections = new List<int>();
+        int newIndex = 0;
 
-        // キーが押されている間 (isPressed) は、常にタイムスタンプを最新に更新する
-        if (keyboard.downArrowKey.isPressed) { lastKeyPressTime[1] = Time.time; pressedDirections.Add(1); }
-        if (keyboard.upArrowKey.isPressed) { lastKeyPressTime[2] = Time.time; pressedDirections.Add(2); }
-        if (keyboard.rightArrowKey.isPressed) { lastKeyPressTime[3] = Time.time; pressedDirections.Add(3); }
-        if (keyboard.leftArrowKey.isPressed) { lastKeyPressTime[4] = Time.time; pressedDirections.Add(4); }
+        // t_playerスクリプトの参照が有効か確認（念のため）
+        t_player playerMovementScript = GetComponent<t_player>();
+        bool isMoving = playerMovementScript != null && playerMovementScript.IsPlayerMoving;
 
-        // 2. 押されているキーの中から、最後に押されたキーを特定する
-        if (pressedDirections.Count > 0)
+
+        // キー入力に応じてインデックスを決定
+        if (keyboard.downArrowKey.isPressed)
         {
-            int preferredIndex = 0;
-            float latestTime = -1f;
-
-            foreach (int index in pressedDirections)
-            {
-                // 最後に押された時刻（最新の時刻）を優先
-                if (lastKeyPressTime[index] > latestTime)
-                {
-                    latestTime = lastKeyPressTime[index];
-                    preferredIndex = index;
-                }
-            }
-
-            // 最後に押されたキーの向きでアニメーションを更新する
-            SetDirection(preferredIndex);
+            newIndex = 1; // 下 = 1
+        }
+        else if (keyboard.upArrowKey.isPressed)
+        {
+            newIndex = 2; // 上 = 2
+        }
+        else if (keyboard.rightArrowKey.isPressed)
+        {
+            newIndex = 3; // 右 = 3
+        }
+        else if (keyboard.leftArrowKey.isPressed)
+        {
+            newIndex = 4; // 左 = 4
         }
 
-        // 3. アニメーターに現在の向きを反映する
-        UpdateAnimator(lastDirectionIndex);
-    }
-
-    // --- プライベートメソッド ---
-
-    /// <summary>
-    /// 内部の向きインデックスを更新する。
-    /// </summary>
-    private void SetDirection(int newIndex)
-    {
+        // ★重要: 移動中か、新しい方向が検出された場合にのみlastDirectionIndexを更新する
         if (newIndex != 0)
         {
-            lastDirectionIndex = newIndex;
+            SetDirection(newIndex);
         }
-    }
 
-    /// <summary>
-    /// AnimatorのDirectionパラメーターを更新する。
-    /// </summary>
-    private void UpdateAnimator(int directionIndex)
+        // ★アニメーターの更新は毎フレーム行う
+        //   これにより、Animatorが次のステートに切り替わった後、
+        //   そのステート（例: Idle_Right）を維持するためにDirection=3を送り続けます。
+        UpdateAnimator(lastDirectionIndex);
+
+        // ※ 従来の else ブロックは不要になりました。
+    }
+    void SetDirection(int index)
     {
-        if (_animator != null)
-        {
-            _animator.SetInteger(DirectionParam, directionIndex);
-        }
+        lastDirectionIndex = index;
+        UpdateAnimator(index);
     }
 
-    // --- 外部呼び出し用メソッド ---
+    // AnimatorのIntパラメーターを更新するメソッド
+    void UpdateAnimator(int index)
+    {
+        if (animator == null) return;
 
-    /// <summary>
-    /// TimeTravelControllerからの呼び出し用。シーンロード後に向きを復元する。
-    /// </summary>
+        // Intパラメーター"Direction"を設定
+        animator.SetInteger("Direction", index);
+    }
+
+    // 外部から向きを復元するためのPublicメソッド (TimeTravelControllerから呼ばれる)
     public void LoadDirectionIndex(int index)
     {
-        if (index != 0)
-        {
-            lastDirectionIndex = index;
-            UpdateAnimator(lastDirectionIndex);
-        }
+        SetDirection(index);
+    }
+
+    // 現在の向きのインデックスを取得するPublicプロパティ
+    public int CurrentDirectionIndex
+    {
+        get { return lastDirectionIndex; }
     }
 }
