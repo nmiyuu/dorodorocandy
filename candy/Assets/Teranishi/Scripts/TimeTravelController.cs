@@ -19,7 +19,7 @@ public class TimeTravelController : MonoBehaviour
     // ★修正済みメソッド: 参照再取得のロジックを改善
     private bool TrySetPlayerReferences()
     {
-        // 1. プレイヤーオブジェクトの参照を確実に取得/再取得する
+        // プレイヤーオブジェクトの参照を確実に取得/再取得する
         if (playerObject == null)
         {
             // 新しいシーンから「Player」タグを持つオブジェクトを探す
@@ -31,12 +31,12 @@ public class TimeTravelController : MonoBehaviour
             return false;
         }
 
-        // 2. プレイヤーオブジェクトが見つかった場合、すべてのコンポーネントを再取得する
+        // プレイヤーオブジェクトが見つかった場合、すべてのコンポーネントを再取得する
         playerScriptRef = playerObject.GetComponent<t_pl>();
         playerMovementScript = playerObject.GetComponent<t_player>();
         playerColliderRef = playerObject.GetComponent<BoxCollider2D>();
 
-        // 3. 全ての参照が取得できたかチェック
+        //  全ての参照が取得できたかチェック
         bool allReferencesSet = playerScriptRef != null && playerMovementScript != null && playerColliderRef != null;
 
         if (allReferencesSet)
@@ -130,11 +130,11 @@ public class TimeTravelController : MonoBehaviour
         if (SceneDataTransfer.Instance != null)
         {
             SceneDataTransfer.Instance.playerPositionToLoad = nextPlayerPosition;
-            // ★修正: Vector2からIntインデックス（CurrentDirectionIndex）を保存
+            //  Vector2からIntインデックス（CurrentDirectionIndex）を保存
             SceneDataTransfer.Instance.playerDirectionIndexToLoad = playerScriptRef.CurrentDirectionIndex;
         }
 
-        // 1. 新しいシーンを非同期でロード
+        //  新しいシーンを非同期でロード
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(nextSceneName, LoadSceneMode.Additive);
         while (!asyncLoad.isDone)
         {
@@ -149,18 +149,18 @@ public class TimeTravelController : MonoBehaviour
             yield break;
         }
 
-        // 2. 新しいシーンの描画をすぐに抑制
+        //新しいシーンの描画をすぐに抑制
         SetSceneRenderingEnabled(nextScene, false);
 
-        // 3. 新しいシーンをアクティブシーンに設定
+        // 新しいシーンをアクティブシーンに設定
         SceneManager.SetActiveScene(nextScene);
 
-        // 4. ブロックの配置と物理演算の安定を待つ
+        // ブロックの配置と物理演算の安定を待つ
         yield return new WaitForFixedUpdate();
         yield return new WaitForEndOfFrame();
         yield return null;
 
-        // 5. プレイヤー参照の再取得のために参照をクリア
+        // プレイヤー参照の再取得のために参照をクリア
         playerObject = null;
         playerScriptRef = null;
         playerColliderRef = null;
@@ -173,7 +173,7 @@ public class TimeTravelController : MonoBehaviour
             yield break;
         }
 
-        // 6. 衝突判定
+        // 衝突判定
         if (playerColliderRef != null)
         {
             Collider2D hitCollider = Physics2D.OverlapBox(
@@ -183,7 +183,7 @@ public class TimeTravelController : MonoBehaviour
                 obstacleLayer
             );
 
-            // 7. 衝突判定後の処理
+            // 衝突判定後の処理
             if (hitCollider != null)
             {
                 Debug.LogWarning($"タイムトラベル中止: 復帰位置({nextPlayerPosition})に障害物('{hitCollider.gameObject.name}')があります。");
@@ -204,7 +204,7 @@ public class TimeTravelController : MonoBehaviour
             }
         }
 
-        // 8. 成功した場合のみ、描画を有効にし、古いシーンをアンロード
+        //  成功した場合のみ、描画を有効にし、古いシーンをアンロード
         SetSceneRenderingEnabled(nextScene, true);
 
         AsyncOperation unloadOldScene = SceneManager.UnloadSceneAsync(currentSceneName);
@@ -213,7 +213,7 @@ public class TimeTravelController : MonoBehaviour
             yield return null;
         }
 
-        // 9. 完了後の最終処理
+        //  完了後の最終処理
         yield return new WaitForFixedUpdate();
 
         if (SceneDataTransfer.Instance != null && playerScriptRef != null)

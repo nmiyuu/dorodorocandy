@@ -1,9 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement;
-using System.Linq;
+using System.Linq; // FindObjectsByTypeやLinqを使う時に必要
 
-// ブロックの状態を保存するための構造体 (変更なし)
+// ブロックの状態を保存するための構造体
 [System.Serializable]
 public struct BlockState
 {
@@ -11,6 +10,8 @@ public struct BlockState
     public Vector3 finalPosition;
 }
 
+/// シーンをまたいでデータを持ち越すシングルトンクラス。
+/// DontDestroyOnLoadでシーン切り替え後も消えないようにする。
 public class SceneDataTransfer : MonoBehaviour
 {
     // --- シングルトンインスタンス ---
@@ -18,39 +19,53 @@ public class SceneDataTransfer : MonoBehaviour
 
     // --- シーンをまたいで引き継ぎたいデータ ---
 
-    // プレイヤーの復帰位置 (既存)
+    // プレイヤーの復帰位置
     public Vector3 playerPositionToLoad = Vector3.zero;
 
-    // ★修正: プレイヤーの向きを保存する変数 (Int型インデックス)
-    // 下=1, 上=2, 右=3, 左=4 で保存
+    // プレイヤーの向きを保存する変数 (Int型インデックス: 下=1, 上=2, 右=3, 左=4)
     public int playerDirectionIndexToLoad = 1; // 初期値は1（下）
 
-    // 過去シーンで動かされたブロックの位置を保存するリスト (既存)
+    // 過去シーンで動かされたブロックの位置を保存するリスト
     public List<BlockState> pastBlockStates = new List<BlockState>();
 
     void Awake()
     {
-        // シングルトンパターンの確立 (既存)
+        // シングルトンパターンの確立
         if (Instance == null)
         {
             Instance = this;
-            // このオブジェクトをシーン切り替え時に破棄されないようにする（永続化）
+            // ずっと残す
             DontDestroyOnLoad(gameObject);
         }
         else
         {
-            // 既にインスタンスがあれば、新しい方は破棄する
+           
             Destroy(gameObject);
         }
     }
 
-    // 動くブロックの最終位置を保存する関数 (既存)
+    /// <summary>
+    /// Rキーリセットなどで呼ばれる。保存されているすべてのデータを初期状態に戻す。
+    /// これで過去/未来の保存データもクリアになる。
+    /// </summary>
+    public void FullReset()
+    {
+        // プレイヤーの位置と向きを初期値に戻す
+        playerPositionToLoad = Vector3.zero;
+        playerDirectionIndexToLoad = 1; // 向きの初期値（下）
+
+        // ブロックの状態リストをクリアする
+        pastBlockStates.Clear();
+
+        Debug.Log("[SceneDataTransfer] データと過去/未来の状態を完全リセットする");
+    }
+
+    // 動くブロックの最終位置を保存する関数
     public void SaveBlockPositions()
     {
         pastBlockStates.Clear();
 
         // 現在のシーンにある MoveBlock をすべて検索
-        // (MoveBlock スクリプトがProject内にあることを前提としています)
         MoveBlock[] currentBlocks = FindObjectsByType<MoveBlock>(FindObjectsSortMode.None);
 
         foreach (MoveBlock block in currentBlocks)
@@ -71,6 +86,6 @@ public class SceneDataTransfer : MonoBehaviour
                 pastBlockStates.Add(state);
             }
         }
-        Debug.Log("動くブロックの位置を " + pastBlockStates.Count + " 個保存しました。");
+        Debug.Log("動くブロックの位置を " + pastBlockStates.Count + " 個保存する");
     }
 }
