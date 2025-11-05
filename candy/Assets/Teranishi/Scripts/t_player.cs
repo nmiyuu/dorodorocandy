@@ -2,29 +2,26 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using UnityEngine.SceneManagement; // Rキーリセットのために必要
+using UnityEngine.SceneManagement;
 
 // プレイヤーの移動と衝突判定を全部やるコアスクリプト。
-// 特徴: 最後のキーを優先するロジックを自分で持つため、t_plとの実行順序依存をなくす。
 public class t_player : MonoBehaviour
 {
     // --- パラメータ設定 (Inspector設定用) ---
-    public float moveUnit = 1.0f;        // 1マス進む距離
-    public float moveSpeed = 5f;         // 移動スピード
+    public float moveUnit = 1.0f;       // 1マス進む距離
+    public float moveSpeed = 5f;        // 移動スピード
     public LayerMask obstacleLayer;      // ぶつかる対象のレイヤー（壁とかブロック）
 
     // --- 内部状態とコンポーネント ---
     [SerializeField]
+    private string resetSceneName = "Stage1_now"; // Rキーリセット時にロードする基準シーン名
     private bool isMoving = false;       // 移動中フラグ
     private Vector3 targetPos;           // 次の目的地
     private BoxCollider2D playerCollider;
-    private t_pl playerAnimScript;      // アニメーション担当のt_plへの参照
+    private t_pl playerAnimScript;       // アニメーション担当のt_plへの参照
 
     // 最後に押されたキーと時間を記録する辞書（キー優先判定に使う）
     private Dictionary<int, float> lastKeyPressTime = new Dictionary<int, float>();
-
-    // Rキーリセット処理のために現在のシーン名を保持する
-    private string currentSceneName;
 
     // --- 公開プロパティ (外部連携用) ---
     public Vector3 CurrentTargetPosition
@@ -52,7 +49,7 @@ public class t_player : MonoBehaviour
         lastKeyPressTime.Add(3, 0f); // 右
         lastKeyPressTime.Add(4, 0f); // 左
 
-        // --- シーン切り替え時の位置ロード処理 (SceneDataTransferに依存) ---
+        // シーン切り替え時の位置ロード処理 (SceneDataTransferに依存)
         if (SceneDataTransfer.Instance != null)
         {
             Vector3 loadPosition = SceneDataTransfer.Instance.playerPositionToLoad;
@@ -64,24 +61,27 @@ public class t_player : MonoBehaviour
         }
         // ロードされなかったら、現在のHierarchy上の位置を目標にする
         if (targetPos == Vector3.zero) targetPos = transform.position;
-
-        // 現在のシーン名をAwakeで取得しておく
-        currentSceneName = SceneManager.GetActiveScene().name;
     }
 
     // --- メイン処理 ---
 
     void Update()
     {
-        // Rキー完全リセット処理
         // Rキーが押されたら、FullSceneResetを実行する
         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
         {
             FullSceneReset();
-            return; // リセットしたらそのフレームの他の処理はしない
+            // リセット処理後、次のフェードロック処理に任せる
         }
 
         if (playerAnimScript == null || Keyboard.current == null) return;
+
+        // フェードイン/アウト中はすべての移動・操作をブロックする
+        if (SceneFader.Instance != null && SceneFader.Instance.IsFading)
+        {
+            // フェード中は移動も向きの更新もしない
+            return;
+        }
 
         // アニメーション向きを最新に更新する
         // 移動判定の前に、このフレームでどのキーが最後に押されたか計算し、t_plに教えて同期させる
@@ -142,9 +142,7 @@ public class t_player : MonoBehaviour
 
     // --- プライベートメソッド (ロジック統合部分) ---
 
-    
     // 今押されているキーの中で、一番最後に押されたキーの向きインデックスを計算して返す。
-  
     private int CalculateNewDirection()
     {
         var keyboard = Keyboard.current;
@@ -178,9 +176,7 @@ public class t_player : MonoBehaviour
         return preferredIndex;
     }
 
-  
     // 向きのインデックス（1～4）をUnityのVector3（方向ベクトル）に変換する関数。
-   
     private Vector3 ConvertDirectionIndexToVector(int index)
     {
         switch (index)
@@ -193,23 +189,30 @@ public class t_player : MonoBehaviour
         }
     }
 
- 
-    // Rキーで呼ばれる完全リセット機能。
-    // シングルトン内のデータをクリアし、現在のシーンを再ロードする。
 
+    // Rキーで呼ばれる完全リセット機能。
+    // シングルトン内のデータをクリアし、基準シーンを再ロードする。
     private void FullSceneReset()
     {
-        // 1. シングルトンのデータ（過去/未来の状態）をリセットする
+        // シングルトンのデータ（過去/未来の状態）をリセットする
         if (SceneDataTransfer.Instance != null)
         {
-            // SceneDataTransfer.csのFullReset関数を呼び出してデータをクリア
             SceneDataTransfer.Instance.FullReset();
         }
 
-        // 2. 現在のシーンを再ロードする
-        SceneManager.LoadScene(currentSceneName);
+        // シーン再ロード処理を SceneFader に置き換える
+        if (SceneFader.Instance != null)
+        {
+            // Rキーリセットは黒フェードを指定する
+            SceneFader.Instance.LoadSceneWithFade(resetSceneName, FadeColor.Black);
+        }
+        else
+        {
+            // フォールバック時
+            SceneManager.LoadScene(resetSceneName);
+        }
 
-        Debug.Log($"シーン '{currentSceneName}' をRキーで完全リセットする");
+        Debug.Log($"シーン '{resetSceneName}' をRキーで完全リセットする (基準シーンへ)");
     }
 
     // --- コルーチン ---

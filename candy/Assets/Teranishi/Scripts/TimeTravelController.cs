@@ -11,48 +11,12 @@ public class TimeTravelController : MonoBehaviour
 
     private bool isSwitchingScene = false;
     private GameObject playerObject;
-    private t_pl playerScriptRef; // スプライト制御用 (Intインデックス対応)
+    private t_pl playerScriptRef; // スプライト制御用
     private t_player playerMovementScript; // 移動制御用
     private BoxCollider2D playerColliderRef;
     private LayerMask obstacleLayer;
 
-    // ★修正済みメソッド: 参照再取得のロジックを改善
-    private bool TrySetPlayerReferences()
-    {
-        // プレイヤーオブジェクトの参照を確実に取得/再取得する
-        if (playerObject == null)
-        {
-            // 新しいシーンから「Player」タグを持つオブジェクトを探す
-            playerObject = GameObject.FindGameObjectWithTag("Player");
-        }
-
-        if (playerObject == null)
-        {
-            return false;
-        }
-
-        // プレイヤーオブジェクトが見つかった場合、すべてのコンポーネントを再取得する
-        playerScriptRef = playerObject.GetComponent<t_pl>();
-        playerMovementScript = playerObject.GetComponent<t_player>();
-        playerColliderRef = playerObject.GetComponent<BoxCollider2D>();
-
-        //  全ての参照が取得できたかチェック
-        bool allReferencesSet = playerScriptRef != null && playerMovementScript != null && playerColliderRef != null;
-
-        if (allReferencesSet)
-        {
-            obstacleLayer = playerMovementScript.obstacleLayer;
-        }
-        else
-        {
-            // 参照が見つからなかった場合の詳細なエラー報告
-            if (playerScriptRef == null) Debug.LogError($"Playerオブジェクト '{playerObject.name}' に t_pl スクリプトが見つかりません。");
-            if (playerMovementScript == null) Debug.LogError($"Playerオブジェクト '{playerObject.name}' に t_player スクリプトが見つかりません。");
-            if (playerColliderRef == null) Debug.LogError($"Playerオブジェクト '{playerObject.name}' に BoxCollider2D が見つかりません。");
-        }
-
-        return allReferencesSet;
-    }
+    // --- Unityライフサイクル ---
 
     void Start()
     {
@@ -66,6 +30,13 @@ public class TimeTravelController : MonoBehaviour
     void Update()
     {
         if (isSwitchingScene) return;
+
+        // フェード中チェック: フェードイン/アウト中はタイムトラベルをブロックする
+        if (SceneFader.Instance != null && SceneFader.Instance.IsFading)
+        {
+            return;
+        }
+
         if (!TrySetPlayerReferences()) return; // 参照が有効かチェック
 
         // 移動中チェック
@@ -73,32 +44,36 @@ public class TimeTravelController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            StartCoroutine(TrySwitchTimeLine());
+            // Spaceキーが押されたら、白フェードを伴う切り替えを開始
+            StartCoroutine(TriggerTimeTravelWithFade());
         }
     }
 
-    private void SetSceneRenderingEnabled(Scene scene, bool isEnabled)
-    {
-        foreach (GameObject rootObject in scene.GetRootGameObjects())
-        {
-            foreach (Renderer renderer in rootObject.GetComponentsInChildren<Renderer>(true))
-            {
-                renderer.enabled = isEnabled;
-            }
-        }
-    }
+    // --- メインロジック ---
 
-
-    public IEnumerator TrySwitchTimeLine()
+    // Spaceキーで呼ばれるフェード付きタイムトラベルの起点
+    public IEnumerator TriggerTimeTravelWithFade()
     {
+        // 1. ロック開始
         isSwitchingScene = true;
 
-        // コルーチン開始直後にもう一度移動中チェック
-        if (playerMovementScript.IsPlayerMoving)
+        // 2. フェードアウトを開始し、完了を待つ (白フェードを指定)
+        if (SceneFader.Instance != null)
         {
-            isSwitchingScene = false;
-            yield break;
+            // フェードアウトコルーチンを自分で実行し、完了を待つ
+            yield return SceneFader.Instance.FadeOut(FadeColor.White);
         }
+
+        // 3. フェードアウト完了後、シーン切り替え本体を実行
+        yield return StartCoroutine(ExecuteTimeTravelLogic());
+
+        // 4. ロック解除はExecuteTimeTravelLogicの最後で行う
+    }
+
+    // フェード処理を含まない、純粋なタイムトラベルの切り替え処理
+    private IEnumerator ExecuteTimeTravelLogic()
+    {
+        // ExecuteTimeTravelLogicの実行前にisSwitchingScene = true; であることを前提とする
 
         Scene currentScene = SceneManager.GetActiveScene();
         string currentSceneName = currentScene.name;
@@ -106,7 +81,7 @@ public class TimeTravelController : MonoBehaviour
 
         Vector3 nextPlayerPosition = playerObject.transform.position;
 
-        // データの保存と次のシーン名の決定
+        // データの保存と次のシーン名の決定 (ロジックは変更なし)
         if (currentSceneName == presentSceneName)
         {
             nextSceneName = pastSceneName;
@@ -130,11 +105,10 @@ public class TimeTravelController : MonoBehaviour
         if (SceneDataTransfer.Instance != null)
         {
             SceneDataTransfer.Instance.playerPositionToLoad = nextPlayerPosition;
-            //  Vector2からIntインデックス（CurrentDirectionIndex）を保存
             SceneDataTransfer.Instance.playerDirectionIndexToLoad = playerScriptRef.CurrentDirectionIndex;
         }
 
-        //  新しいシーンを非同期でロード
+        // 新しいシーンを非同期でロード
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(nextSceneName, LoadSceneMode.Additive);
         while (!asyncLoad.isDone)
         {
@@ -149,7 +123,7 @@ public class TimeTravelController : MonoBehaviour
             yield break;
         }
 
-        //新しいシーンの描画をすぐに抑制
+        // 新しいシーンの描画をすぐに抑制
         SetSceneRenderingEnabled(nextScene, false);
 
         // 新しいシーンをアクティブシーンに設定
@@ -190,40 +164,98 @@ public class TimeTravelController : MonoBehaviour
 
                 SceneManager.SetActiveScene(currentScene);
 
-                AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(nextScene);
-                while (!unloadOp.isDone)
+                // シーンが有効かつロードされているかを確認してからアンロード
+                if (nextScene.IsValid() && nextScene.isLoaded)
                 {
-                    yield return null;
+                    AsyncOperation unloadOp = SceneManager.UnloadSceneAsync(nextScene);
+                    while (!unloadOp.isDone)
+                    {
+                        yield return null;
+                    }
                 }
 
                 yield return null;
-
                 isSwitchingScene = false;
                 Debug.Log("切り替えがキャンセルされました。");
                 yield break;
             }
         }
 
-        //  成功した場合のみ、描画を有効にし、古いシーンをアンロード
+        // 成功した場合のみ、描画を有効にし、古いシーンをアンロード
         SetSceneRenderingEnabled(nextScene, true);
 
-        AsyncOperation unloadOldScene = SceneManager.UnloadSceneAsync(currentSceneName);
-        while (!unloadOldScene.isDone)
+        // 古いシーンのアンロード前にロードされているかチェック (前回の ArgumentException 対策)
+        if (currentScene.IsValid() && currentScene.isLoaded)
         {
-            yield return null;
+            AsyncOperation unloadOldScene = SceneManager.UnloadSceneAsync(currentSceneName);
+            while (!unloadOldScene.isDone)
+            {
+                yield return null;
+            }
         }
 
-        //  完了後の最終処理
+        // 完了後の最終処理
         yield return new WaitForFixedUpdate();
 
         if (SceneDataTransfer.Instance != null && playerScriptRef != null)
         {
-            // ★修正: Intインデックスをロードし、t_pl.LoadDirectionIndex()でアニメーションを復元
+            // プレイヤーの向きを復元
             playerScriptRef.LoadDirectionIndex(SceneDataTransfer.Instance.playerDirectionIndexToLoad);
             Debug.Log($"プレイヤーの向きを {SceneDataTransfer.Instance.playerDirectionIndexToLoad} (Int Index) に復元しました。");
         }
 
         isSwitchingScene = false;
         Debug.Log($"シーン切り替え完了: {nextSceneName}。次の入力可能です。");
+    }
+
+    // シーン内のレンダラーの有効/無効を切り替える
+    private void SetSceneRenderingEnabled(Scene scene, bool isEnabled)
+    {
+        // シーンが無効であれば、ここで処理を中断する (ArgumentException対策)
+        if (!scene.IsValid() || !scene.isLoaded)
+        {
+            Debug.LogWarning($"[TimeTravel] 無効なシーン '{scene.name}' のレンダリング設定をスキップします。");
+            return;
+        }
+
+        foreach (GameObject rootObject in scene.GetRootGameObjects())
+        {
+            foreach (Renderer renderer in rootObject.GetComponentsInChildren<Renderer>(true))
+            {
+                renderer.enabled = isEnabled;
+            }
+        }
+    }
+
+    // プレイヤーの参照を確実に取得/再取得する
+    private bool TrySetPlayerReferences()
+    {
+        if (playerObject == null)
+        {
+            playerObject = GameObject.FindGameObjectWithTag("Player");
+        }
+
+        if (playerObject == null)
+        {
+            return false;
+        }
+
+        playerScriptRef = playerObject.GetComponent<t_pl>();
+        playerMovementScript = playerObject.GetComponent<t_player>();
+        playerColliderRef = playerObject.GetComponent<BoxCollider2D>();
+
+        bool allReferencesSet = playerScriptRef != null && playerMovementScript != null && playerColliderRef != null;
+
+        if (allReferencesSet)
+        {
+            obstacleLayer = playerMovementScript.obstacleLayer;
+        }
+        else
+        {
+            // エラー報告はAwake/Start時のみに絞るか、詳細なチェックを行う
+            // if (playerScriptRef == null) Debug.LogError($"Playerオブジェクト '{playerObject.name}' に t_pl スクリプトが見つかりません。");
+        }
+
+        return allReferencesSet;
     }
 }
