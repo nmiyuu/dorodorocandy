@@ -908,8 +908,8 @@ MonoBehaviour:
   moveSpeed: 5
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 136
-  isMoving: 0
+    m_Bits: 392
+  resetSceneName: Stage1_now
 --- !u!50 &692462663
 Rigidbody2D:
   serializedVersion: 5
