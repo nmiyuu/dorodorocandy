@@ -56,11 +56,11 @@ public class TitleManager : MonoBehaviour
             Debug.Log("セーブデータがないため、新しくゲームを開始します。");
             if (SceneFader.Instance != null)
             {
-                SceneFader.Instance.LoadSceneWithFade("Stage1_now", FadeColor.Black);
+                SceneFader.Instance.LoadSceneWithFade("Select", FadeColor.Black);
             }
             else
             {
-                SceneManager.LoadScene("Stage1_now");
+                SceneManager.LoadScene("Select");
             }
         }
     }
