@@ -33,7 +33,6 @@ public class GoalManager : MonoBehaviour
     // 「タイトルへ戻る」ボタンが押されたとき
     public void OnTitleButton()
     {
-        // タイトルに戻る前にセーブデータを削除するならここで行う
         // PlayerPrefs.DeleteAll();
 
         // SceneFaderを使ってタイトルシーンへ黒フェードで移動
