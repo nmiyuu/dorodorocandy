@@ -109,7 +109,25 @@ public class MoveBlock : MonoBehaviour
 
         transform.position = target;
         isMoving = false;
+
+       //移動完了後に情報を保存する
+        SaveBlockPosition();
     }
 
+  
+    private void SaveBlockPosition()
+    {
+        // SceneDataTransfer.Instance が永続化されていることを確認
+        if (SceneDataTransfer.Instance == null)
+        {
+            Debug.LogWarning($"MoveBlock '{blockID}': SceneDataTransfer が見つかりません。位置を保存できませんでした。");
+            return;
+        }
+
+        // SceneDataTransfer に、ブロックのIDと最終位置を保存する
+        // このメソッドは SceneDataTransfer.cs で定義されています。
+        SceneDataTransfer.Instance.AddOrUpdateBlockState(blockID, transform.position);
+        Debug.Log($"過去ブロック '{blockID}' の新位置 {transform.position} を保存しました。");
+    }
     public bool IsMoving => isMoving;
 }

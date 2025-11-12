@@ -17,7 +17,7 @@ public class SceneFader : MonoBehaviour
     public float fadeDuration = 0.8f;
 
     // フェード中は次の遷移をブロックするためのフラグ
-    public bool IsFading { get; private set; } = false;
+    public bool IsFading { get; set; } = false;
 
     // シーン遷移時に最後に使用されたフェード色を保持
     private FadeColor lastFadeColor = FadeColor.Black;

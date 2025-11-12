@@ -1,91 +1,94 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
-using System.Linq; // FindObjectsByTypeやLinqを使う時に必要
+using System.Linq;
 
-// ブロックの状態を保存するための構造体
+// ★★★ 必要なデータ構造の定義（FutureObstacleControllerに合わせて追記） ★★★
+// シーンをまたいでブロックの状態を保持するための構造体
 [System.Serializable]
 public struct BlockState
 {
-    public string id;
-    public Vector3 finalPosition;
+    public string id;           // 対応するブロックのユニークID
+    public Vector3 finalPosition; // 過去のブロックが移動し終わった最終位置
+    // 必要に応じて、穴が埋まったかどうかの bool 状態もここに追加可能
 }
 
-/// シーンをまたいでデータを持ち越すシングルトンクラス。
-/// DontDestroyOnLoadでシーン切り替え後も消えないようにする。
 public class SceneDataTransfer : MonoBehaviour
 {
-    // --- シングルトンインスタンス ---
-    public static SceneDataTransfer Instance;
+    // --- シングルトンパターン ---
+    public static SceneDataTransfer Instance { get; private set; }
 
-    // --- シーンをまたいで引き継ぎたいデータ ---
+    // --- 転送データ ---
 
     // プレイヤーの復帰位置
-    public Vector3 playerPositionToLoad = Vector3.zero;
+    [HideInInspector] public Vector3 playerPositionToLoad = Vector3.zero;
 
-    // プレイヤーの向きを保存する変数 (Int型インデックス: 下=1, 上=2, 右=3, 左=4)
-    public int playerDirectionIndexToLoad = 1; // 初期値は1（下）
+    // プレイヤーの向きのインデックス
+    [HideInInspector] public int playerDirectionIndexToLoad = 0;
 
-    // 過去シーンで動かされたブロックの位置を保存するリスト
-    public List<BlockState> pastBlockStates = new List<BlockState>();
+    // ★★★ 修正: ブロックの状態を List<BlockState> で保持する ★★★
+    [HideInInspector] public List<BlockState> pastBlockStates = new List<BlockState>();
+
+    // --- Unityライフサイクル ---
 
     void Awake()
     {
-        // シングルトンパターンの確立
-        if (Instance == null)
+        if (Instance != null && Instance != this)
         {
-            Instance = this;
-            // ずっと残す
-            DontDestroyOnLoad(gameObject);
+            Destroy(gameObject);
         }
         else
         {
-           
-            Destroy(gameObject);
+            Instance = this;
+            // シーンをまたいでオブジェクトを保持する（永続化）
+            DontDestroyOnLoad(gameObject);
         }
     }
 
-    /// <summary>
-    /// Rキーリセットなどで呼ばれる。保存されているすべてのデータを初期状態に戻す。
-    /// これで過去/未来の保存データもクリアになる。
-    /// </summary>
+    // --- ブロックデータ処理 ---
+
+    // 過去シーンから現在シーンに戻る際に呼ばれる（TimeTravelControllerから呼ばれる）
+    // ブロックの位置を保存する処理に特化させる
+    public void SaveBlockPositions(List<BlockState> statesToSave)
+    {
+        // 以前のデータを完全に上書き
+        pastBlockStates = new List<BlockState>(statesToSave);
+
+        Debug.Log($"[SceneDataTransfer] {pastBlockStates.Count} 個のブロックの状態（位置）を保存しました。");
+    }
+
+    // FutureObstacleController からブロックが動いた後の位置を保存するメソッド
+    // （過去の MoveBlock から呼ばれることを想定）
+    public void AddOrUpdateBlockState(string blockId, Vector3 finalPos)
+    {
+        // 既存の状態を検索
+        int index = pastBlockStates.FindIndex(state => state.id == blockId);
+
+        if (index != -1)
+        {
+            // 既にIDが存在する場合、位置を更新
+            BlockState updatedState = pastBlockStates[index];
+            updatedState.finalPosition = finalPos;
+            pastBlockStates[index] = updatedState;
+        }
+        else
+        {
+            // 新しい状態として追加
+            pastBlockStates.Add(new BlockState { id = blockId, finalPosition = finalPos });
+        }
+    }
+
     public void FullReset()
     {
-        // プレイヤーの位置と向きを初期値に戻す
+        // プレイヤーの位置を初期値 (0, 0, 0) にリセット
         playerPositionToLoad = Vector3.zero;
-        playerDirectionIndexToLoad = 1; // 向きの初期値（下）
 
-        // ブロックの状態リストをクリアする
+        // プレイヤーの向きを初期値 (0) にリセット
+        playerDirectionIndexToLoad = 0;
+
+        // ブロックの状態リストをクリア
         pastBlockStates.Clear();
 
-        Debug.Log("[SceneDataTransfer] データと過去/未来の状態を完全リセットする");
-    }
-
-    // 動くブロックの最終位置を保存する関数
-    public void SaveBlockPositions()
-    {
-        pastBlockStates.Clear();
-
-        // 現在のシーンにある MoveBlock をすべて検索
-        MoveBlock[] currentBlocks = FindObjectsByType<MoveBlock>(FindObjectsSortMode.None);
-
-        foreach (MoveBlock block in currentBlocks)
-        {
-            // blockIDが設定されているブロックのみを処理
-            if (!string.IsNullOrEmpty(block.blockID))
-            {
-                BlockState state = new BlockState
-                {
-                    id = block.blockID,
-                    // 位置をマス目の中心に丸める
-                    finalPosition = new Vector3(
-                        Mathf.Round(block.transform.position.x),
-                        Mathf.Round(block.transform.position.y),
-                        Mathf.Round(block.transform.position.z)
-                    )
-                };
-                pastBlockStates.Add(state);
-            }
-        }
-        Debug.Log("動くブロックの位置を " + pastBlockStates.Count + " 個保存する");
+        Debug.Log("[SceneDataTransfer] ゲーム状態を完全にリセットしました。");
     }
 }

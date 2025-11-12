@@ -20,6 +20,7 @@ public class TimeTravelController : MonoBehaviour
 
     void Start()
     {
+        // Startでは参照取得を一度試みる
         TrySetPlayerReferences();
         if (playerObject == null)
         {
@@ -29,7 +30,14 @@ public class TimeTravelController : MonoBehaviour
 
     void Update()
     {
+        // 1. シーン切り替え中は停止
         if (isSwitchingScene) return;
+
+        // 2. 自分がアクティブシーンに属していないなら処理を停止
+        if (gameObject.scene != SceneManager.GetActiveScene())
+        {
+            return;
+        }
 
         // フェード中チェック: フェードイン/アウト中はタイムトラベルをブロックする
         if (SceneFader.Instance != null && SceneFader.Instance.IsFading)
@@ -60,28 +68,43 @@ public class TimeTravelController : MonoBehaviour
         // 2. フェードアウトを開始し、完了を待つ (白フェードを指定)
         if (SceneFader.Instance != null)
         {
-            // フェードアウトコルーチンを自分で実行し、完了を待つ
             yield return SceneFader.Instance.FadeOut(FadeColor.White);
         }
 
         // 3. フェードアウト完了後、シーン切り替え本体を実行
         yield return StartCoroutine(ExecuteTimeTravelLogic());
 
-        // 4. ロック解除はExecuteTimeTravelLogicの最後で行う
+        // 4. シーン切り替え成功後、フェードイン（解除）処理
+
+        // isSwitchingScene が true のまま（つまり切り替えが成功した）場合のみ、フェードインを実行
+        if (isSwitchingScene == true && SceneFader.Instance != null)
+        {
+            // 画面が「白」で覆われているので、FadeInの引数に White を指定する
+            yield return SceneFader.Instance.FadeIn(FadeColor.White);
+        }
     }
 
     // フェード処理を含まない、純粋なタイムトラベルの切り替え処理
     private IEnumerator ExecuteTimeTravelLogic()
     {
-        // ExecuteTimeTravelLogicの実行前にisSwitchingScene = true; であることを前提とする
-
         Scene currentScene = SceneManager.GetActiveScene();
         string currentSceneName = currentScene.name;
         string nextSceneName = string.Empty;
 
-        Vector3 nextPlayerPosition = playerObject.transform.position;
+        // プレイヤーの位置を安全に取得（参照が取れていない場合はここで処理を中断）
+        Vector3 nextPlayerPosition;
+        if (playerObject != null)
+        {
+            nextPlayerPosition = playerObject.transform.position;
+        }
+        else
+        {
+            Debug.LogError("プレイヤーオブジェクトの参照が取れていません！タイムトラベルを中止します。");
+            isSwitchingScene = false; // ★ロック解除ポイント★
+            yield break;
+        }
 
-        // データの保存と次のシーン名の決定 (ロジックは変更なし)
+        // データの保存と次のシーン名の決定
         if (currentSceneName == presentSceneName)
         {
             nextSceneName = pastSceneName;
@@ -89,15 +112,13 @@ public class TimeTravelController : MonoBehaviour
         else if (currentSceneName == pastSceneName)
         {
             nextSceneName = presentSceneName;
-            if (SceneDataTransfer.Instance != null)
-            {
-                SceneDataTransfer.Instance.SaveBlockPositions();
-            }
+
+            // ★ブロックデータは MoveBlock がリアルタイムで更新するため、TimeTravelControllerからのSave呼び出しは不要。★
         }
         else
         {
             Debug.LogWarning("未定義のシーンです: " + currentSceneName);
-            isSwitchingScene = false;
+            isSwitchingScene = false; // ★ロック解除ポイント★
             yield break;
         }
 
@@ -119,7 +140,7 @@ public class TimeTravelController : MonoBehaviour
         if (!nextScene.IsValid())
         {
             Debug.LogError("シーンの追加ロードに失敗しました: " + nextSceneName);
-            isSwitchingScene = false;
+            isSwitchingScene = false; // ★ロック解除ポイント★
             yield break;
         }
 
@@ -143,18 +164,20 @@ public class TimeTravelController : MonoBehaviour
         if (!TrySetPlayerReferences())
         {
             // 参照再取得失敗: シーン切り替えを中止
-            isSwitchingScene = false;
+            isSwitchingScene = false; // ★ロック解除ポイント★
             yield break;
         }
 
         // 衝突判定
         if (playerColliderRef != null)
         {
+            LayerMask currentObstacleLayer = playerMovementScript.obstacleLayer;
+
             Collider2D hitCollider = Physics2D.OverlapBox(
                 (Vector2)nextPlayerPosition + playerColliderRef.offset,
                 playerColliderRef.size,
                 0f,
-                obstacleLayer
+                currentObstacleLayer
             );
 
             // 衝突判定後の処理
@@ -174,8 +197,14 @@ public class TimeTravelController : MonoBehaviour
                     }
                 }
 
+                // 衝突によりキャンセルされたので、白画面を解除する！
+                if (SceneFader.Instance != null)
+                {
+                    yield return SceneFader.Instance.FadeIn(FadeColor.White);
+                }
+
                 yield return null;
-                isSwitchingScene = false;
+                isSwitchingScene = false; // ★ロック解除ポイント★
                 Debug.Log("切り替えがキャンセルされました。");
                 yield break;
             }
@@ -184,7 +213,7 @@ public class TimeTravelController : MonoBehaviour
         // 成功した場合のみ、描画を有効にし、古いシーンをアンロード
         SetSceneRenderingEnabled(nextScene, true);
 
-        // 古いシーンのアンロード前にロードされているかチェック (前回の ArgumentException 対策)
+        // 古いシーンのアンロード前にロードされているかチェック
         if (currentScene.IsValid() && currentScene.isLoaded)
         {
             AsyncOperation unloadOldScene = SceneManager.UnloadSceneAsync(currentSceneName);
@@ -204,14 +233,13 @@ public class TimeTravelController : MonoBehaviour
             Debug.Log($"プレイヤーの向きを {SceneDataTransfer.Instance.playerDirectionIndexToLoad} (Int Index) に復元しました。");
         }
 
-        isSwitchingScene = false;
+        isSwitchingScene = false; // ★成功時のロック解除ポイント★
         Debug.Log($"シーン切り替え完了: {nextSceneName}。次の入力可能です。");
     }
 
     // シーン内のレンダラーの有効/無効を切り替える
     private void SetSceneRenderingEnabled(Scene scene, bool isEnabled)
     {
-        // シーンが無効であれば、ここで処理を中断する (ArgumentException対策)
         if (!scene.IsValid() || !scene.isLoaded)
         {
             Debug.LogWarning($"[TimeTravel] 無効なシーン '{scene.name}' のレンダリング設定をスキップします。");
@@ -250,12 +278,12 @@ public class TimeTravelController : MonoBehaviour
         {
             obstacleLayer = playerMovementScript.obstacleLayer;
         }
-        else
-        {
-            // エラー報告はAwake/Start時のみに絞るか、詳細なチェックを行う
-            // if (playerScriptRef == null) Debug.LogError($"Playerオブジェクト '{playerObject.name}' に t_pl スクリプトが見つかりません。");
-        }
 
         return allReferencesSet;
+    }
+
+    void OnDestroy()
+    {
+        Debug.Log($"[TimeTravelController: {gameObject.name}] は正常に破棄されました。", this);
     }
 }

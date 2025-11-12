@@ -31,14 +31,20 @@ public class FutureObstacleController : MonoBehaviour
 
     void Start()
     {
-        // 1. SceneDataTransferが存在するか確認
-        if (SceneDataTransfer.Instance == null)
+        // 起動時の初期化ロジックをコルーチンに移し、SceneDataTransferの準備を待つ
+        StartCoroutine(InitializeOnDataReady());
+    }
+
+    private System.Collections.IEnumerator InitializeOnDataReady()
+    {
+        // 1. SceneDataTransfer.Instance が設定されるまで待機
+        while (SceneDataTransfer.Instance == null)
         {
-            Debug.LogError("SceneDataTransfer が見つかりません。");
-            return;
+            yield return null; // 1フレーム待機
         }
 
         // 2. 過去のブロックの保存位置を SceneDataTransfer から検索
+        //    (SceneDataTransfer.cs で定義した BlockState 型が必要)
         BlockState? savedState = SceneDataTransfer.Instance.pastBlockStates
             .Where(state => state.id == blockID)
             .Cast<BlockState?>()
