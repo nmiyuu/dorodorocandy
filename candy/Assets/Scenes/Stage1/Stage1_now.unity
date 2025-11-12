@@ -119,6 +119,52 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &149296270
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 149296272}
+  - component: {fileID: 149296273}
+  m_Layer: 0
+  m_Name: TimeTravel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &149296272
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149296270}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.72952, y: 1.21276, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &149296273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 149296270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b138169f6c13c3148864ef814d8ec675, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pastSceneName: Stage1_Past
+  presentSceneName: Stage1_now
 --- !u!1 &363276559
 GameObject:
   m_ObjectHideFlags: 0
@@ -383,8 +429,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 683191868}
-  - component: {fileID: 683191867}
-  - component: {fileID: 683191866}
+  - component: {fileID: 683191869}
   m_Layer: 0
   m_Name: SceneDataTransfer
   m_TagString: Untagged
@@ -392,37 +437,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &683191866
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 683191865}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b138169f6c13c3148864ef814d8ec675, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pastSceneName: Stage1_Past
-  presentSceneName: Stage1_now
---- !u!114 &683191867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 683191865}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0457d5f40fad543438ed0f5346e1a500, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerPositionToLoad: {x: 0, y: 0, z: 0}
-  playerDirectionIndexToLoad: 1
-  pastBlockStates:
-  - id: 
-    finalPosition: {x: 0, y: 0, z: 0}
 --- !u!4 &683191868
 Transform:
   m_ObjectHideFlags: 0
@@ -438,6 +452,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &683191869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683191865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0457d5f40fad543438ed0f5346e1a500, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPositionToLoad: {x: 0, y: 0, z: 0}
+  playerDirectionIndexToLoad: 0
+  pastBlockStates: []
 --- !u!1 &838690153
 GameObject:
   m_ObjectHideFlags: 0
@@ -2741,3 +2770,4 @@ SceneRoots:
   - {fileID: 1633737549}
   - {fileID: 363276562}
   - {fileID: 1700991427}
+  - {fileID: 149296272}
