@@ -26,11 +26,12 @@ public class TitleManager : MonoBehaviour
         if (SceneFader.Instance != null)
         {
             SceneFader.Instance.LoadSceneWithFade("Stage1_now", FadeColor.Black);
+            //ディレイ
+            SceneManager.LoadScene("Stage1_now");
         }
         else
         {
             // SceneFaderがない場合のフォールバック
-            SceneManager.LoadScene("Stage1_now");
         }
     }
 

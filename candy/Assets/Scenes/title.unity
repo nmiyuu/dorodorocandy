@@ -1076,7 +1076,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 2087897001}
         m_TargetAssemblyTypeName: ButtonSoundPlayer, Assembly-CSharp
         m_MethodName: PlayClickSound
         m_Mode: 1
@@ -1563,7 +1563,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bdd1fc4a2a92714cb102bebe33874db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clickSound: {fileID: 8300000, guid: dcd9de6dd624b1045945b51f5bef5506, type: 3}
+  clickSound: {fileID: 8300000, guid: 2d39eaf35e03d6a45b69d1d346e3b075, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
