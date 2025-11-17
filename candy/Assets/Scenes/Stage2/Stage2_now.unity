@@ -1634,7 +1634,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: 1746295165429097852, guid: 6b4ad5a9511a240439aa471cbbc220cb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1746,7 +1746,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 186298595fe24ad40b529365ca81476c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockID: 
+  blockID: Stage2_Rock2
   filledBlockSprite: {fileID: 5982708588258017892, guid: 715ec70e41fe48d4a994cc9397606955, type: 3}
 --- !u!1 &1681056027
 GameObject:
@@ -1948,7 +1948,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: 1746295165429097852, guid: 6b4ad5a9511a240439aa471cbbc220cb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
