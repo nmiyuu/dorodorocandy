@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject playerPrefab;          // プレイヤーのPrefab
     public Vector3 playerStartPos = new Vector3(0, -1, 0); // プレイヤー初期位置
+    public int count = 0;
+
 
     void Awake()
     {
@@ -29,6 +31,8 @@ public class GameManager : MonoBehaviour
         {
             StartCoroutine(ResetGame());
         }
+
+        count++;
     }
 
     IEnumerator ResetGame()

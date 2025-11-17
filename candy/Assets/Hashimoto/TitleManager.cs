@@ -1,3 +1,4 @@
+using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -5,13 +6,16 @@ using UnityEngine.SceneManagement;
 
 public class TitleManager : MonoBehaviour
 {
+    private int count = 0;
+    public bool swich = false;
     // 「はじめから」
     public void OnStartButton()
     {
+        swich = true;
         // ゲーム内データ（シングルトン）を完全にリセット
         if (SceneDataTransfer.Instance != null)
         {
-            SceneDataTransfer.Instance.FullReset();
+            //SceneDataTransfer.Instance.FullReset();
             Debug.Log("[TitleManager] SceneDataTransferのデータを初期化しました。");
         }
         else
@@ -26,7 +30,7 @@ public class TitleManager : MonoBehaviour
         if (SceneFader.Instance != null)
         {
             SceneFader.Instance.LoadSceneWithFade("Stage1_now", FadeColor.Black);
-            //ディレイ
+            if(count == 180)
             SceneManager.LoadScene("Stage1_now");
         }
         else
@@ -66,10 +70,18 @@ public class TitleManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        if (swich == true)
+        {
+            count++;
+        }
+    }
+
     // 「おわり」
     public void OnExitButton()
     {
         Debug.Log("ゲームを終了します");
-        Application.Quit();
+            Application.Quit();
     }
 }
