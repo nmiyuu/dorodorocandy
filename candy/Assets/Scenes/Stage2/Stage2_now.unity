@@ -1895,8 +1895,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1905749161}
   - component: {fileID: 1905749160}
-  - component: {fileID: 1905749163}
   - component: {fileID: 1905749162}
+  - component: {fileID: 1905749163}
   - component: {fileID: 1905749164}
   m_Layer: 3
   m_Name: "\u5D29\u308C\u305F\u5CA9_0"
