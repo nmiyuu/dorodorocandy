@@ -1943,6 +1943,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5166560456081371135, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8109048201686214944, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: m_Name
       value: moov_rock_0
