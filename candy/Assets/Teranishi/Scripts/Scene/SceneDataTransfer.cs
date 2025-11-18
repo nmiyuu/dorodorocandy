@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Linq;
 
-// 必要なデータ構造の定義（FutureObstacleControllerに合わせて追記）
+// ★★★ 必要なデータ構造の定義（FutureObstacleControllerに合わせて追記） ★★★
 // シーンをまたいでブロックの状態を保持するための構造体
 [System.Serializable]
 public struct BlockState
@@ -26,7 +26,7 @@ public class SceneDataTransfer : MonoBehaviour
     // プレイヤーの向きのインデックス
     [HideInInspector] public int playerDirectionIndexToLoad = 0;
 
-    //  ブロックの状態を List<BlockState> で保持する
+    // ★★★ 修正: ブロックの状態を List<BlockState> で保持する ★★★
     [HideInInspector] public List<BlockState> pastBlockStates = new List<BlockState>();
 
     // --- Unityライフサイクル ---
