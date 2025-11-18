@@ -420,7 +420,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   filledHoleSprite: {fileID: 0}
-<<<<<<< HEAD
 --- !u!1 &559720571
 GameObject:
   m_ObjectHideFlags: 0
@@ -898,8 +897,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-=======
->>>>>>> e32c5d5dee4a90bf9ad8b0e1a9dd479d39db8f7a
 --- !u!1 &838690153
 GameObject:
   m_ObjectHideFlags: 0
@@ -1278,7 +1275,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -1296,12 +1293,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1238025771}
-<<<<<<< HEAD
   - {fileID: 559720572}
   - {fileID: 626715990}
   - {fileID: 2072568642}
-=======
->>>>>>> e32c5d5dee4a90bf9ad8b0e1a9dd479d39db8f7a
   m_Father: {fileID: 1700991427}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -3371,9 +3365,6 @@ SceneRoots:
   - {fileID: 363276562}
   - {fileID: 1700991427}
   - {fileID: 149296272}
-<<<<<<< HEAD
   - {fileID: 718293866}
   - {fileID: 697401551}
   - {fileID: 1306215053}
-=======
->>>>>>> 5e044994e1ac9c92fb628ef4fbd31381024cb82a
