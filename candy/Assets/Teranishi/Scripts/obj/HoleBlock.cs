@@ -6,11 +6,18 @@ public class HoleBlock : MonoBehaviour
     public Sprite filledHoleSprite;
 
     private SpriteRenderer spriteRenderer;
+    private BoxCollider2D holeCollider;
 
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        // AwakeでのBoxCollider2Dの取得は不要になりました
+        // BoxCollider2Dがアタッチされていることを前提としています
+        holeCollider = GetComponent<BoxCollider2D>();
+
+        if (holeCollider == null)
+        {
+            Debug.LogError($"【致命的エラー】HoleBlock '{gameObject.name}' に BoxCollider2D が見つかりません。無効化処理がスキップされます。");
+        }
     }
 
     // FutureObstacleControllerから呼ばれるメソッド
@@ -25,27 +32,19 @@ public class HoleBlock : MonoBehaviour
             }
             else
             {
-                // スプライトが設定されていない場合は非表示にする
                 spriteRenderer.enabled = false;
             }
         }
 
-        
-
-        // アタッチされているすべてのCollider2Dを取得する
-        Collider2D[] colliders = GetComponents<Collider2D>();
-
-        if (colliders.Length > 0)
+        // 2. 当たり判定の無効化
+        if (holeCollider != null)
         {
-            foreach (var col in colliders)
-            {
-                col.enabled = false; // 型に関係なく無効化
-                Debug.Log($"穴ブロック '{gameObject.name}' の Collider ({col.GetType().Name}) を無効化しました。");
-            }
+            holeCollider.enabled = false;
+            Debug.Log($"穴ブロック '{gameObject.name}' の Collider を無効化しました。");
         }
         else
         {
-            Debug.LogError($"【無効化失敗】HoleBlock '{gameObject.name}' に Collider2D が見つかりません。");
+            Debug.LogError($"【無効化失敗】HoleBlock '{gameObject.name}' の BoxCollider2D が null です。");
         }
 
         Debug.Log($"穴ブロック '{gameObject.name}' が埋められました。");
