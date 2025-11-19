@@ -1464,7 +1464,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1064153361684203226, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.489
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1064153361684203226, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1908,7 +1908,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 3
   m_Sprite: {fileID: -5372438342267549016, guid: 6a0770bed6f5a8142bb8a555f4955746, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

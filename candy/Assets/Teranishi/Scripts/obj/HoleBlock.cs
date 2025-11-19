@@ -30,7 +30,7 @@ public class HoleBlock : MonoBehaviour
             }
         }
 
-        // 2. 当たり判定の無効化 (★★★ 修正箇所 ★★★)
+        
 
         // アタッチされているすべてのCollider2Dを取得する
         Collider2D[] colliders = GetComponents<Collider2D>();
