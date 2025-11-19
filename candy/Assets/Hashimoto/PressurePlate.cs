@@ -2,21 +2,25 @@ using UnityEngine;
 
 public class PressurePlate : MonoBehaviour
 {
-    public GameObject targetBlock;  // 消したいブロック
+    public LayerMask playerLayer;
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (((1 << other.gameObject.layer) & playerLayer) != 0)
         {
-            targetBlock.SetActive(false);   // 踏んだらブロック消える
+            Debug.Log("指定レイヤーのオブジェクトが踏んだ！");
+            // ブロックを消す処理
+            // ブロックを非表示にする
+            TargetBlock.isActive = false;
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            targetBlock.SetActive(true);    // 離したらブロック戻る
+            // ブロックを再表示する（必要なら）
+            TargetBlock.isActive = true;
         }
     }
 }
