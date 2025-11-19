@@ -2023,7 +2023,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fadePanel: {fileID: 1238025772}
-  fadeDuration: 0.8
+  fadeDuration: 0.4
 --- !u!4 &1700991427
 Transform:
   m_ObjectHideFlags: 0
