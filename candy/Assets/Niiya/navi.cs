@@ -21,6 +21,8 @@ public class TextTyper : MonoBehaviour
 
     void Start()
     {
+        if (tmpText == null)
+            Debug.LogError("tmpText がインスペクタで割り当てられていません");
         StartCoroutine(TypeText(messages[index]));
     }
 
@@ -51,6 +53,11 @@ public class TextTyper : MonoBehaviour
     IEnumerator TypeText(string message)
     {
         isTyping = true;
+
+        // ▼ TMP の初期化遅れ対策（最重要）
+        tmpText.ForceMeshUpdate();
+        Canvas.ForceUpdateCanvases();
+
         tmpText.text = "";
 
         foreach (char c in message)
