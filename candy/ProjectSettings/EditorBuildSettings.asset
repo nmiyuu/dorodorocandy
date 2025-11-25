@@ -6,9 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/op.unity
-    guid: 5d632232e481eee428ce1ef7fb5c635f
-  - enabled: 1
     path: Assets/Scenes/Stage1/Stage1_now.unity
     guid: 8aa9df0c3bdb49f40b61474b4e33a7d6
   - enabled: 1
@@ -29,7 +26,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Select.unity
     guid: 19703cb031e5db8429162270ceee7e08
-<<<<<<< HEAD
   - enabled: 1
     path: Assets/Scenes/op.unity
     guid: 5d632232e481eee428ce1ef7fb5c635f
@@ -39,8 +35,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Stage3/Stage3_Past.unity
     guid: 2cffefc5f5982df4cab28cd1092d3b1d
-=======
->>>>>>> 1676199 (背景追加)
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
