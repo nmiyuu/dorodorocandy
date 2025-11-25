@@ -402,6 +402,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 275419175}
   m_CullTransparentMesh: 1
+<<<<<<< HEAD:candy/Assets/Scenes/title_LOCAL_895.unity
 --- !u!1 &413999313
 GameObject:
   m_ObjectHideFlags: 0
@@ -447,6 +448,65 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+=======
+--- !u!1001 &471308316
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1178261375480464329, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
+      propertyPath: m_Name
+      value: SceneDataTransfer
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361261210083206963, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.89459
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361261210083206963, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.10538
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361261210083206963, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361261210083206963, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361261210083206963, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361261210083206963, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361261210083206963, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361261210083206963, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361261210083206963, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7361261210083206963, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
+>>>>>>> 00754f702b3cd0878c7de0510a53000311707101:candy/Assets/Scenes/title.unity
 --- !u!1 &533080514
 GameObject:
   m_ObjectHideFlags: 0
@@ -1844,4 +1904,8 @@ SceneRoots:
   - {fileID: 120550654}
   - {fileID: 2087896998}
   - {fileID: 1175349330}
+<<<<<<< HEAD:candy/Assets/Scenes/title_LOCAL_895.unity
   - {fileID: 413999315}
+=======
+  - {fileID: 471308316}
+>>>>>>> 00754f702b3cd0878c7de0510a53000311707101:candy/Assets/Scenes/title.unity
