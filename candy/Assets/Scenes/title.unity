@@ -402,53 +402,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 275419175}
   m_CullTransparentMesh: 1
-<<<<<<< HEAD:candy/Assets/Scenes/title_LOCAL_895.unity
---- !u!1 &413999313
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 413999315}
-  - component: {fileID: 413999314}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &413999314
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 413999313}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5825f7617f55aa64a88493ee0a35307e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  continueButton: {fileID: 533080514}
---- !u!4 &413999315
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 413999313}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.01601, y: -2.76635, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-=======
 --- !u!1001 &471308316
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -506,7 +459,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 61ff294b599e16a45832df2e1504b11c, type: 3}
->>>>>>> 00754f702b3cd0878c7de0510a53000311707101:candy/Assets/Scenes/title.unity
 --- !u!1 &533080514
 GameObject:
   m_ObjectHideFlags: 0
@@ -1904,8 +1856,4 @@ SceneRoots:
   - {fileID: 120550654}
   - {fileID: 2087896998}
   - {fileID: 1175349330}
-<<<<<<< HEAD:candy/Assets/Scenes/title_LOCAL_895.unity
-  - {fileID: 413999315}
-=======
   - {fileID: 471308316}
->>>>>>> 00754f702b3cd0878c7de0510a53000311707101:candy/Assets/Scenes/title.unity

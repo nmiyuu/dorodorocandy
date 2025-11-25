@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class navi2 : MonoBehaviour
+public class TextSwitcher : MonoBehaviour
 {
     public TMP_Text tmpText;
 
@@ -18,13 +18,11 @@ public class navi2 : MonoBehaviour
 
     void Start()
     {
-        tmpText.text = messages[index];  //Å‰‚Ì•¶‚ğ•\¦ 
-
+        tmpText.text = messages[index];  // Å‰‚Ì•¶‚ğ•\¦
     }
 
     void Update()
     {
-       
         // Enter ‚Ü‚½‚Í Return ‚ª‰Ÿ‚³‚ê‚½‚ç
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
