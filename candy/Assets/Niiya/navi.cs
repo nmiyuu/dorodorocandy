@@ -54,9 +54,10 @@ public class TextTyper : MonoBehaviour
     {
         isTyping = true;
 
+        yield return null;
+
         // ▼ TMP の初期化遅れ対策（最重要）
         tmpText.ForceMeshUpdate();
-        Canvas.ForceUpdateCanvases();
 
         tmpText.text = "";
 
