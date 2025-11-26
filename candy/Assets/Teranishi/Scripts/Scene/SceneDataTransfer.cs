@@ -1,35 +1,42 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Linq;
+using System; // [Serializable] ã«å¿…è¦
 
-// •K—v‚Èƒf[ƒ^\‘¢‚Ì’è‹`iFutureObstacleController‚É‡‚í‚¹‚Ä’Ç‹Lj
-// ƒV[ƒ“‚ğ‚Ü‚½‚¢‚ÅƒuƒƒbƒN‚Ìó‘Ô‚ğ•Û‚·‚é‚½‚ß‚Ì\‘¢‘Ì
-[System.Serializable]
+// å¿…è¦ãªãƒ‡ãƒ¼ã‚¿æ§‹é€ ã®å®šç¾©
+// ã‚·ãƒ¼ãƒ³ã‚’ã¾ãŸã„ã§ãƒ–ãƒ­ãƒƒã‚¯ã®çŠ¶æ…‹ã‚’ä¿æŒã™ã‚‹ãŸã‚ã®æ§‹é€ ä½“
+[Serializable]
 public struct BlockState
 {
-    public string id;           // ‘Î‰‚·‚éƒuƒƒbƒN‚Ìƒ†ƒj[ƒNID
-    public Vector3 finalPosition; // ‰ß‹‚ÌƒuƒƒbƒN‚ªˆÚ“®‚µI‚í‚Á‚½ÅIˆÊ’u
-    // •K—v‚É‰‚¶‚ÄAŒŠ‚ª–„‚Ü‚Á‚½‚©‚Ç‚¤‚©‚Ì bool ó‘Ô‚à‚±‚±‚É’Ç‰Á‰Â”\
+    public string id;            // å¯¾å¿œã™ã‚‹ãƒ–ãƒ­ãƒƒã‚¯ã®ãƒ¦ãƒ‹ãƒ¼ã‚¯ID
+    public Vector3 finalPosition; // éå»ã®ãƒ–ãƒ­ãƒƒã‚¯ãŒç§»å‹•ã—çµ‚ã‚ã£ãŸæœ€çµ‚ä½ç½®
+
+    // ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+    public BlockState(string id, Vector3 finalPosition)
+    {
+        this.id = id;
+        this.finalPosition = finalPosition;
+    }
 }
 
 public class SceneDataTransfer : MonoBehaviour
 {
-    // --- ƒVƒ“ƒOƒ‹ƒgƒ“ƒpƒ^[ƒ“ ---
+    // --- ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ãƒ‘ã‚¿ãƒ¼ãƒ³ ---
     public static SceneDataTransfer Instance { get; private set; }
 
-    // --- “]‘—ƒf[ƒ^ ---
+    // --- è»¢é€ãƒ‡ãƒ¼ã‚¿ ---
 
-    // ƒvƒŒƒCƒ„[‚Ì•œ‹AˆÊ’u
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å¾©å¸°ä½ç½®
     [HideInInspector] public Vector3 playerPositionToLoad = Vector3.zero;
 
-    // ƒvƒŒƒCƒ„[‚ÌŒü‚«‚ÌƒCƒ“ƒfƒbƒNƒX
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‘ãã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
     [HideInInspector] public int playerDirectionIndexToLoad = 0;
 
-    //  ƒuƒƒbƒN‚Ìó‘Ô‚ğ List<BlockState> ‚Å•Û‚·‚é
+    // ãƒ–ãƒ­ãƒƒã‚¯ã®çŠ¶æ…‹ã‚’ List<BlockState> ã§ä¿æŒã™ã‚‹
     [HideInInspector] public List<BlockState> pastBlockStates = new List<BlockState>();
 
-    // --- Unityƒ‰ƒCƒtƒTƒCƒNƒ‹ ---
+    // --- Unityãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ« ---
 
     void Awake()
     {
@@ -42,55 +49,100 @@ public class SceneDataTransfer : MonoBehaviour
         else
         {
             Instance = this;
-            // ƒV[ƒ“‚ğ‚Ü‚½‚¢‚ÅƒIƒuƒWƒFƒNƒg‚ğ•Û‚·‚éi‰i‘±‰»j
+            // ã‚·ãƒ¼ãƒ³ã‚’ã¾ãŸã„ã§ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä¿æŒã™ã‚‹ï¼ˆæ°¸ç¶šåŒ–ï¼‰
             DontDestroyOnLoad(gameObject);
         }
     }
 
-    // --- ƒuƒƒbƒNƒf[ƒ^ˆ— ---
+    // ------------------------------------
+    // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ‡ãƒ¼ã‚¿å‡¦ç†
+    // ------------------------------------
 
-    // ‰ß‹ƒV[ƒ“‚©‚çŒ»İƒV[ƒ“‚É–ß‚éÛ‚ÉŒÄ‚Î‚ê‚éiTimeTravelController‚©‚çŒÄ‚Î‚ê‚éj
-    // ƒuƒƒbƒN‚ÌˆÊ’u‚ğ•Û‘¶‚·‚éˆ—‚É“Á‰»‚³‚¹‚é
-    public void SaveBlockPositions(List<BlockState> statesToSave)
+    /// <summary>
+    /// ã‚·ãƒ¼ãƒ³é·ç§»å‰ã«ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã¨å‘ãã‚’ä¿å­˜ã—ã¾ã™ã€‚
+    /// </summary>
+    /// <param name="pos">ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®æœ€çµ‚çš„ãªä½ç½®ã€‚</param>
+    /// <param name="dirIndex">ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‘ãã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã€‚</param>
+    public void SavePlayerState(Vector3 pos, int dirIndex)
     {
-        // ˆÈ‘O‚Ìƒf[ƒ^‚ğŠ®‘S‚Éã‘‚«
-        pastBlockStates = new List<BlockState>(statesToSave);
-
-        Debug.Log($"[SceneDataTransfer] {pastBlockStates.Count} ŒÂ‚ÌƒuƒƒbƒN‚Ìó‘ÔiˆÊ’uj‚ğ•Û‘¶‚µ‚Ü‚µ‚½B");
+        playerPositionToLoad = pos;
+        playerDirectionIndexToLoad = dirIndex;
+        Debug.Log($"[SceneDataTransfer] ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®çŠ¶æ…‹ã‚’ä¿å­˜ã—ã¾ã—ãŸ: Pos={pos}, Dir={dirIndex}");
     }
 
-    // FutureObstacleController ‚©‚çƒuƒƒbƒN‚ª“®‚¢‚½Œã‚ÌˆÊ’u‚ğ•Û‘¶‚·‚éƒƒ\ƒbƒh
-    // i‰ß‹‚Ì MoveBlock ‚©‚çŒÄ‚Î‚ê‚é‚±‚Æ‚ğ‘z’èj
+    // ------------------------------------
+    // ãƒ–ãƒ­ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿å‡¦ç†
+    // ------------------------------------
+
+    /// <summary>
+    /// éå»ã‚·ãƒ¼ãƒ³ã‹ã‚‰ç¾åœ¨ã‚·ãƒ¼ãƒ³ã«æˆ»ã‚‹éš›ã«å‘¼ã°ã‚Œã‚‹ï¼ˆTimeTravelControllerã‹ã‚‰å‘¼ã°ã‚Œã‚‹ï¼‰
+    /// ãƒ–ãƒ­ãƒƒã‚¯ã®ä½ç½®ã‚’ä¿å­˜ã™ã‚‹å‡¦ç†ã«ç‰¹åŒ–ã•ã›ã‚‹
+    /// </summary>
+    public void SaveBlockPositions(List<BlockState> statesToSave)
+    {
+        // ä»¥å‰ã®ãƒ‡ãƒ¼ã‚¿ã‚’å®Œå…¨ã«ä¸Šæ›¸ã
+        pastBlockStates = new List<BlockState>(statesToSave);
+
+        Debug.Log($"[SceneDataTransfer] {pastBlockStates.Count} å€‹ã®ãƒ–ãƒ­ãƒƒã‚¯ã®çŠ¶æ…‹ï¼ˆä½ç½®ï¼‰ã‚’ä¿å­˜ã—ã¾ã—ãŸã€‚");
+    }
+
+    /// <summary>
+    /// ãƒ–ãƒ­ãƒƒã‚¯ã®çŠ¶æ…‹ã‚’ä¿å­˜ã¾ãŸã¯æ›´æ–°ã™ã‚‹ (Listã‚’ä½¿ç”¨ã—ã¦å‡¦ç†ã‚’å®Ÿè£…)ã€‚
+    /// </summary>
+    /// <param name="blockId">ãƒ–ãƒ­ãƒƒã‚¯ã®ID</param>
+    /// <param name="finalPos">ãƒ–ãƒ­ãƒƒã‚¯ã®ç¾åœ¨ã®ä½ç½®</param>
     public void AddOrUpdateBlockState(string blockId, Vector3 finalPos)
     {
-        // Šù‘¶‚Ìó‘Ô‚ğŒŸõ
+        // æ—¢å­˜ã®çŠ¶æ…‹ã‚’æ¤œç´¢
         int index = pastBlockStates.FindIndex(state => state.id == blockId);
 
         if (index != -1)
         {
-            // Šù‚ÉID‚ª‘¶İ‚·‚éê‡AˆÊ’u‚ğXV
+            // æ—¢ã«IDãŒå­˜åœ¨ã™ã‚‹å ´åˆã€ä½ç½®ã‚’æ›´æ–°
             BlockState updatedState = pastBlockStates[index];
             updatedState.finalPosition = finalPos;
             pastBlockStates[index] = updatedState;
         }
         else
         {
-            // V‚µ‚¢ó‘Ô‚Æ‚µ‚Ä’Ç‰Á
-            pastBlockStates.Add(new BlockState { id = blockId, finalPosition = finalPos });
+            // æ–°ã—ã„çŠ¶æ…‹ã¨ã—ã¦è¿½åŠ 
+            pastBlockStates.Add(new BlockState(blockId, finalPos));
         }
     }
 
+    /// <summary>
+    /// æŒ‡å®šã•ã‚ŒãŸIDã®ãƒ–ãƒ­ãƒƒã‚¯ã®ä¿å­˜ã•ã‚ŒãŸçŠ¶æ…‹ã‚’å–å¾—ã™ã‚‹ã€‚
+    /// </summary>
+    /// <param name="id">ãƒ–ãƒ­ãƒƒã‚¯ã®ID</param>
+    /// <returns>ä¿å­˜ã•ã‚ŒãŸ BlockState (è¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸå ´åˆã¯ null)</returns>
+    public BlockState? GetBlockState(string id)
+    {
+        // Linqã®FirstOrDefaultã‚’ä½¿ã£ã¦æ¤œç´¢
+        BlockState foundState = pastBlockStates.FirstOrDefault(state => state.id == id);
+
+        // éå»ã®ãƒªã‚¹ãƒˆã«ãã®IDãŒå­˜åœ¨ã™ã‚‹ã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯
+        if (pastBlockStates.Any(state => state.id == id))
+        {
+            return foundState;
+        }
+        return null; // ãƒ‡ãƒ¼ã‚¿ãŒè¦‹ã¤ã‹ã‚‰ãªã‹ã£ãŸ
+    }
+
+    // ------------------------------------
+    // ãƒªã‚»ãƒƒãƒˆå‡¦ç†
+    // ------------------------------------
+
     public void FullReset()
     {
-        // ƒvƒŒƒCƒ„[‚ÌˆÊ’u‚ğ‰Šú’l (0, 0, 0) ‚ÉƒŠƒZƒbƒg
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã‚’åˆæœŸå€¤ (0, 0, 0) ã«ãƒªã‚»ãƒƒãƒˆ
         playerPositionToLoad = Vector3.zero;
 
-        // ƒvƒŒƒCƒ„[‚ÌŒü‚«‚ğ‰Šú’l (0) ‚ÉƒŠƒZƒbƒg
+        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å‘ãã‚’åˆæœŸå€¤ (0) ã«ãƒªã‚»ãƒƒãƒˆ
         playerDirectionIndexToLoad = 0;
 
-        // ƒuƒƒbƒN‚Ìó‘ÔƒŠƒXƒg‚ğƒNƒŠƒA
+        // ãƒ–ãƒ­ãƒƒã‚¯ã®çŠ¶æ…‹ãƒªã‚¹ãƒˆã‚’ã‚¯ãƒªã‚¢
         pastBlockStates.Clear();
 
-        Debug.Log("[SceneDataTransfer] ƒQ[ƒ€ó‘Ô‚ğŠ®‘S‚ÉƒŠƒZƒbƒg‚µ‚Ü‚µ‚½B");
+        Debug.Log("[SceneDataTransfer] ã‚²ãƒ¼ãƒ çŠ¶æ…‹ã‚’å®Œå…¨ã«ãƒªã‚»ãƒƒãƒˆã—ã¾ã—ãŸã€‚");
     }
 }

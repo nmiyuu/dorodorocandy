@@ -42,6 +42,7 @@ public class OpeningManager : MonoBehaviour
     private AudioSource audioSource;
     private Coroutine openingCoroutine;
     private float canvasWidth; // ワイプ計算に使用するキャンバスの幅
+    private bool isSkipping = false; // スキップ中かどうかのフラグ
 
     void Awake()
     {
@@ -99,6 +100,34 @@ public class OpeningManager : MonoBehaviour
         openingCoroutine = StartCoroutine(PlayOpeningSlides());
     }
 
+    // --- スキップ機能 ---
+    void Update()
+    {
+        // 任意のキーが押されたか、またはマウスがクリックされたらスキップ
+        if (Input.anyKeyDown || Input.GetMouseButtonDown(0))
+        {
+            if (!isSkipping && openingCoroutine != null)
+            {
+                SkipOpening();
+            }
+        }
+    }
+
+    private void SkipOpening()
+    {
+        isSkipping = true;
+
+        // 実行中のコルーチンを停止
+        if (openingCoroutine != null)
+        {
+            StopCoroutine(openingCoroutine);
+            openingCoroutine = null;
+        }
+
+        // タイトルシーンへ遷移
+        LoadNextScene();
+    }
+
     // --- メインロジック ---
 
     private IEnumerator PlayOpeningSlides()
@@ -114,6 +143,9 @@ public class OpeningManager : MonoBehaviour
         // 2枚目以降のスライドをワイプで表示
         for (int i = 1; i < slides.Count; i++) // i=1から開始
         {
+            // スキップ中であれば即座に終了
+            if (isSkipping) yield break;
+
             OpeningSlide currentSlide = slides[i];
 
             if (currentSlide.image != null)
@@ -132,6 +164,9 @@ public class OpeningManager : MonoBehaviour
 
                 // 3. ワイプアニメーションを実行
                 yield return StartCoroutine(WipeAnimation(currentSlide.wipeDuration));
+
+                // スキップ中であればワイプアニメーション後に即座に終了
+                if (isSkipping) yield break;
 
                 // 4. ワイプ完了後の描画処理（残像対策 - 座標変化を遅延させる）
 
@@ -162,8 +197,11 @@ public class OpeningManager : MonoBehaviour
             }
         }
 
-        // すべてのスライドが終了したら、次のシーンへ遷移
-        LoadNextScene();
+        // スキップ中でなければ、すべて完了後に次のシーンへ遷移
+        if (!isSkipping)
+        {
+            LoadNextScene();
+        }
     }
 
     // ワイプアニメーションを実行するコルーチン (マスクの幅を広げる)
@@ -181,6 +219,9 @@ public class OpeningManager : MonoBehaviour
         // Time.unscaledDeltaTimeを使用し、実行時間を安定化させる
         while (time < duration)
         {
+            // スキップ中であればアニメーションを中断
+            if (isSkipping) yield break;
+
             time += Time.unscaledDeltaTime;
             float progress = time / duration; // 0から1へ
             SetWipeMaskWidth(progress); // マスクの幅を更新 (Left Offset: canvasWidth -> 0)
@@ -195,7 +236,7 @@ public class OpeningManager : MonoBehaviour
     {
         if (wipeMaskPanel == null) return;
 
-        // 【修正ロジック】: 右から左へ広がるワイプを実現
+        // 右から左へ広がるワイプを実現
         // progress 0 (隠れる - 右端に幅0) のとき Left Offset = canvasWidth (1600)
         // progress 1 (表示完了 - 画面全体) のとき Left Offset = 0
 
@@ -231,7 +272,11 @@ public class OpeningManager : MonoBehaviour
             Debug.LogError("遷移先シーン名が設定されていません！処理を中断します。");
             return;
         }
-        Debug.Log($"シーン '{nextSceneName}' へ遷移します。");
+        string logMessage = isSkipping ?
+            $"キー操作によりシーン '{nextSceneName}' へスキップ遷移します。" :
+            $"シーン '{nextSceneName}' へ遷移します。";
+
+        Debug.Log(logMessage);
         SceneManager.LoadScene(nextSceneName);
     }
 }
