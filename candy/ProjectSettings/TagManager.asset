@@ -3,28 +3,19 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags:
-  - MoveBlock
-  - Goal
-  - CostImage
-<<<<<<< HEAD
-  - Item
-  - BreakableBlock
-=======
-  - New tag
->>>>>>> dfc2e213ff6c1d995ba13024fc3a9b8a8e1e184d
+  tags: []
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Obstacle
+  - 
   - Water
   - UI
-  - Player
-  - MoveBlock
-  - Hole
-  - DontMoveBlock
-  - Goal
+  - 
+  - 
+  - 
+  - 
+  - 
   - 
   - 
   - 
