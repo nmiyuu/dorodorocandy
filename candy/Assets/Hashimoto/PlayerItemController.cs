@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class PlayerItemController : MonoBehaviour
 {
+    private void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
     private bool hasItem = false;
 
     private void OnTriggerEnter2D(Collider2D other)
