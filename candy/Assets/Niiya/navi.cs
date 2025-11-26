@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 
-public class navi : MonoBehaviour
+public class TextTyper : MonoBehaviour
 {
     public TMP_Text tmpText;
     public float typeSpeed = 0.05f; // 1•¶š‚Ì•\¦ŠÔŠui•bj
