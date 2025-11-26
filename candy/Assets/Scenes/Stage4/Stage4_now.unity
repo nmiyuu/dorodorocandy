@@ -1741,6 +1741,10 @@ PrefabInstance:
       propertyPath: resetSceneName
       value: Stage4_now
       objectReference: {fileID: 0}
+    - target: {fileID: 6606493509502384704, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
+      propertyPath: obstacleLayer.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

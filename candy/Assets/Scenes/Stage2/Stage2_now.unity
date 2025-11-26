@@ -1416,7 +1416,7 @@ MonoBehaviour:
   moveSpeed: 5
   obstacleLayer:
     serializedVersion: 2
-    m_Bits: 264
+    m_Bits: 0
   resetSceneName: Stage2_now
 --- !u!114 &1217916300
 MonoBehaviour:
