@@ -208,7 +208,7 @@ Canvas:
   m_GameObject: {fileID: 276614388}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 602267071}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -303,18 +303,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slides:
-  - image: {fileID: -3437022533778657886, guid: 01f9ebfdbbb51a6459c4e85fd4836d74, type: 3}
+  - image: {fileID: 5530426048538175959, guid: 0bb708f0a8850074bb7f93fcff2cadcc, type: 3}
     duration: 3
     seClip: {fileID: 0}
-    wipeDuration: 3
-  - image: {fileID: 25250206797975698, guid: 01ecbbb07c02cd84e982c7f51df424b9, type: 3}
+    wipeDuration: 0
+  - image: {fileID: 5443733407993461460, guid: 6335b29a91365a24e84ce4a692dacb8a, type: 3}
     duration: 3
     seClip: {fileID: 0}
-    wipeDuration: 3
-  - image: {fileID: 7733935467251439777, guid: 96d948b0f00894747972143d32a35b82, type: 3}
+    wipeDuration: 0
+  - image: {fileID: 5131994564822080240, guid: aa0e936b476485d4ab41278b6c882b8a, type: 3}
     duration: 3
     seClip: {fileID: 0}
-    wipeDuration: 2
+    wipeDuration: 0
   nextSceneName: title
   displayImage: {fileID: 1338340230}
   wipeMaskPanel: {fileID: 304440155}

@@ -1,29 +1,29 @@
-ï»¿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç§»å‹•ã¨è¡çªåˆ¤å®šã‚’å…¨éƒ¨ã‚„ã‚‹ã‚³ã‚¢ã‚¹ã‚¯ãƒªãƒ—ãƒˆã€‚
-public class t_player : MonoBehaviour // t_player ã‹ã‚‰ PlayerController ã«å¤‰æ›´ (ãƒ•ã‚¡ã‚¤ãƒ«ãƒ‘ã‚¹ã«åˆã‚ã›ã‚‹)
+// ƒvƒŒƒCƒ„[‚ÌˆÚ“®‚ÆÕ“Ë”»’è‚ğ‘S•”‚â‚éƒRƒAƒXƒNƒŠƒvƒgB
+public class t_player : MonoBehaviour
 {
-    // --- ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿è¨­å®š (Inspectorè¨­å®šç”¨) ---
-    public float moveUnit = 1.0f;       // 1ãƒã‚¹é€²ã‚€è·é›¢
-    public float moveSpeed = 5f;        // ç§»å‹•ã‚¹ãƒ”ãƒ¼ãƒ‰
-    public LayerMask obstacleLayer;      // ã¶ã¤ã‹ã‚‹å¯¾è±¡ã®ãƒ¬ã‚¤ãƒ¤ãƒ¼ï¼ˆå£ã¨ã‹ãƒ–ãƒ­ãƒƒã‚¯ï¼‰
+    // --- ƒpƒ‰ƒ[ƒ^İ’è (Inspectorİ’è—p) ---
+    public float moveUnit = 1.0f;       // 1ƒ}ƒXi‚Ş‹——£
+    public float moveSpeed = 5f;        // ˆÚ“®ƒXƒs[ƒh
+    public LayerMask obstacleLayer;      // ‚Ô‚Â‚©‚é‘ÎÛ‚ÌƒŒƒCƒ„[i•Ç‚Æ‚©ƒuƒƒbƒNj
 
-    // --- å†…éƒ¨çŠ¶æ…‹ã¨ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ ---
+    // --- “à•”ó‘Ô‚ÆƒRƒ“ƒ|[ƒlƒ“ƒg ---
     [SerializeField]
-    private string resetSceneName = "Stage1_now"; // Rã‚­ãƒ¼ãƒªã‚»ãƒƒãƒˆæ™‚ã«ãƒ­ãƒ¼ãƒ‰ã™ã‚‹åŸºæº–ã‚·ãƒ¼ãƒ³å
-    private bool isMoving = false;       // ç§»å‹•ä¸­ãƒ•ãƒ©ã‚°
-    private Vector3 targetPos;           // æ¬¡ã®ç›®çš„åœ°
+    private string resetSceneName = "Stage1_now"; // RƒL[ƒŠƒZƒbƒg‚Éƒ[ƒh‚·‚éŠî€ƒV[ƒ“–¼
+    private bool isMoving = false;       // ˆÚ“®’†ƒtƒ‰ƒO
+    private Vector3 targetPos;           // Ÿ‚Ì–Ú“I’n
     private BoxCollider2D playerCollider;
-    private t_pl playerAnimScript;       // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³æ‹…å½“ã®t_plã¸ã®å‚ç…§
+    private t_pl playerAnimScript;       // ƒAƒjƒ[ƒVƒ‡ƒ“’S“–‚Ìt_pl‚Ö‚ÌQÆ
 
-    // æœ€å¾Œã«æŠ¼ã•ã‚ŒãŸã‚­ãƒ¼ã¨æ™‚é–“ã‚’è¨˜éŒ²ã™ã‚‹è¾æ›¸ï¼ˆã‚­ãƒ¼å„ªå…ˆåˆ¤å®šã«ä½¿ã†ï¼‰
+    // ÅŒã‚É‰Ÿ‚³‚ê‚½ƒL[‚ÆŠÔ‚ğ‹L˜^‚·‚é«‘iƒL[—Dæ”»’è‚Ég‚¤j
     private Dictionary<int, float> lastKeyPressTime = new Dictionary<int, float>();
 
-    // --- å…¬é–‹ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ (å¤–éƒ¨é€£æºç”¨) ---
+    // --- ŒöŠJƒvƒƒpƒeƒB (ŠO•”˜AŒg—p) ---
     public Vector3 CurrentTargetPosition
     {
         get { return targetPos; }
@@ -33,24 +33,23 @@ public class t_player : MonoBehaviour // t_player ã‹ã‚‰ PlayerController ã«å¤‰
         get { return isMoving; }
     }
 
-    // --- Unityãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ« ---
+    // --- Unityƒ‰ƒCƒtƒTƒCƒNƒ‹ ---
 
     void Awake()
     {
         playerCollider = GetComponent<BoxCollider2D>();
         playerAnimScript = GetComponent<t_pl>();
 
-        if (playerCollider == null) Debug.LogError("[PlayerController] BoxCollider2DãŒãªã„");
-        if (playerAnimScript == null) Debug.LogError("[PlayerController] t_plãŒãªã„");
+        if (playerCollider == null) Debug.LogError("[t_player] BoxCollider2D‚ª‚È‚¢");
+        if (playerAnimScript == null) Debug.LogError("[t_player] t_pl‚ª‚È‚¢");
 
-        // è¾æ›¸ã®åˆæœŸåŒ–ï¼ˆæ–¹å‘ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’ç™»éŒ²ï¼‰
-        lastKeyPressTime.Add(1, 0f); // ä¸‹
-        lastKeyPressTime.Add(2, 0f); // ä¸Š
-        lastKeyPressTime.Add(3, 0f); // å³
-        lastKeyPressTime.Add(4, 0f); // å·¦
+        // «‘‚Ì‰Šú‰»i•ûŒüƒCƒ“ƒfƒbƒNƒX‚ğ“o˜^j
+        lastKeyPressTime.Add(1, 0f); // ‰º
+        lastKeyPressTime.Add(2, 0f); // ã
+        lastKeyPressTime.Add(3, 0f); // ‰E
+        lastKeyPressTime.Add(4, 0f); // ¶
 
-        // ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆæ™‚ã®ä½ç½®ãƒ­ãƒ¼ãƒ‰å‡¦ç† (SceneDataTransferã«ä¾å­˜)
-        
+        // ƒV[ƒ“Ø‚è‘Ö‚¦‚ÌˆÊ’uƒ[ƒhˆ— (SceneDataTransfer‚ÉˆË‘¶)
         if (SceneDataTransfer.Instance != null)
         {
             Vector3 loadPosition = SceneDataTransfer.Instance.playerPositionToLoad;
@@ -60,43 +59,39 @@ public class t_player : MonoBehaviour // t_player ã‹ã‚‰ PlayerController ã«å¤‰
                 targetPos = loadPosition;
             }
         }
-        
-
-        // ãƒ­ãƒ¼ãƒ‰ã•ã‚Œãªã‹ã£ãŸã‚‰ã€ç¾åœ¨ã®Hierarchyä¸Šã®ä½ç½®ã‚’ç›®æ¨™ã«ã™ã‚‹
+        // ƒ[ƒh‚³‚ê‚È‚©‚Á‚½‚çAŒ»İ‚ÌHierarchyã‚ÌˆÊ’u‚ğ–Ú•W‚É‚·‚é
         if (targetPos == Vector3.zero) targetPos = transform.position;
     }
 
-    // --- ãƒ¡ã‚¤ãƒ³å‡¦ç† ---
+    // --- ƒƒCƒ“ˆ— ---
 
     void Update()
     {
-        // Rã‚­ãƒ¼ãŒæŠ¼ã•ã‚ŒãŸã‚‰ã€FullSceneResetã‚’å®Ÿè¡Œã™ã‚‹
+        // RƒL[‚ª‰Ÿ‚³‚ê‚½‚çAFullSceneReset‚ğÀs‚·‚é
         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
         {
             FullSceneReset();
-            return; // ãƒªã‚»ãƒƒãƒˆå‡¦ç†å¾Œã¯å³åº§ã«æŠœã‘ã‚‹
+            // ƒŠƒZƒbƒgˆ—ŒãAŸ‚ÌƒtƒF[ƒhƒƒbƒNˆ—‚É”C‚¹‚é
         }
 
         if (playerAnimScript == null || Keyboard.current == null) return;
 
-        // ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³/ã‚¢ã‚¦ãƒˆä¸­ã¯ã™ã¹ã¦ã®ç§»å‹•ãƒ»æ“ä½œã‚’ãƒ–ãƒ­ãƒƒã‚¯ã™ã‚‹
-        // SceneFaderã®å‚ç…§ãŒãªã„å ´åˆã¯ã‚³ãƒ¡ãƒ³ãƒˆã‚¢ã‚¦ãƒˆã¾ãŸã¯é©åˆ‡ãªå‡¦ç†ã«ç½®ãæ›ãˆã¦ãã ã•ã„
-        /*
+        // ƒtƒF[ƒhƒCƒ“/ƒAƒEƒg’†‚Í‚·‚×‚Ä‚ÌˆÚ“®E‘€ì‚ğƒuƒƒbƒN‚·‚é
         if (SceneFader.Instance != null && SceneFader.Instance.IsFading)
         {
+            // ƒtƒF[ƒh’†‚ÍˆÚ“®‚àŒü‚«‚ÌXV‚à‚µ‚È‚¢
             return;
         }
-        */
 
-        // --- ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³å‘ãã®æ›´æ–° ---
-        int newDirectionIndex = CalculateNewDirectionForAnimation();
+        // ƒAƒjƒ[ƒVƒ‡ƒ“Œü‚«‚ğÅV‚ÉXV‚·‚é
+        // ˆÚ“®”»’è‚Ì‘O‚ÉA‚±‚ÌƒtƒŒ[ƒ€‚Å‚Ç‚ÌƒL[‚ªÅŒã‚É‰Ÿ‚³‚ê‚½‚©ŒvZ‚µAt_pl‚É‹³‚¦‚Ä“¯Šú‚³‚¹‚é
+        int newDirectionIndex = CalculateNewDirection();
         playerAnimScript.SetDirectionFromExternal(newDirectionIndex);
 
-        // ç§»å‹•ä¸­ã¯å…¥åŠ›ã‚’å—ã‘ä»˜ã‘ãªã„
+        // ˆÚ“®’†‚Í“ü—Í‚ğó‚¯•t‚¯‚È‚¢
         if (isMoving) return;
 
-        // --- ç§»å‹•åˆ¤å®šã¨å®Ÿè¡Œ ---
-
+        // ˆÚ“®ƒgƒŠƒK[‚Ì”»’è (’·‰Ÿ‚µ–h~‚Ì‚½‚ßwasPressedThisFrame‚ğg‚¤)
         bool keyWasPressed = Keyboard.current.upArrowKey.wasPressedThisFrame ||
                              Keyboard.current.downArrowKey.wasPressedThisFrame ||
                              Keyboard.current.leftArrowKey.wasPressedThisFrame ||
@@ -104,92 +99,56 @@ public class t_player : MonoBehaviour // t_player ã‹ã‚‰ PlayerController ã«å¤‰
 
         if (!keyWasPressed) return;
 
-        // æŠ¼ã•ã‚ŒãŸã‚­ãƒ¼ã®ä¸­ã§ã€æœ€æ–°ã®å‘ãã‚’ç§»å‹•æ–¹å‘ã¨ã—ã¦æ±ºå®š
-        Vector3 dir = GetMoveDirectionFromLatestPress();
+        // ŒvZ‚µ‚½ÅV‚ÌŒü‚«inewDirectionIndexj‚ÅˆÚ“®•ûŒü‚ğŒˆ’è
+        Vector3 dir = ConvertDirectionIndexToVector(newDirectionIndex);
 
-        // è¡çªåˆ¤å®šã¨ç§»å‹•ã®å®Ÿè¡Œ
+        // Õ“Ë”»’è‚ÆˆÚ“®‚ÌÀs
         if (dir != Vector3.zero)
         {
-            // --- ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½ç½®ã‚’0.5åˆ»ã¿ã®ã‚°ãƒªãƒƒãƒ‰ã«ä¸¸ã‚ã‚‹ ---
-            const float snapInverse = 2.0f; // 1.0f / 0.5f
-            transform.position = new Vector3(
-                Mathf.Round(transform.position.x * snapInverse) / snapInverse,
-                Mathf.Round(transform.position.y * snapInverse) / snapInverse,
-                transform.position.z
-            );
-
-            // --- è¡çªåˆ¤å®šï¼ˆBoxCastï¼‰ã®å®Ÿè¡Œ ---
             Vector2 origin = (Vector2)transform.position + playerCollider.offset;
             Vector2 size = playerCollider.size;
             float angle = 0f;
-            // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚µã‚¤ã‚ºã¯ã€ã‚°ãƒªãƒƒãƒ‰ã‚µã‚¤ã‚ºã‚ˆã‚Šã‚ãšã‹ã«å°ã•ãã™ã‚‹ã“ã¨ã§ã€
-            // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã¨ãƒ–ãƒ­ãƒƒã‚¯ãŒåŒã˜ä½ç½®ã«ã„ã‚‹ã¨åˆ¤å®šã•ã‚Œã‚‹ã®ã‚’é˜²ã
-            Vector2 boxSize = size * 0.9f;
-            float checkDistance = moveUnit * 1.01f;
+            float checkDistance = moveUnit * 1.01f; // ‚¿‚å‚¢’·‚ß‚Éƒ`ƒFƒbƒN
 
-            // Physics2D.BoxCast ã®å‘¼ã³å‡ºã—
-            RaycastHit2D hit = Physics2D.BoxCast(origin, boxSize, angle, dir, checkDistance, obstacleLayer);
+            RaycastHit2D hit = Physics2D.BoxCast(origin, size, angle, dir, checkDistance, obstacleLayer);
 
             if (hit.collider == null)
             {
-                // 1. ä½•ã‚‚ãªã„ï¼ˆç©ºã„ã¦ã„ã‚‹ï¼‰ãªã‚‰ç§»å‹•ã™ã‚‹ (é€šå¸¸ã®ç§»å‹•)
+                // ‰½‚à‚È‚¢‚È‚çˆÚ“®‚·‚é
                 targetPos = transform.position + dir * moveUnit;
-                Debug.Log($"[Player Move] OK: ç©ºããƒã‚¹ã¸ç§»å‹•ã—ã¾ã™ã€‚æ–¹å‘: {dir}, ç›®æ¨™ä½ç½®: {targetPos}");
                 StartCoroutine(MoveToPosition(targetPos));
             }
             else
             {
-                // 2. ä½•ã‹ã«ã¶ã¤ã‹ã£ãŸå ´åˆã€ãã‚ŒãŒMoveBlockã‹ã©ã†ã‹ã‚’ãƒã‚§ãƒƒã‚¯ã™ã‚‹
+                // ‰½‚©‚É‚Ô‚Â‚©‚Á‚½‚çA‚»‚ê‚ªƒuƒƒbƒN‚©ƒ`ƒFƒbƒN‚·‚é
                 GameObject hitObject = hit.collider.gameObject;
-                MoveBlock blockToPush = hitObject.GetComponent<MoveBlock>();
+                int moveBlockLayerIndex = LayerMask.NameToLayer("MoveBlock");
 
-                // è¡çªå¯¾è±¡ãŒMoveBlockï¼ˆæŠ¼ã›ã‚‹å²©ï¼‰ã®å ´åˆ
-                if (blockToPush != null)
+                if (hitObject.layer == moveBlockLayerIndex)
                 {
-                    // --- ä¿®æ­£ç®‡æ‰€: TryMove ã‚’ GetPushableChain ã«ç½®ãæ›ãˆã€é€£é–ç§»å‹•ã‚’å®Ÿè¡Œ ---
-                    List<MoveBlock> pushableChain = blockToPush.GetPushableChain(dir);
-
-                    if (pushableChain != null)
+                    MoveBlock blockToPush = hitObject.GetComponent<MoveBlock>();
+                    if (blockToPush != null && blockToPush.TryMove(dir))
                     {
-                        // ãƒ–ãƒ­ãƒƒã‚¯ã‚’å‹•ã‹ã›ãŸï¼ˆé€£é–ç§»å‹•ãŒå¯èƒ½ã ã£ãŸï¼‰ã‹ã‚‰ã€è‡ªåˆ†ã¨ãƒ–ãƒ­ãƒƒã‚¯å…¨ã¦ã‚’ç§»å‹•ã•ã›ã‚‹
-
-                        // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç§»å‹•
+                        // ƒuƒƒbƒN‚ğ“®‚©‚¹‚½‚©‚çA©•ª‚àˆÚ“®‚·‚é
                         targetPos = transform.position + dir * moveUnit;
                         StartCoroutine(MoveToPosition(targetPos));
-
-                        // ãƒ–ãƒ­ãƒƒã‚¯ã®é€£é–ç§»å‹•ã‚’é–‹å§‹
-                        foreach (var block in pushableChain)
-                        {
-                            block.StartMovement(dir);
-                        }
-
-                        Debug.Log($"[Player Push] OK: {pushableChain.Count}å€‹ã®ãƒ–ãƒ­ãƒƒã‚¯ã‚’æŠ¼ã—ã¦ç§»å‹•ã—ã¾ã™ã€‚æ–¹å‘: {dir}");
                     }
-                    else
-                    {
-                        // ãƒ–ãƒ­ãƒƒã‚¯ãŒå‹•ã‹ã›ãªã‹ã£ãŸå ´åˆï¼ˆå£ã«å½“ãŸã£ãŸã€å¾ªç’°å‚ç…§ã€ãªã©ï¼‰ã¯ã€è‡ªåˆ†ã‚‚æ­¢ã¾ã‚‹
-                        Debug.Log($"[Player Push] BLOCKED: ãƒ–ãƒ­ãƒƒã‚¯ ({blockToPush.gameObject.name}) ã¯å‹•ã‹ã›ã¾ã›ã‚“ã€‚");
-                    }
+                    // ƒuƒƒbƒN‚ª“®‚©‚¹‚È‚©‚Á‚½‚çA©•ª‚à~‚Ü‚é
                 }
-                // è¡çªå¯¾è±¡ãŒMoveBlockã§ã¯ãªã„å ´åˆï¼ˆå‹•ã‹ã›ãªã„å£ã‚„å²©ï¼‰
-                else
-                {
-                    // å£ãªã©å‹•ã‹ã›ãªã„éšœå®³ç‰©ã«å½“ãŸã£ãŸã®ã§ã€ä½•ã‚‚ã›ãšæ­¢ã¾ã‚‹
-                    Debug.Log($"[Player Move] BLOCKED: éšœå®³ç‰© ({hitObject.name}) ã«è¡çªã—ã¾ã—ãŸã€‚");
-                }
+                // •Ç‚Æ‚©‚¾‚Á‚½‚çA‰½‚à‚¹‚¸~‚Ü‚é
             }
         }
-
     }
 
-    // --- ãƒ—ãƒ©ã‚¤ãƒ™ãƒ¼ãƒˆãƒ¡ã‚½ãƒƒãƒ‰ (ãƒ­ã‚¸ãƒƒã‚¯çµ±åˆéƒ¨åˆ†) ---
-    // (ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã€æ–¹å‘è¨ˆç®—ã€ãƒªã‚»ãƒƒãƒˆå‡¦ç†ã¯ t_player.cs ã‹ã‚‰ãã®ã¾ã¾å¼•ãç¶™ã)
+    // --- ƒvƒ‰ƒCƒx[ƒgƒƒ\ƒbƒh (ƒƒWƒbƒN“‡•”•ª) ---
 
-    private int CalculateNewDirectionForAnimation()
+    // ¡‰Ÿ‚³‚ê‚Ä‚¢‚éƒL[‚Ì’†‚ÅAˆê”ÔÅŒã‚É‰Ÿ‚³‚ê‚½ƒL[‚ÌŒü‚«ƒCƒ“ƒfƒbƒNƒX‚ğŒvZ‚µ‚Ä•Ô‚·B
+    private int CalculateNewDirection()
     {
         var keyboard = Keyboard.current;
         List<int> pressedDirections = new List<int>();
 
+        // ‰Ÿ‚³‚ê‚Ä‚¢‚éƒL[‚Ìƒ^ƒCƒ€ƒXƒ^ƒ“ƒv‚ğXV‚·‚é
         if (keyboard.downArrowKey.isPressed) { lastKeyPressTime[1] = Time.time; pressedDirections.Add(1); }
         if (keyboard.upArrowKey.isPressed) { lastKeyPressTime[2] = Time.time; pressedDirections.Add(2); }
         if (keyboard.rightArrowKey.isPressed) { lastKeyPressTime[3] = Time.time; pressedDirections.Add(3); }
@@ -197,14 +156,17 @@ public class t_player : MonoBehaviour // t_player ã‹ã‚‰ PlayerController ã«å¤‰
 
         if (pressedDirections.Count == 0)
         {
+            // ƒL[‚ª‰½‚à‰Ÿ‚³‚ê‚Ä‚È‚¢‚È‚çAt_pl‚ª‚Á‚Ä‚é¡‚ÌŒü‚«‚ğ‚»‚Ì‚Ü‚Ü•Ô‚·
             return playerAnimScript.CurrentDirectionIndex;
         }
 
+        // ÅŒã‚É‰Ÿ‚³‚ê‚½ƒL[‚ğ“Á’è‚·‚éƒƒWƒbƒN
         int preferredIndex = 0;
         float latestTime = -1f;
 
         foreach (int index in pressedDirections)
         {
+            // Time.time‚ª‘å‚«‚¢•û‚ªÅViÅŒã‚É‰Ÿ‚³‚ê‚½ƒL[j
             if (lastKeyPressTime[index] > latestTime)
             {
                 latestTime = lastKeyPressTime[index];
@@ -214,34 +176,7 @@ public class t_player : MonoBehaviour // t_player ã‹ã‚‰ PlayerController ã«å¤‰
         return preferredIndex;
     }
 
-    private Vector3 GetMoveDirectionFromLatestPress()
-    {
-        var keyboard = Keyboard.current;
-
-        float latestTime = -1f;
-        int latestIndex = 0;
-
-        if (keyboard.downArrowKey.wasPressedThisFrame)
-        {
-            if (Time.time > latestTime) { latestTime = Time.time; latestIndex = 1; }
-        }
-        if (keyboard.upArrowKey.wasPressedThisFrame)
-        {
-            if (Time.time > latestTime) { latestTime = Time.time; latestIndex = 2; }
-        }
-        if (keyboard.rightArrowKey.wasPressedThisFrame)
-        {
-            if (Time.time > latestTime) { latestTime = Time.time; latestIndex = 3; }
-        }
-        if (keyboard.leftArrowKey.wasPressedThisFrame)
-        {
-            if (Time.time > latestTime) { latestTime = Time.time; latestIndex = 4; }
-        }
-
-        return ConvertDirectionIndexToVector(latestIndex);
-    }
-
-
+    // Œü‚«‚ÌƒCƒ“ƒfƒbƒNƒXi1`4j‚ğUnity‚ÌVector3i•ûŒüƒxƒNƒgƒ‹j‚É•ÏŠ·‚·‚éŠÖ”B
     private Vector3 ConvertDirectionIndexToVector(int index)
     {
         switch (index)
@@ -250,49 +185,50 @@ public class t_player : MonoBehaviour // t_player ã‹ã‚‰ PlayerController ã«å¤‰
             case 2: return Vector3.up;
             case 3: return Vector3.right;
             case 4: return Vector3.left;
-            default: return Vector3.zero;
+            default: return Vector3.zero; // 0‚È‚çˆÚ“®‚È‚µ
         }
     }
 
 
+    // RƒL[‚ÅŒÄ‚Î‚ê‚éŠ®‘SƒŠƒZƒbƒg‹@”\B
+    // ƒVƒ“ƒOƒ‹ƒgƒ““à‚Ìƒf[ƒ^‚ğƒNƒŠƒA‚µAŠî€ƒV[ƒ“‚ğÄƒ[ƒh‚·‚éB
     private void FullSceneReset()
     {
-        
+        // ƒVƒ“ƒOƒ‹ƒgƒ“‚Ìƒf[ƒ^i‰ß‹/–¢—ˆ‚Ìó‘Ôj‚ğƒŠƒZƒbƒg‚·‚é
         if (SceneDataTransfer.Instance != null)
         {
             SceneDataTransfer.Instance.FullReset();
         }
 
+        // ƒV[ƒ“Äƒ[ƒhˆ—‚ğ SceneFader ‚É’u‚«Š·‚¦‚é
         if (SceneFader.Instance != null)
         {
+            // RƒL[ƒŠƒZƒbƒg‚Í•ƒtƒF[ƒh‚ğw’è‚·‚é
             SceneFader.Instance.LoadSceneWithFade(resetSceneName, FadeColor.Black);
         }
         else
         {
+            // ƒtƒH[ƒ‹ƒoƒbƒN
             SceneManager.LoadScene(resetSceneName);
         }
-        
 
-        // æš«å®šçš„ãªãƒªã‚»ãƒƒãƒˆå‡¦ç†ï¼ˆSceneManagerã®ã¿ä½¿ç”¨ï¼‰
-        SceneManager.LoadScene(resetSceneName);
-
-
-        Debug.Log($"ã‚·ãƒ¼ãƒ³ '{resetSceneName}' ã‚’Rã‚­ãƒ¼ã§å®Œå…¨ãƒªã‚»ãƒƒãƒˆã™ã‚‹ (åŸºæº–ã‚·ãƒ¼ãƒ³ã¸)");
+        Debug.Log($"ƒV[ƒ“ '{resetSceneName}' ‚ğRƒL[‚ÅŠ®‘SƒŠƒZƒbƒg‚·‚é (Šî€ƒV[ƒ“‚Ö)");
     }
 
-
-    // --- ã‚³ãƒ«ãƒ¼ãƒãƒ³ ---
+    // --- ƒRƒ‹[ƒ`ƒ“ ---
 
     IEnumerator MoveToPosition(Vector3 target)
     {
         isMoving = true;
 
+        // –Ú“I’n‚É‚Ù‚Ú’…‚­‚Ü‚ÅˆÚ“®‚ğ‘±‚¯‚é
         while ((transform.position - target).sqrMagnitude > 0.001f)
         {
             transform.position = Vector3.MoveTowards(transform.position, target, moveSpeed * Time.deltaTime);
-            yield return null;
+            yield return null; // 1ƒtƒŒ[ƒ€‘Ò‚Â
         }
 
+        // ÅŒã‚É–Ú“I’n‚Éƒsƒ^ƒb‚Æ‡‚í‚¹‚é
         transform.position = target;
         isMoving = false;
     }
