@@ -7,6 +7,8 @@ TagManager:
   - MoveBlock
   - Goal
   - CostImage
+  - Item
+  - BreakableBlock
   layers:
   - Default
   - TransparentFX
