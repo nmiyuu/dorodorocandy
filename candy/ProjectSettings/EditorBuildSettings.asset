@@ -27,6 +27,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Select.unity
     guid: 19703cb031e5db8429162270ceee7e08
   - enabled: 1
+<<<<<<< HEAD
     path: Assets/Scenes/Stage3/Stage3_Past.unity
     guid: 1b74a4baa6ebd944ba5b447f3b1eb88c
   - enabled: 1
@@ -36,6 +37,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Stage3/Stage3_now.unity
     guid: ef0516eab938e3a42a931aae4cfcd1d2
   - enabled: 1
+=======
+>>>>>>> d7b903ea779c927488696e75ee1df13e1c360b46
     path: Assets/Scenes/Stage4/Stage4_now.unity
     guid: 8080ae9ff9807f44ea6a9b5810b5455d
   - enabled: 1
