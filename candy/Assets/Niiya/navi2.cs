@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class TextSwitcher : MonoBehaviour
+public class navi2 : MonoBehaviour
 {
     public TMP_Text tmpText;
 
@@ -11,7 +11,7 @@ public class TextSwitcher : MonoBehaviour
     string[] messages = {
         "？？",
         "ナビ",
-       "ナビ"
+        "ナビ"
     };
 
     int index = 0;
