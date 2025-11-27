@@ -1767,8 +1767,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 486833043541164994, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
+      propertyPath: m_Size.x
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 486833043541164994, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
+      propertyPath: m_Size.y
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 486833043541164994, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
       propertyPath: m_IsTrigger
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3872048202047042514, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
       propertyPath: m_Name
@@ -1776,11 +1784,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5543173357386406543, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.4
+      value: -5.5
       objectReference: {fileID: 0}
     - target: {fileID: 5543173357386406543, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.63
+      value: -3.5
       objectReference: {fileID: 0}
     - target: {fileID: 5543173357386406543, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1921,9 +1929,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2075010957648428065, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4198029321570415763, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: blockID
-      value: Stage5_Rock
+      value: Stage5_Rock2
       objectReference: {fileID: 0}
     - target: {fileID: 4198029321570415763, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: presentSceneName
@@ -1995,7 +2007,8 @@ GameObject:
   - component: {fileID: 1502964983}
   - component: {fileID: 1502964985}
   - component: {fileID: 1502964984}
-  m_Layer: 0
+  - component: {fileID: 1502964986}
+  m_Layer: 3
   m_Name: Obstacle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2011,7 +2024,7 @@ Transform:
   m_GameObject: {fileID: 1502964982}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.05, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2308,6 +2321,36 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: -6, y: -2, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 1
+      m_TileSpriteIndex: 1
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -5, y: -2, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 1
+      m_TileSpriteIndex: 1
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -3, y: -2, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 1
+      m_TileSpriteIndex: 1
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: -2, y: -2, z: 0}
     second:
       serializedVersion: 2
@@ -2369,16 +2412,6 @@ Tilemap:
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
   - first: {x: -6, y: -1, z: 0}
-    second:
-      serializedVersion: 2
-      m_TileIndex: 1
-      m_TileSpriteIndex: 1
-      m_TileMatrixIndex: 0
-      m_TileColorIndex: 0
-      m_TileObjectToInstantiateIndex: 65535
-      dummyAlignment: 0
-      m_AllTileFlags: 1073741825
-  - first: {x: -5, y: -1, z: 0}
     second:
       serializedVersion: 2
       m_TileIndex: 1
@@ -2702,19 +2735,19 @@ Tilemap:
   m_TileAssetArray:
   - m_RefCount: 49
     m_Data: {fileID: 11400000, guid: 554b5a308d2010e4586b1bf2717ac7f0, type: 2}
-  - m_RefCount: 11
+  - m_RefCount: 13
     m_Data: {fileID: 11400000, guid: 44ca7c078493b234180214ab52516d13, type: 2}
   - m_RefCount: 2
     m_Data: {fileID: 11400000, guid: 801535dd79dfed54984d7aab549995a0, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 49
     m_Data: {fileID: 694894105003484391, guid: e6ef39ee603d2614ba03b969a51fd347, type: 3}
-  - m_RefCount: 11
+  - m_RefCount: 13
     m_Data: {fileID: -2182124076254010665, guid: 56ccf7833cf54e24aa962dda988aa2ca, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: -5480466415607809440, guid: 63065bf8932ff744fb500b9ee9c212b4, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 62
+  - m_RefCount: 64
     m_Data:
       e00: 1
       e01: 0
@@ -2733,7 +2766,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 62
+  - m_RefCount: 64
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
@@ -2759,6 +2792,44 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!19719996 &1502964986
+TilemapCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1502964982}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_MaximumTileChangeCount: 1000
+  m_ExtrusionFactor: 0
+  m_UseDelaunayMesh: 0
 --- !u!1001 &1882445828
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2773,7 +2844,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1064153361684203226, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.51
+      value: -2.41
       objectReference: {fileID: 0}
     - target: {fileID: 1064153361684203226, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2807,9 +2878,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2075010957648428065, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4083397850469104172, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
+      propertyPath: m_Simulated
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4198029321570415763, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: blockID
-      value: Stage5_Rock
+      value: Stage5_Rock1
       objectReference: {fileID: 0}
     - target: {fileID: 4198029321570415763, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: presentSceneName
