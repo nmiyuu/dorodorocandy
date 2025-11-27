@@ -1423,7 +1423,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 938876735000366466, guid: 1476cc855b215dd42bc47ff7289d1f39, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.47
+      value: -2.606
       objectReference: {fileID: 0}
     - target: {fileID: 938876735000366466, guid: 1476cc855b215dd42bc47ff7289d1f39, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1463,7 +1463,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3478618938926450718, guid: 1476cc855b215dd42bc47ff7289d1f39, type: 3}
       propertyPath: blockID
-      value: Stage5_Rock1
+      value: Stage5_Rock2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1549,7 +1549,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 938876735000366466, guid: 1476cc855b215dd42bc47ff7289d1f39, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.52
+      value: -2.564
       objectReference: {fileID: 0}
     - target: {fileID: 938876735000366466, guid: 1476cc855b215dd42bc47ff7289d1f39, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1589,7 +1589,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3478618938926450718, guid: 1476cc855b215dd42bc47ff7289d1f39, type: 3}
       propertyPath: blockID
-      value: Stage5_Rock2
+      value: Stage5_Rock1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
