@@ -1833,6 +1833,10 @@ PrefabInstance:
       propertyPath: presentSceneName
       value: Stage4_now
       objectReference: {fileID: 0}
+    - target: {fileID: 4198029321570415763, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
+      propertyPath: obstacleLayer.m_Bits
+      value: 136
+      objectReference: {fileID: 0}
     - target: {fileID: 5166560456081371135, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: fixedStartPosition.x
       value: 1.5
@@ -4216,6 +4220,10 @@ PrefabInstance:
       propertyPath: presentSceneName
       value: Stage4_now
       objectReference: {fileID: 0}
+    - target: {fileID: 4198029321570415763, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
+      propertyPath: obstacleLayer.m_Bits
+      value: 136
+      objectReference: {fileID: 0}
     - target: {fileID: 5166560456081371135, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: fixedStartPosition.x
       value: 0
@@ -4355,6 +4363,10 @@ PrefabInstance:
     - target: {fileID: 4198029321570415763, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: presentSceneName
       value: Stage4_now
+      objectReference: {fileID: 0}
+    - target: {fileID: 4198029321570415763, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
+      propertyPath: obstacleLayer.m_Bits
+      value: 136
       objectReference: {fileID: 0}
     - target: {fileID: 4198029321570415763, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: pushBlockerLayer.m_Bits
