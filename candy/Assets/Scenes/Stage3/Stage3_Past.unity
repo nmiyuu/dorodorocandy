@@ -328,8 +328,10 @@ GameObject:
   - component: {fileID: 933529063}
   - component: {fileID: 933529062}
   - component: {fileID: 933529061}
+  - component: {fileID: 933529064}
+  - component: {fileID: 933529065}
   m_Layer: 0
-  m_Name: "\u6728_0"
+  m_Name: tree_0
   m_TagString: BreakableBlock
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -451,6 +453,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &933529064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 933529060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1bc6570b2e8ed45b0b5bb211b2289f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tree: 
+--- !u!114 &933529065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 933529060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86b40488fa670db459b4decbb64c4632, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: da40d0b8-e4df-4350-8c08-c917cd75b1a8
 --- !u!1 &1255033683
 GameObject:
   m_ObjectHideFlags: 0

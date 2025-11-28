@@ -18,6 +18,15 @@ public class navi2 : MonoBehaviour
 
     void Start()
     {
+        // ▼ すでに表示済みなら即非表示にして終了
+        if (PlayerPrefs.GetInt("Navi2Shown", 0) == 1)
+        {
+            tmpText.text = "";
+            if (imageObject != null) imageObject.SetActive(false);
+            this.enabled = false;   // Update を止める
+            return;
+        }
+
         tmpText.text = messages[index];  // 最初の文を表示
     }
 
@@ -38,6 +47,9 @@ public class navi2 : MonoBehaviour
                                     // ★ 画像オブジェクトも非表示にする
                 if (imageObject != null)
                     imageObject.SetActive(false);
+
+                // ★ 一度表示したことを記録
+                PlayerPrefs.SetInt("Navi2Shown", 1);
             }
         }
     }
