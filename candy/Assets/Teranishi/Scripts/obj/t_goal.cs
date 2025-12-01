@@ -5,16 +5,13 @@ public class t_goal : MonoBehaviour
 {
     [Header("ステージ設定")]
     [Tooltip("このステージのインデックス（例：ステージ1なら1、ステージ2なら2）")]
-    // ステージインデックスを設定できるようにする
     public int thisStageIndex = 1;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // 中身はなし
     }
 
-    // Update is called once per frame
     void Update()
     {
         // 中身はなし
@@ -22,20 +19,17 @@ public class t_goal : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // プレイヤーコンポーネントがあるオブジェクトに衝突した場合
         if (collision.gameObject.GetComponent<t_player>())
         {
-            // 1. SceneDataTransferが存在するか確認
             if (SceneDataTransfer.Instance != null)
             {
-                // 2. このステージをクリアしたことを記録
-                // lastClearedStageIndexが更新される
+                // 1. 【追加】クリア時の移動回数を一時保存 (ゴール画面へ渡す)
+                SceneDataTransfer.Instance.movesOnClear = SceneDataTransfer.Instance.currentStageMoveCount;
+
+                // 2. ステージクリアを記録
                 SceneDataTransfer.Instance.RecordStageClear(thisStageIndex);
 
-                Debug.Log($"ステージ {thisStageIndex} をクリアしました。クリア状況を記録。");
-
-                // 3. 次のステージへ進む前に、プレイヤーの位置情報をリセットしておく
-                // これにより、次のステージで前のステージの位置情報がロードされるのを防ぐ
+                // 3. 【修正】次のステージへ行く準備として、プレイヤー位置、ブロック、そして移動回数（currentStageMoveCount）をリセット
                 SceneDataTransfer.Instance.ClearPlayerState();
             }
 
