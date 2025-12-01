@@ -60,7 +60,6 @@ public class navi : MonoBehaviour
 
                 // š ˆê“x•\¦‚µ‚½‚±‚Æ‚ğ‹L˜^
                 PlayerPrefs.SetInt("NaviShown", 1);
-                PlayerPrefs.Save();
             }
         }
     }
