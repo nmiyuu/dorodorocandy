@@ -21,6 +21,8 @@ public class navi51 : MonoBehaviour
 
     void Start()
     {
+        
+
         // ¥ ‚·‚Å‚É•\¦Ï‚İ‚È‚ç‘¦”ñ•\¦‚É‚µ‚ÄI—¹
         if (PlayerPrefs.GetInt("NaviShown", 0) == 1)
         {
