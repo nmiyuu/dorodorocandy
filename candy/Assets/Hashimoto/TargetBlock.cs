@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class TargetBlock : MonoBehaviour
 {
-    // 別シーンからブロックの状態を制御する静的変数
-    public static bool isActive = true;
+    public int blockID; // ブロックごとのID
+    public bool isActive = true;
 
-    void Update()
+    public void SetActive(bool value)
     {
-        // 静的変数に従ってブロックの表示/非表示を切り替える
-        gameObject.SetActive(isActive);
+        isActive = value;
+        gameObject.SetActive(value);
     }
 }
