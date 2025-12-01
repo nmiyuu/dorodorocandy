@@ -15,7 +15,8 @@ public class t_pl : MonoBehaviour
     // 向きのインデックス (1:下, 2:上, 3:右, 4:左)。初期値は「下」
     private int lastDirectionIndex = 1;
 
-    // t_player.csがこの値を読んで使う。最新の向きを渡すプロパティ
+    // t_player.csやPlayerItemController.csがこの値を読んで使う。最新の向きを渡すプロパティ
+    // ★ギミック連携（アイテム使用方向決定）に必須のプロパティ
     public int CurrentDirectionIndex => lastDirectionIndex;
 
     // --- Unityライフサイクル ---
