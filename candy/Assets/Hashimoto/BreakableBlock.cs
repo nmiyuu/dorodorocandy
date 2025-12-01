@@ -1,26 +1,45 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BreakableBlock : MonoBehaviour
 {
-    public UniqueID tree;  // ← 自動生成したIDを参照する
+    public string tree; // ← Inspector で空なら自動生成される
 
-    void OnEnable()
+    void Awake()
     {
-        // 破壊済みなら消す
-        if (ItemManager.Instance.destroyedBlocks.Contains(tree.id))
+        // blockID が未設定ならシーン名 + オブジェクト名で自動生成
+        if (string.IsNullOrEmpty(tree))
         {
-            Destroy(gameObject);
+            tree = $"{SceneManager.GetActiveScene().name}_{gameObject.name}";
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    void Start()
     {
-        if (other.CompareTag("Player") &&
-            ItemManager.Instance.obtainedItems.Count > 0)
+        Debug.Log($"ブロックID: {tree}");
+
+        if (ItemManager.Instance == null)
         {
-            // このブロックのIDを登録
-            ItemManager.Instance.destroyedBlocks.Add(tree.id);
-            Destroy(gameObject);
+            Debug.Log("ItemManager が存在していません！！");
+            return;
+        }
+
+        if (ItemManager.Instance.destroyedBlocks.Contains(tree))
+        {
+            Debug.Log(tree + " は破壊済み → 非表示にします");
+            gameObject.SetActive(false);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Item")) // 当たり判定は適宜変更
+        {
+            // 破壊記録
+            ItemManager.Instance.destroyedBlocks.Add(tree);
+
+            // 消す
+            gameObject.SetActive(false);
         }
     }
 }
