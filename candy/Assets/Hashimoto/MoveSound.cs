@@ -3,36 +3,26 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class MoveSound : MonoBehaviour
 {
-    public AudioClip moveSound;
+    public AudioClip moveSound; // インスペクタでmp3を指定
     private AudioSource audioSource;
     private Vector3 lastPosition;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        audioSource.clip = moveSound;
-        audioSource.loop = true; // 移動中はループ再生
         lastPosition = transform.position;
     }
 
     void Update()
     {
-        // 移動しているか判定
+        // 位置が変わったらSE再生
         if (transform.position != lastPosition)
         {
             if (!audioSource.isPlaying)
             {
-                audioSource.Play(); // 移動開始で再生
+                audioSource.PlayOneShot(moveSound);
             }
+            lastPosition = transform.position;
         }
-        else
-        {
-            if (audioSource.isPlaying)
-            {
-                audioSource.Stop(); // 移動が止まったら停止
-            }
-        }
-
-        lastPosition = transform.position;
     }
 }

@@ -468,6 +468,37 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 192
   targetBlockID: 0
+--- !u!1 &963855662
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 963855663}
+  m_Layer: 0
+  m_Name: MagicExplosion
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &963855663
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963855662}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -2.17176, y: 1.6319, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &984349406
 GameObject:
   m_ObjectHideFlags: 0
@@ -714,6 +745,10 @@ PrefabInstance:
       propertyPath: presentSceneName
       value: Stage3_now
       objectReference: {fileID: 0}
+    - target: {fileID: 4198029321570415763, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
+      propertyPath: obstacleLayer.m_Bits
+      value: 136
+      objectReference: {fileID: 0}
     - target: {fileID: 8109048201686214944, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: m_Name
       value: moov_rock_0
@@ -735,7 +770,7 @@ GameObject:
   - component: {fileID: 1255033686}
   - component: {fileID: 1255033685}
   - component: {fileID: 1255033687}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Obstacle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1650,7 +1685,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea161d58ac826dc4aae4921f553e825e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSound: {fileID: 8300000, guid: f116cf0bcdf60ec458a9f19539bff4ef, type: 3}
+  moveSound: {fileID: 8300000, guid: ff6e731880d31344085833b8d3a772dc, type: 3}
 --- !u!82 &1503411853
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1803,6 +1838,10 @@ PrefabInstance:
     - target: {fileID: 4198029321570415763, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: presentSceneName
       value: Stage3_now
+      objectReference: {fileID: 0}
+    - target: {fileID: 4198029321570415763, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
+      propertyPath: obstacleLayer.m_Bits
+      value: 136
       objectReference: {fileID: 0}
     - target: {fileID: 5166560456081371135, guid: f554f4ea59f32ff4ea4c192c4895a015, type: 3}
       propertyPath: m_Enabled
@@ -3582,3 +3621,4 @@ SceneRoots:
   - {fileID: 1046729029}
   - {fileID: 1969984679}
   - {fileID: 1675861869}
+  - {fileID: 963855663}
