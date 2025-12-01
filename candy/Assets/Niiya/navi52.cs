@@ -1,12 +1,15 @@
 using UnityEngine;
 using TMPro;
+using System.IO;
 
-public class navi52 : MonoBehaviour
+public class Navi52 : MonoBehaviour
 {
     public TMP_Text tmpText;
 
-    // ★ ここに消したい画像の GameObject を入れる
+    // 消したい画像の GameObject
     public GameObject imageObject;
+
+    private string flagPath;
 
     string[] messages = {
         "なびくん",
@@ -18,40 +21,48 @@ public class navi52 : MonoBehaviour
 
     void Start()
     {
-        // ▼ すでに表示済みなら即非表示にして終了
-        if (PlayerPrefs.GetInt("Navi2Shown", 0) == 1)
+        //File.Delete(Path.Combine(Application.persistentDataPath, "navi52_shown.txt"));
+
+        if (tmpText == null)
         {
-            tmpText.text = "";
-            if (imageObject != null) imageObject.SetActive(false);
-            this.enabled = false;   // Update を止める
+            Debug.LogError("tmpText が割り当てられていません");
             return;
         }
 
-        tmpText.text = messages[index];  // 最初の文を表示
+        flagPath = Path.Combine(Application.persistentDataPath, "navi52_shown.txt");
+
+        // すでに表示済みなら終了
+        if (File.Exists(flagPath))
+        {
+            tmpText.text = "";
+            if (imageObject != null) imageObject.SetActive(false);
+            this.enabled = false;
+            return;
+        }
+
+        // 表示する場合
+        if (imageObject != null) imageObject.SetActive(true);
+        tmpText.text = messages[index];
     }
 
     void Update()
     {
-        // Enter または Return が押されたら
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             index++;
 
             if (index < messages.Length)
             {
-                tmpText.text = messages[index];  // 次の文を表示
+                tmpText.text = messages[index];
             }
             else
             {
-                tmpText.text = "";  // 全部終わったら消す
-                                    // ★ 画像オブジェクトも非表示にする
-                if (imageObject != null)
-                    imageObject.SetActive(false);
+                tmpText.text = "";
+                if (imageObject != null) imageObject.SetActive(false);
 
-                // ★ 一度表示したことを記録
-                PlayerPrefs.SetInt("Navi2Shown", 1);
+                // 一度表示したことを記録
+                File.WriteAllText(flagPath, "shown");
             }
         }
     }
 }
-
