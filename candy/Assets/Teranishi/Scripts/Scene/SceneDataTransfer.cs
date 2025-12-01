@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Linq;
 using System;
@@ -32,11 +33,19 @@ public class SceneDataTransfer : MonoBehaviour
 
     [Header("ゲーム進行状況と移動回数")]
     [HideInInspector] public int lastClearedStageIndex = 0;
-    [HideInInspector] public int currentStageMoveCount = 0; // 現在のステージの移動回数 (ソフトリセットで維持)
-    [HideInInspector] public int movesOnClear = 0;          // ゴールシーンへ渡すための最終移動回数
+    [HideInInspector] public int currentStageMoveCount = 0;
+    [HideInInspector] public int movesOnClear = 0;
 
     [Header("ムーブブロックの状態")]
     [HideInInspector] public List<BlockState> pastBlockStates = new List<BlockState>();
+
+    // --- アイテムとギミックの状態 ---
+    [Header("アイテムとギミックの状態")]
+    [HideInInspector] public bool hasMatchStick = false;                             // マッチ棒を持っているか (所持フラグ)
+    [HideInInspector] public List<string> burnedObjectIDs = new List<string>();      // 燃やされて消えたオブジェクトのIDリスト (過去の変化)
+    [HideInInspector] public List<string> vanishedItemIDs = new List<string>();      // 恒久的に消滅したアイテムのIDリスト (永続的な取得)
+    // ----------------------------------------
+
 
     // --- Unityライフサイクル ---
 
@@ -59,27 +68,18 @@ public class SceneDataTransfer : MonoBehaviour
     // プレイヤーとステージの状態操作
     // ------------------------------------
 
-    /// <summary>
-    /// シーン遷移前にプレイヤーの位置と向きを保存します。
-    /// </summary>
     public void SavePlayerState(Vector3 pos, int dirIndex)
     {
         playerPositionToLoad = pos;
         playerDirectionIndexToLoad = dirIndex;
     }
 
-    /// <summary>
-    /// 移動回数を1加算します。
-    /// </summary>
     public void IncrementMoveCount()
     {
         currentStageMoveCount++;
         Debug.Log($"[SceneDataTransfer] 移動回数: {currentStageMoveCount}");
     }
 
-    /// <summary>
-    /// クリアしたステージのインデックスを記録します。
-    /// </summary>
     public void RecordStageClear(int clearedStageIndex)
     {
         if (clearedStageIndex > lastClearedStageIndex)
@@ -88,52 +88,112 @@ public class SceneDataTransfer : MonoBehaviour
         }
     }
 
+    // --- ギミック関連のメソッド ---
+
+    /// <summary>
+    /// マッチ棒をアイテムとして取得したことを記録する
+    /// </summary>
+    public void AcquireMatchStick()
+    {
+        hasMatchStick = true;
+        Debug.Log("[SceneDataTransfer] マッチ棒を取得しました。");
+    }
+
+    /// <summary>
+    /// オブジェクトが燃やされて消えたことを記録する
+    /// </summary>
+    public void RecordBurnedObject(string objectId)
+    {
+        if (!burnedObjectIDs.Contains(objectId))
+        {
+            burnedObjectIDs.Add(objectId);
+            Debug.Log($"[SceneDataTransfer] オブジェクトを燃やして消去記録: {objectId}");
+        }
+    }
+
+    /// <summary>
+    /// 指定されたオブジェクトが既に燃やされているか確認する
+    /// </summary>
+    public bool IsObjectBurned(string objectId)
+    {
+        return burnedObjectIDs.Contains(objectId);
+    }
+
+    /// <summary>
+    /// アイテムがシーンから消滅したことを恒久的に記録する
+    /// </summary>
+    public void RecordItemVanished(string itemId)
+    {
+        if (!vanishedItemIDs.Contains(itemId))
+        {
+            vanishedItemIDs.Add(itemId);
+            Debug.Log($"[SceneDataTransfer] アイテムを消去記録: {itemId}");
+        }
+    }
+
+    /// <summary>
+    /// 指定されたアイテムIDが既に消滅しているか確認する
+    /// </summary>
+    public bool IsItemVanished(string itemId)
+    {
+        return vanishedItemIDs.Contains(itemId);
+    }
+    // --------------------------------------
+
     // ------------------------------------
     // リセット処理
     // ------------------------------------
 
-    /// <summary>
-    /// 【ソフトリセット】ステージ内でのリセット(Rキー)に使用。移動回数は維持します。
-    /// </summary>
     public void SoftReset()
     {
+        // ソフトリセット: 位置とブロック状態のみリセットし、移動回数は維持
         playerPositionToLoad = Vector3.zero;
         playerDirectionIndexToLoad = 0;
         pastBlockStates.Clear();
-        // currentStageMoveCount は維持
         Debug.Log("[SceneDataTransfer] ソフトリセットを実行しました (位置/ブロックリセット)。");
     }
 
-    /// <summary>
-    /// 【ハードリセット】次のステージへ進む際などに使用。全てのステージ進行データ、移動回数をリセットします。
-    /// </summary>
     public void ClearPlayerState()
     {
+        // ステージ切り替え時のリセット: 位置、ブロックデータ、移動回数をリセット
         playerPositionToLoad = Vector3.zero;
         playerDirectionIndexToLoad = 0;
         pastBlockStates.Clear();
-        // ステージ切り替え時なので移動回数もリセット
         currentStageMoveCount = 0;
+
+        // ギミックの状態（hasMatchStick, burnedObjectIDs, vanishedItemIDs）は維持
+        // （次のステージに持ち越し、または永続的な状態のため）
 
         Debug.Log("[SceneDataTransfer] プレイヤーの状態、ブロックデータ、移動回数をリセットしました。");
     }
 
+    public void FullGameReset()
+    {
+        // フルゲームリセット: 全てのゲーム進行データを初期化
+        playerPositionToLoad = Vector3.zero;
+        playerDirectionIndexToLoad = 0;
+        pastBlockStates.Clear();
+        currentStageMoveCount = 0;
+        lastClearedStageIndex = 0;
+
+        // ギミックの状態もリセット
+        hasMatchStick = false;
+        burnedObjectIDs.Clear();
+        vanishedItemIDs.Clear(); // ★追加★
+
+        Debug.Log("[SceneDataTransfer] フルゲームリセットを実行しました (全データ初期化)。");
+    }
+
     // ------------------------------------
-    // ブロックデータ処理
+    // ブロックデータ処理 (省略なし)
     // ------------------------------------
 
-    /// <summary>
-    /// 過去シーンから現在シーンに戻る際に、ブロックの位置のリストを上書き保存する
-    /// </summary>
     public void SaveBlockPositions(List<BlockState> statesToSave)
     {
         pastBlockStates = new List<BlockState>(statesToSave);
         Debug.Log($"[SceneDataTransfer] {pastBlockStates.Count} 個のブロックの状態（位置）を保存しました。");
     }
 
-    /// <summary>
-    /// ブロックの状態を保存または更新する (移動完了時に MoveBlock から呼ばれる)。
-    /// </summary>
     public void AddOrUpdateBlockState(string blockId, Vector3 finalPos)
     {
         int index = pastBlockStates.FindIndex(state => state.id == blockId);
@@ -150,9 +210,6 @@ public class SceneDataTransfer : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 指定されたIDのブロックの保存された状態を取得する。
-    /// </summary>
     public BlockState? GetBlockState(string id)
     {
         BlockState foundState = pastBlockStates.FirstOrDefault(state => state.id == id);
@@ -162,23 +219,5 @@ public class SceneDataTransfer : MonoBehaviour
             return foundState;
         }
         return null;
-    }
-
-    public void FullGameReset()
-    {
-        // プレイヤーの状態をリセット
-        playerPositionToLoad = Vector3.zero;
-        playerDirectionIndexToLoad = 0;
-
-        // ブロックの状態リストをクリア
-        pastBlockStates.Clear();
-
-        // 移動回数をリセット
-        currentStageMoveCount = 0;
-
-        // ★ステージクリア状況を初期値（0）にリセット★
-        lastClearedStageIndex = 0;
-
-        Debug.Log("[SceneDataTransfer] フルゲームリセットを実行しました (全データ初期化)。");
     }
 }
