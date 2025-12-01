@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System.Linq;
-using System; // [Serializable] に必要
+using System;
 
 // シーンをまたいでブロックの状態を保持するための構造体
 [Serializable]
@@ -11,7 +10,6 @@ public struct BlockState
     public string id;            // 対応するブロックのユニークID
     public Vector3 finalPosition; // ブロックが移動し終わった最終位置
 
-    // コンストラクタ
     public BlockState(string id, Vector3 finalPosition)
     {
         this.id = id;
@@ -29,18 +27,15 @@ public class SceneDataTransfer : MonoBehaviour
     // ------------------------------------
 
     [Header("プレイヤーの状態")]
-    // プレイヤーの復帰位置
     [HideInInspector] public Vector3 playerPositionToLoad = Vector3.zero;
-    // プレイヤーの向きのインデックス
     [HideInInspector] public int playerDirectionIndexToLoad = 0;
 
-    [Header("ゲーム進行状況")]
-    // 最後にクリアしたステージのインデックス（例：1, 2, 3, ...）。初期値は0。
-    // GoalManagerで次のステージ名を動的に決定するために使用されます。
+    [Header("ゲーム進行状況と移動回数")]
     [HideInInspector] public int lastClearedStageIndex = 0;
+    [HideInInspector] public int currentStageMoveCount = 0; // 現在のステージの移動回数 (ソフトリセットで維持)
+    [HideInInspector] public int movesOnClear = 0;          // ゴールシーンへ渡すための最終移動回数
 
     [Header("ムーブブロックの状態")]
-    // ブロックの状態を List<BlockState> で保持する
     [HideInInspector] public List<BlockState> pastBlockStates = new List<BlockState>();
 
     // --- Unityライフサイクル ---
@@ -51,62 +46,76 @@ public class SceneDataTransfer : MonoBehaviour
 
         if (Instance != null && Instance != this)
         {
-            // 既に存在するインスタンスがあれば、この新しいオブジェクトを破棄
             Destroy(gameObject);
         }
         else
         {
-            // インスタンスを自身に設定し、シーン遷移時にも破棄されないようにする
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
     }
 
     // ------------------------------------
-    // プレイヤーデータ処理
+    // プレイヤーとステージの状態操作
     // ------------------------------------
 
     /// <summary>
     /// シーン遷移前にプレイヤーの位置と向きを保存します。
-    /// （Time Travel Controllerなどから呼ばれる）
     /// </summary>
     public void SavePlayerState(Vector3 pos, int dirIndex)
     {
         playerPositionToLoad = pos;
         playerDirectionIndexToLoad = dirIndex;
-        Debug.Log($"[SceneDataTransfer] プレイヤーの状態を保存しました: Pos={pos}, Dir={dirIndex}");
     }
 
     /// <summary>
-    /// 次のステージへ進む際などに、プレイヤーの位置ロード情報をリセットします。
-    /// （次のステージで初期位置から開始させるため）
+    /// 移動回数を1加算します。
     /// </summary>
-    public void ClearPlayerState()
+    public void IncrementMoveCount()
     {
-        // プレイヤーの位置と向きを初期値にリセット
-        playerPositionToLoad = Vector3.zero;
-        playerDirectionIndexToLoad = 0;
-
-        // **注意**: ブロックの状態もクリアしないと、次のステージで前ステージのブロックが残る可能性がある
-        pastBlockStates.Clear();
-
-        Debug.Log("[SceneDataTransfer] プレイヤーの状態とブロックデータをリセットしました。");
+        currentStageMoveCount++;
+        Debug.Log($"[SceneDataTransfer] 移動回数: {currentStageMoveCount}");
     }
 
-    // ------------------------------------
-    // ステージクリアデータ処理
-    // ------------------------------------
-
     /// <summary>
-    /// クリアしたステージのインデックスを記録します。既に記録されているものより大きい場合のみ更新します。
+    /// クリアしたステージのインデックスを記録します。
     /// </summary>
     public void RecordStageClear(int clearedStageIndex)
     {
         if (clearedStageIndex > lastClearedStageIndex)
         {
             lastClearedStageIndex = clearedStageIndex;
-            Debug.Log($"[SceneDataTransfer] ステージ {clearedStageIndex} のクリア状況を記録しました。");
         }
+    }
+
+    // ------------------------------------
+    // リセット処理
+    // ------------------------------------
+
+    /// <summary>
+    /// 【ソフトリセット】ステージ内でのリセット(Rキー)に使用。移動回数は維持します。
+    /// </summary>
+    public void SoftReset()
+    {
+        playerPositionToLoad = Vector3.zero;
+        playerDirectionIndexToLoad = 0;
+        pastBlockStates.Clear();
+        // currentStageMoveCount は維持
+        Debug.Log("[SceneDataTransfer] ソフトリセットを実行しました (位置/ブロックリセット)。");
+    }
+
+    /// <summary>
+    /// 【ハードリセット】次のステージへ進む際などに使用。全てのステージ進行データ、移動回数をリセットします。
+    /// </summary>
+    public void ClearPlayerState()
+    {
+        playerPositionToLoad = Vector3.zero;
+        playerDirectionIndexToLoad = 0;
+        pastBlockStates.Clear();
+        // ステージ切り替え時なので移動回数もリセット
+        currentStageMoveCount = 0;
+
+        Debug.Log("[SceneDataTransfer] プレイヤーの状態、ブロックデータ、移動回数をリセットしました。");
     }
 
     // ------------------------------------
@@ -118,9 +127,7 @@ public class SceneDataTransfer : MonoBehaviour
     /// </summary>
     public void SaveBlockPositions(List<BlockState> statesToSave)
     {
-        // 以前のデータを完全に上書き
         pastBlockStates = new List<BlockState>(statesToSave);
-
         Debug.Log($"[SceneDataTransfer] {pastBlockStates.Count} 個のブロックの状態（位置）を保存しました。");
     }
 
@@ -133,14 +140,12 @@ public class SceneDataTransfer : MonoBehaviour
 
         if (index != -1)
         {
-            // 既にIDが存在する場合、位置を更新
             BlockState updatedState = pastBlockStates[index];
             updatedState.finalPosition = finalPos;
             pastBlockStates[index] = updatedState;
         }
         else
         {
-            // 新しい状態として追加
             pastBlockStates.Add(new BlockState(blockId, finalPos));
         }
     }
@@ -152,22 +157,14 @@ public class SceneDataTransfer : MonoBehaviour
     {
         BlockState foundState = pastBlockStates.FirstOrDefault(state => state.id == id);
 
-        // 過去のリストにそのIDが存在するかどうかをチェック
         if (pastBlockStates.Any(state => state.id == id))
         {
             return foundState;
         }
-        return null; // データが見つからなかった
+        return null;
     }
 
-    // ------------------------------------
-    // リセット処理
-    // ------------------------------------
-
-    /// <summary>
-    /// lastClearedStageIndex も含め、全データを初期状態にリセットします。
-    /// </summary>
-    public void FullReset()
+    public void FullGameReset()
     {
         // プレイヤーの状態をリセット
         playerPositionToLoad = Vector3.zero;
@@ -176,9 +173,12 @@ public class SceneDataTransfer : MonoBehaviour
         // ブロックの状態リストをクリア
         pastBlockStates.Clear();
 
-        // ステージクリア状況を初期値にリセット
+        // 移動回数をリセット
+        currentStageMoveCount = 0;
+
+        // ★ステージクリア状況を初期値（0）にリセット★
         lastClearedStageIndex = 0;
 
-        Debug.Log("[SceneDataTransfer] ゲーム状態を完全にリセットしました。");
+        Debug.Log("[SceneDataTransfer] フルゲームリセットを実行しました (全データ初期化)。");
     }
 }

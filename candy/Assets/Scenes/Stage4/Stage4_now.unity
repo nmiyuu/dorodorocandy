@@ -1771,6 +1771,7 @@ GameObject:
   - component: {fileID: 1123112562}
   - component: {fileID: 1123112561}
   - component: {fileID: 1123112564}
+  - component: {fileID: 1123112565}
   - component: {fileID: 1123112563}
   m_Layer: 0
   m_Name: "\u30B4\u30FC\u30EB_0"
@@ -1902,11 +1903,24 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1123112560}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ccbb69e93b972ad4191cd5e790618b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1123112565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1123112560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 718f5a5c623536640b6bd432d3461fa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thisStageIndex: 4
 --- !u!1001 &1138313431
 PrefabInstance:
   m_ObjectHideFlags: 0
