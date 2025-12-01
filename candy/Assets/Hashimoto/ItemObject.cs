@@ -2,29 +2,26 @@ using UnityEngine;
 
 public class ItemObject : MonoBehaviour
 {
-    // このアイテムの一意ID（同じIDのアイテムは2つ存在させない）
-    public string matchstick;
+    public string matchstick; // 他と被らないID（例： "item_001"）
 
-    void OnEnable()
+    void Start()
     {
-        // ゲーム開始後に再度シーンが読み込まれた場合など、
-        // すでに取得済みのIDと一致していたら自動的に消す
+        // すでに取得済みなら非表示にする
         if (ItemManager.Instance.obtainedItems.Contains(matchstick))
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter(Collider other)
     {
-        // プレイヤーが触れたときにアイテムを取得
         if (other.CompareTag("Player"))
         {
-            // アイテム取得IDを記録
+            // 取得したIDを保存する
             ItemManager.Instance.obtainedItems.Add(matchstick);
 
-            // 取得したのでオブジェクトを消す
-            Destroy(gameObject);
+            // 自分を消す
+            gameObject.SetActive(false);
         }
     }
 }
