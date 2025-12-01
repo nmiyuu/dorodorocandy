@@ -4,7 +4,7 @@ public class PlayerItemController : MonoBehaviour
 {
     private void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
+      
     }
     private bool hasItem = false;
 
