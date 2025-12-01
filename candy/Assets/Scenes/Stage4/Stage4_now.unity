@@ -130,7 +130,6 @@ GameObject:
   - component: {fileID: 312160384}
   - component: {fileID: 312160386}
   - component: {fileID: 312160385}
-  - component: {fileID: 312160387}
   m_Layer: 5
   m_Name: BackGround
   m_TagString: Untagged
@@ -195,19 +194,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 312160383}
   m_CullTransparentMesh: 1
---- !u!114 &312160387
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 312160383}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f56c2ff497307944abe24be1a0590336, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  matchstick: 
 --- !u!1001 &451861657
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1697,11 +1683,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 486833043541164994, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
       propertyPath: m_Size.x
-      value: 0.8
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 486833043541164994, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
       propertyPath: m_Size.y
-      value: 0.8
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 486833043541164994, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
       propertyPath: m_IsTrigger
