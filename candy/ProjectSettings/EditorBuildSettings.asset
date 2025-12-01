@@ -21,10 +21,10 @@ EditorBuildSettings:
     path: Assets/Scenes/Stage1/Stage1_Past.unity
     guid: 66e5b27c1612f8b48bc48521336c0c3e
   - enabled: 1
-    path: Assets/Scenes/Stage2/Stage2_Past.unity
+    path: Assets/Scenes/Stage1/Stage2/Stage2_Past.unity
     guid: f77507cc231257d479df078e0a4f89a6
   - enabled: 1
-    path: Assets/Scenes/Stage2/Stage2_now.unity
+    path: Assets/Scenes/Stage1/Stage2/Stage2_now.unity
     guid: e9a10c8f873aa0b4394891da8f6ad8c7
   - enabled: 1
     path: Assets/Scenes/Stage3/Stage3_Past.unity

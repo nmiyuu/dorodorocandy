@@ -177,7 +177,6 @@ GameObject:
   - component: {fileID: 192976357}
   - component: {fileID: 192976359}
   - component: {fileID: 192976360}
-  - component: {fileID: 192976361}
   m_Layer: 0
   m_Name: "\u30B4\u30FC\u30EB_0"
   m_TagString: Untagged
@@ -308,24 +307,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 192976356}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ccbb69e93b972ad4191cd5e790618b9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &192976361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 192976356}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 718f5a5c623536640b6bd432d3461fa3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  thisStageIndex: 5
 --- !u!1 &332790814
 GameObject:
   m_ObjectHideFlags: 0
@@ -386,11 +372,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3075569705519495706, guid: 609658a8ba9367d4e9c1a8345dbc28b1, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.55
+      value: 5.5
       objectReference: {fileID: 0}
     - target: {fileID: 3075569705519495706, guid: 609658a8ba9367d4e9c1a8345dbc28b1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.48
+      value: 2.47
       objectReference: {fileID: 0}
     - target: {fileID: 3075569705519495706, guid: 609658a8ba9367d4e9c1a8345dbc28b1, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4023,7 +4009,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5.51, y: 2.49, z: 0}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 1}
+  m_LocalScale: {x: 1.6, y: 1.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
