@@ -21,8 +21,10 @@ public class navi51 : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("Navi51Shown の値 = " + PlayerPrefs.GetInt("Navi51Shown", 0));
+
         // ▼ すでに表示済みなら即非表示にして終了
-        if (PlayerPrefs.GetInt("NaviShown", 0) == 1)
+        if (PlayerPrefs.GetInt("Navi51Shown", 0) == 1)
         {
             tmpText.text = "";
             if (imageObject != null) imageObject.SetActive(false);
@@ -59,7 +61,8 @@ public class navi51 : MonoBehaviour
                     imageObject.SetActive(false);
 
                 // ★ 一度表示したことを記録
-                PlayerPrefs.SetInt("NaviShown", 1);
+                PlayerPrefs.SetInt("Navi51Shown", 1);
+                PlayerPrefs.Save();
             }
         }
     }
