@@ -1,7 +1,10 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> origin/main
 --- !u!28 &-8064799739256053706
 Texture2D:
   m_ObjectHideFlags: 0
@@ -48,7 +51,12 @@ Texture2D:
     offset: 0
     size: 0
     path: 
+<<<<<<< HEAD
 >>>>>>> 2ffdd409fa4e96ff663ac35a6b256f30d0143ca1
+=======
+=======
+>>>>>>> origin/main
+>>>>>>> origin/main
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,9 +118,12 @@ MonoBehaviour:
   m_AtlasPopulationMode: 1
   InternalDynamicOS: 0
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_GlyphTable: []
   m_CharacterTable: []
 =======
+=======
+>>>>>>> origin/main
   m_GlyphTable:
   - m_Index: 7785
     m_Metrics:
@@ -970,7 +981,14 @@ MonoBehaviour:
     m_Unicode: 116
     m_GlyphIndex: 412
     m_Scale: 1
+<<<<<<< HEAD
 >>>>>>> 2ffdd409fa4e96ff663ac35a6b256f30d0143ca1
+=======
+=======
+  m_GlyphTable: []
+  m_CharacterTable: []
+>>>>>>> origin/main
+>>>>>>> origin/main
   m_AtlasTextures:
   - {fileID: 5562225736338908989}
   m_AtlasTextureIndex: 0
@@ -982,6 +1000,7 @@ MonoBehaviour:
   m_AtlasPadding: 9
   m_AtlasRenderMode: 4165
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_UsedGlyphRects: []
   m_FreeGlyphRects:
   - m_X: 0
@@ -989,6 +1008,8 @@ MonoBehaviour:
     m_Width: 1023
     m_Height: 1023
 =======
+=======
+>>>>>>> origin/main
   m_UsedGlyphRects:
   - m_X: 0
     m_Y: 0
@@ -1343,7 +1364,18 @@ MonoBehaviour:
     m_Y: 193
     m_Width: 28
     m_Height: 88
+<<<<<<< HEAD
 >>>>>>> 2ffdd409fa4e96ff663ac35a6b256f30d0143ca1
+=======
+=======
+  m_UsedGlyphRects: []
+  m_FreeGlyphRects:
+  - m_X: 0
+    m_Y: 0
+    m_Width: 1023
+    m_Height: 1023
+>>>>>>> origin/main
+>>>>>>> origin/main
   m_FontFeatureTable:
     m_MultipleSubstitutionRecords: []
     m_LigatureSubstitutionRecords: []
