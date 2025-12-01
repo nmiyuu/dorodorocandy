@@ -36,7 +36,7 @@ public class GoalManager : MonoBehaviour
         {
             Debug.Log("全ステージをクリアしました。");
             // 例: エンディングシーンへ遷移
-            // SceneManager.LoadScene("EndCreditScene"); 
+             SceneManager.LoadScene("clear"); 
             return;
         }
 
