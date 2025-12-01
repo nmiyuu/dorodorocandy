@@ -10,8 +10,8 @@ public class navi2 : MonoBehaviour
 
     string[] messages = {
         "？？",
-        "ナビ",
-        "ナビ"
+        "なび",
+        "なびくん"
     };
 
     int index = 0;
@@ -50,6 +50,7 @@ public class navi2 : MonoBehaviour
 
                 // ★ 一度表示したことを記録
                 PlayerPrefs.SetInt("Navi2Shown", 1);
+                PlayerPrefs.Save();
             }
         }
     }
