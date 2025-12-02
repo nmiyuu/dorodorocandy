@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+// SceneDataTransfer クラスを参照するために using が必要
+// SceneDataTransfer が別の名前空間にいる場合、その名前空間を追加してください
+// using YourGameNamespace; 
 
 // フェード色を定義するEnum
 public enum FadeColor { Black, White }
@@ -46,11 +49,6 @@ public class SceneFader : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        // 永続化オブジェクトのためStartは再利用できないが、Awakeで初期化済み
-    }
-
     void OnDestroy()
     {
         // オブジェクトが破棄される時にイベントの登録を解除する
@@ -64,8 +62,28 @@ public class SceneFader : MonoBehaviour
         if (fadePanel != null)
         {
             // 最後に使用された色でフェードインを開始
-            StartCoroutine(FadeIn(lastFadeColor));
+            // ★修正点: StartCoroutineを直接呼び出すのではなく、FadeInCoroutineを待つラッパーを使用★
+            StartCoroutine(FadeInAfterLoad(lastFadeColor));
         }
+    }
+
+    // ロード後のフェードインと操作有効化を行うラッパーコルーチン
+    private IEnumerator FadeInAfterLoad(FadeColor color)
+    {
+        // 1. フェードインを実行
+        yield return StartCoroutine(FadeIn(color));
+
+        // 2. フェードイン完了後、SceneDataTransfer の状態をリセット
+        if (SceneDataTransfer.Instance != null)
+        {
+            // ★追加: シーン切り替え完了。プレイヤー操作を有効化する★
+            SceneDataTransfer.Instance.EndSceneChange();
+        }
+
+        // ★★★ 修正箇所: IsFadingフラグをここで解除する ★★★
+        IsFading = false;
+        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
     }
 
 
@@ -99,8 +117,8 @@ public class SceneFader : MonoBehaviour
         }
         fadePanel.color = new Color(targetColor.r, targetColor.g, targetColor.b, 0f);
 
-        // フェード終了フラグを解除することで、次の遷移を許可する
-        IsFading = false;
+        // フェード終了フラグを解除 (FadeInAfterLoadでEndSceneChangeを呼び出すため、ここでは解除しない)
+        // IsFading = false;
     }
 
     // ゲーム画面から暗転させる（シーン遷移前）
@@ -143,10 +161,16 @@ public class SceneFader : MonoBehaviour
 
     private IEnumerator LoadSceneSequence(string sceneName, FadeColor color)
     {
-        // 1. フェードアウト（画面が暗くなる）
+        // ★追加: 1. SceneDataTransferに、シーン変更開始を通知し、操作を無効化する★
+        if (SceneDataTransfer.Instance != null)
+        {
+            SceneDataTransfer.Instance.StartSceneChange();
+        }
+
+        // 2. フェードアウト（画面が暗くなる）
         yield return StartCoroutine(FadeOut(color));
 
-        // 2. シーンをロードする（OnSceneLoadedが呼ばれFadeInが開始される）
+        // 3. シーンをロードする（OnSceneLoadedが呼ばれ、FadeInAfterLoad -> FadeIn が開始される）
         SceneManager.LoadScene(sceneName);
 
         // シーンロード後は処理をOnSceneLoadedとFadeInに任せる

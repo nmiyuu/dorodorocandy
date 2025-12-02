@@ -8,7 +8,7 @@ using System;
 [Serializable]
 public struct BlockState
 {
-    public string id;            // 対応するブロックのユニークID
+    public string id;              // 対応するブロックのユニークID
     public Vector3 finalPosition; // ブロックが移動し終わった最終位置
 
     public BlockState(string id, Vector3 finalPosition)
@@ -45,9 +45,14 @@ public class SceneDataTransfer : MonoBehaviour
     [HideInInspector] public List<string> burnedObjectIDs = new List<string>();      // 燃やされて消えたオブジェクトのIDリスト (過去の変化)
     [HideInInspector] public List<string> vanishedItemIDs = new List<string>();      // 恒久的に消滅したアイテムのIDリスト (永続的な取得)
 
-    // ★橋ギミック用に追加★
+    // ★スイッチと橋の状態★
     [Header("スイッチと橋の状態")]
-    [HideInInspector] public List<string> activatedSwitchIDs = new List<string>();      // 押されたスイッチのユニークIDを保存するリスト
+    [HideInInspector] public List<string> activatedSwitchIDs = new List<string>();       // 押されたスイッチのユニークIDを保存するリスト
+
+    // ★シーン遷移の状態 (追加)★
+    [Header("シーン状態")]
+    [HideInInspector] public bool isChangingScene = false; // ★このフラグが t_player.cs で参照されます★
+
     // ----------------------------------------
 
 
@@ -66,6 +71,28 @@ public class SceneDataTransfer : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+    }
+
+    // ------------------------------------
+    // シーン遷移管理メソッド 
+    // ------------------------------------
+
+    /// <summary>
+    /// シーン遷移を開始する際に呼び出す（フェードアウト開始時）
+    /// </summary>
+    public void StartSceneChange()
+    {
+        isChangingScene = true;
+        Debug.Log("[SceneDataTransfer] シーン変更処理を開始しました。移動/操作を無効化。");
+    }
+
+    /// <summary>
+    /// シーン遷移が完了した際に呼び出す（フェードイン完了時）
+    /// </summary>
+    public void EndSceneChange()
+    {
+        isChangingScene = false;
+        Debug.Log("[SceneDataTransfer] シーン変更処理を完了しました。移動/操作を有効化。");
     }
 
     // ------------------------------------
@@ -129,7 +156,7 @@ public class SceneDataTransfer : MonoBehaviour
         return vanishedItemIDs.Contains(itemId);
     }
 
-    // --- ★スイッチ/橋関連 (追加)★ ---
+    // --- スイッチ/橋関連 ---
 
     /// <summary>
     /// スイッチが押されたことを恒久的に記録する
@@ -150,7 +177,6 @@ public class SceneDataTransfer : MonoBehaviour
     {
         return activatedSwitchIDs.Contains(switchId);
     }
-    // --------------------------------------
 
     // ------------------------------------
     // リセット処理
@@ -173,7 +199,7 @@ public class SceneDataTransfer : MonoBehaviour
         pastBlockStates.Clear();
         currentStageMoveCount = 0;
 
-        // ギミックの状態（hasMatchStick, burnedObjectIDs, vanishedItemIDs, activatedSwitchIDs）は維持
+        // ギミックの状態は維持
 
         Debug.Log("[SceneDataTransfer] プレイヤーの状態、ブロックデータ、移動回数をリセットしました。");
     }
@@ -191,13 +217,13 @@ public class SceneDataTransfer : MonoBehaviour
         hasMatchStick = false;
         burnedObjectIDs.Clear();
         vanishedItemIDs.Clear();
-        activatedSwitchIDs.Clear(); // ★追加★
+        activatedSwitchIDs.Clear();
 
         Debug.Log("[SceneDataTransfer] フルゲームリセットを実行しました (全データ初期化)。");
     }
 
     // ------------------------------------
-    // ブロックデータ処理 (省略なし)
+    // ブロックデータ処理 
     // ------------------------------------
 
     public void SaveBlockPositions(List<BlockState> statesToSave)
