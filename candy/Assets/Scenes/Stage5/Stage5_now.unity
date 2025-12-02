@@ -729,7 +729,7 @@ MonoBehaviour:
 '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 32203a698755da248bc1cf902659dcca, type: 2}
-  m_sharedMaterial: {fileID: 2000355201982600107, guid: 32203a698755da248bc1cf902659dcca, type: 2}
+  m_sharedMaterial: {fileID: 3442773304277787970, guid: 32203a698755da248bc1cf902659dcca, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3902,7 +3902,7 @@ MonoBehaviour:
   m_text: New Text
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 32203a698755da248bc1cf902659dcca, type: 2}
-  m_sharedMaterial: {fileID: 2000355201982600107, guid: 32203a698755da248bc1cf902659dcca, type: 2}
+  m_sharedMaterial: {fileID: 3442773304277787970, guid: 32203a698755da248bc1cf902659dcca, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
