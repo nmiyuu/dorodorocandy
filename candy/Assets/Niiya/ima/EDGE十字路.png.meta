@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2a4a91fcc6e8ef745bb55224a90243b5
+guid: 174a9fbcfe3215f429ff3f255caef104
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6597781239094325695
-    second: "EDGE\u30AB\u30FC\u30D6\u53F3\u4E0B\uFF11_0"
+      213: 9140681019475592075
+    second: "EDGE\u5341\u5B57\u8DEF_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "EDGE\u30AB\u30FC\u30D6\u53F3\u4E0B\uFF11_0"
+      name: "EDGE\u5341\u5B57\u8DEF_0"
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 64
         height: 64
-      alignment: 9
-      pivot: {x: 0.5625, y: 0.453125}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 14ecb0a6be8ff64a0800000000000000
-      internalID: -6597781239094325695
+      spriteID: b838ff235f83ade70800000000000000
+      internalID: 9140681019475592075
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 2b4ed5fc808563c4da633aa2105b7914
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "EDGE\u30AB\u30FC\u30D6\u53F3\u4E0B\uFF11_0": -6597781239094325695
+      "EDGE\u5341\u5B57\u8DEF_0": 9140681019475592075
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
