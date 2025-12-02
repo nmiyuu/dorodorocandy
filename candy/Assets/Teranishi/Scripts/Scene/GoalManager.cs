@@ -27,8 +27,10 @@ public class GoalManager : MonoBehaviour
 
         if (nextStageIndex > totalStageCount)
         {
+
             Debug.Log("全ステージをクリアしました。");
-            return;
+
+            SceneManager.LoadScene("clear");
         }
 
         // 2. 次のシーン名を 'Stage[N]_now' の形式で生成
