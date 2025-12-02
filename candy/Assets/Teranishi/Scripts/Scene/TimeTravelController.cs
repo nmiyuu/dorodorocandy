@@ -43,8 +43,6 @@ public class TimeTravelController : MonoBehaviour
             return;
         }
 
-        // SceneFader.IsFading のチェックは、SceneDataTransfer.isChangingScene でカバーされるため不要です。
-
         if (!TrySetPlayerReferences()) return; // 参照が有効かチェック
 
         // 移動中チェック
@@ -70,20 +68,32 @@ public class TimeTravelController : MonoBehaviour
         else
         {
             Debug.LogError("SceneDataTransfer が見つかりません。タイムトラベルを中止します。");
+
+            // ロックフラグが設定できなかった場合、EndSceneChangeを呼んで元に戻す
+            if (SceneDataTransfer.Instance != null)
+                SceneDataTransfer.Instance.EndSceneChange();
+
             yield break;
         }
 
-        // 2. フェードアウトを開始し、完了を待つ (白フェードを指定)
+        // 2. ★★★ SE再生 ★★★
+        // ロック直後にSEを鳴らすことで、入力に即座に反応した演出を行う
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlaySceneTransitionSE();
+        }
+
+        // 3. フェードアウトを開始し、完了を待つ (白フェードを指定)
         if (SceneFader.Instance != null)
         {
             yield return SceneFader.Instance.FadeOut(FadeColor.White);
         }
 
-        // 3. フェードアウト完了後、シーン切り替え本体を実行
+        // 4. フェードアウト完了後、シーン切り替え本体を実行
         bool success = false;
         yield return StartCoroutine(ExecuteTimeTravelLogic(result => success = result));
 
-        // 4. シーン切り替え成功/失敗後の処理
+        // 5. シーン切り替え成功/失敗後の処理
 
         if (success)
         {
