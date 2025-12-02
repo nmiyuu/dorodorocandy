@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class navi2 : MonoBehaviour
+public class navi32 : MonoBehaviour
 {
     public TMP_Text tmpText;
 
@@ -9,7 +9,8 @@ public class navi2 : MonoBehaviour
     public GameObject imageObject;
 
     string[] messages = {
-        "？？",
+        "なびくん",
+        "なびくん",
         "なびくん",
         "なびくん"
     };
@@ -19,7 +20,7 @@ public class navi2 : MonoBehaviour
     void Start()
     {
         // ▼ すでに表示済みなら即非表示にして終了
-        if (PlayerPrefs.GetInt("Navi2Shown", 0) == 1)
+        if (PlayerPrefs.GetInt("Navi32Shown", 0) == 1)
         {
             tmpText.text = "";
             if (imageObject != null) imageObject.SetActive(false);
@@ -49,8 +50,10 @@ public class navi2 : MonoBehaviour
                     imageObject.SetActive(false);
 
                 // ★ 一度表示したことを記録
-                PlayerPrefs.SetInt("Navi2Shown", 1);
+                PlayerPrefs.SetInt("Navi32Shown", 1);
             }
         }
     }
 }
+
+
