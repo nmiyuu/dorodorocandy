@@ -44,6 +44,10 @@ public class SceneDataTransfer : MonoBehaviour
     [HideInInspector] public bool hasMatchStick = false;                             // マッチ棒を持っているか (所持フラグ)
     [HideInInspector] public List<string> burnedObjectIDs = new List<string>();      // 燃やされて消えたオブジェクトのIDリスト (過去の変化)
     [HideInInspector] public List<string> vanishedItemIDs = new List<string>();      // 恒久的に消滅したアイテムのIDリスト (永続的な取得)
+
+    // ★橋ギミック用に追加★
+    [Header("スイッチと橋の状態")]
+    [HideInInspector] public List<string> activatedSwitchIDs = new List<string>();      // 押されたスイッチのユニークIDを保存するリスト
     // ----------------------------------------
 
 
@@ -90,18 +94,13 @@ public class SceneDataTransfer : MonoBehaviour
 
     // --- ギミック関連のメソッド ---
 
-    /// <summary>
-    /// マッチ棒をアイテムとして取得したことを記録する
-    /// </summary>
+    // --- マッチ棒関連 ---
     public void AcquireMatchStick()
     {
         hasMatchStick = true;
         Debug.Log("[SceneDataTransfer] マッチ棒を取得しました。");
     }
 
-    /// <summary>
-    /// オブジェクトが燃やされて消えたことを記録する
-    /// </summary>
     public void RecordBurnedObject(string objectId)
     {
         if (!burnedObjectIDs.Contains(objectId))
@@ -111,17 +110,11 @@ public class SceneDataTransfer : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 指定されたオブジェクトが既に燃やされているか確認する
-    /// </summary>
     public bool IsObjectBurned(string objectId)
     {
         return burnedObjectIDs.Contains(objectId);
     }
 
-    /// <summary>
-    /// アイテムがシーンから消滅したことを恒久的に記録する
-    /// </summary>
     public void RecordItemVanished(string itemId)
     {
         if (!vanishedItemIDs.Contains(itemId))
@@ -131,12 +124,31 @@ public class SceneDataTransfer : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 指定されたアイテムIDが既に消滅しているか確認する
-    /// </summary>
     public bool IsItemVanished(string itemId)
     {
         return vanishedItemIDs.Contains(itemId);
+    }
+
+    // --- ★スイッチ/橋関連 (追加)★ ---
+
+    /// <summary>
+    /// スイッチが押されたことを恒久的に記録する
+    /// </summary>
+    public void RecordSwitchActivated(string switchId)
+    {
+        if (!activatedSwitchIDs.Contains(switchId))
+        {
+            activatedSwitchIDs.Add(switchId);
+            Debug.Log($"[SceneDataTransfer] スイッチを起動記録: {switchId}");
+        }
+    }
+
+    /// <summary>
+    /// 指定されたスイッチIDが既に押されているか確認する
+    /// </summary>
+    public bool IsSwitchActivated(string switchId)
+    {
+        return activatedSwitchIDs.Contains(switchId);
     }
     // --------------------------------------
 
@@ -161,8 +173,7 @@ public class SceneDataTransfer : MonoBehaviour
         pastBlockStates.Clear();
         currentStageMoveCount = 0;
 
-        // ギミックの状態（hasMatchStick, burnedObjectIDs, vanishedItemIDs）は維持
-        // （次のステージに持ち越し、または永続的な状態のため）
+        // ギミックの状態（hasMatchStick, burnedObjectIDs, vanishedItemIDs, activatedSwitchIDs）は維持
 
         Debug.Log("[SceneDataTransfer] プレイヤーの状態、ブロックデータ、移動回数をリセットしました。");
     }
@@ -179,7 +190,8 @@ public class SceneDataTransfer : MonoBehaviour
         // ギミックの状態もリセット
         hasMatchStick = false;
         burnedObjectIDs.Clear();
-        vanishedItemIDs.Clear(); // ★追加★
+        vanishedItemIDs.Clear();
+        activatedSwitchIDs.Clear(); // ★追加★
 
         Debug.Log("[SceneDataTransfer] フルゲームリセットを実行しました (全データ初期化)。");
     }

@@ -7,6 +7,9 @@ TagManager:
   - MoveBlock
   - Goal
   - CostImage
+  - Item
+  - BreakableBlock
+  - Pushable
   layers:
   - Default
   - TransparentFX
@@ -19,7 +22,7 @@ TagManager:
   - Hole
   - DontMoveBlock
   - Goal
-  - 
+  - switch
   - 
   - 
   - 
