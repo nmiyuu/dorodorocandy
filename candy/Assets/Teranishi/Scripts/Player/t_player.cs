@@ -8,13 +8,13 @@ public class t_player : MonoBehaviour
 {
     // --- パラメータ設定 (Inspector設定用) ---
     [Header("移動設定")]
-    public float moveUnit = 1.0f;       // 1マス進む距離
-    public float moveSpeed = 5f;        // 移動スピード
+    public float moveUnit = 1.0f;        // 1マス進む距離
+    public float moveSpeed = 5f;         // 移動スピード
     public LayerMask obstacleLayer;      // ぶつかる対象のレイヤー（壁とかブロック）
 
     [Header("アニメーション設定")]
     [Tooltip("アニメーション担当のt_plへの参照。")]
-    public t_pl playerAnimScript;       // t_pl スクリプトをInspectorで設定可能にする
+    public t_pl playerAnimScript;        // t_pl スクリプトをInspectorで設定可能にする
 
     // --- 内部状態とコンポーネント ---
     private bool isMoving = false;       // 移動中フラグ
@@ -78,6 +78,13 @@ public class t_player : MonoBehaviour
 
     void Update()
     {
+        // シーン切り替え中は移動入力を無視するガードロジック
+        if (SceneDataTransfer.Instance != null && SceneDataTransfer.Instance.isChangingScene)
+        {
+            return;
+        }
+        // 
+
         // Rキーが押されたら、SoftResetを実行する (移動回数は維持される)
         if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
         {
@@ -219,9 +226,4 @@ public class t_player : MonoBehaviour
         transform.position = target;
         isMoving = false;
     }
-
-    // --- 未定義のメソッド ---
-    // CalculateNewDirectionForAnimation と GetMoveDirectionFromLatestPress が未定義のため、
-    // Update()内で簡略化されたロジックを使用しています。元のコードにこれらのメソッドがあれば、
-    // それらを使うように Update() を調整してください。
 }

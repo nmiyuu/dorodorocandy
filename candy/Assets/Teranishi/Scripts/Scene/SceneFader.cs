@@ -2,8 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
-// SceneDataTransfer クラスを参照するために using が必要
-// SceneDataTransfer が別の名前空間にいる場合、その名前空間を追加してください
+// SceneDataTransfer や SoundManager が別の名前空間にいる場合、その名前空間を追加してください
 // using YourGameNamespace; 
 
 // フェード色を定義するEnum
@@ -62,7 +61,6 @@ public class SceneFader : MonoBehaviour
         if (fadePanel != null)
         {
             // 最後に使用された色でフェードインを開始
-            // ★修正点: StartCoroutineを直接呼び出すのではなく、FadeInCoroutineを待つラッパーを使用★
             StartCoroutine(FadeInAfterLoad(lastFadeColor));
         }
     }
@@ -76,14 +74,12 @@ public class SceneFader : MonoBehaviour
         // 2. フェードイン完了後、SceneDataTransfer の状態をリセット
         if (SceneDataTransfer.Instance != null)
         {
-            // ★追加: シーン切り替え完了。プレイヤー操作を有効化する★
+            // シーン切り替え完了。プレイヤー操作を有効化する
             SceneDataTransfer.Instance.EndSceneChange();
         }
 
-        // ★★★ 修正箇所: IsFadingフラグをここで解除する ★★★
+        // 3. フェード終了フラグを解除し、次の遷移を許可する
         IsFading = false;
-        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-
     }
 
 
@@ -103,7 +99,7 @@ public class SceneFader : MonoBehaviour
     {
         Color targetColor = (color == FadeColor.Black) ? Color.black : Color.white;
 
-        IsFading = true;
+        IsFading = true; // フェード中は操作をブロック
 
         float timer = fadeDuration;
         while (timer > 0f)
@@ -117,8 +113,7 @@ public class SceneFader : MonoBehaviour
         }
         fadePanel.color = new Color(targetColor.r, targetColor.g, targetColor.b, 0f);
 
-        // フェード終了フラグを解除 (FadeInAfterLoadでEndSceneChangeを呼び出すため、ここでは解除しない)
-        // IsFading = false;
+        // IsFading = false の解除は FadeInAfterLoad で行われます
     }
 
     // ゲーム画面から暗転させる（シーン遷移前）
@@ -161,16 +156,26 @@ public class SceneFader : MonoBehaviour
 
     private IEnumerator LoadSceneSequence(string sceneName, FadeColor color)
     {
-        // ★追加: 1. SceneDataTransferに、シーン変更開始を通知し、操作を無効化する★
+        // ... (SceneDataTransfer.StartSceneChange() の処理はそのまま) ...
         if (SceneDataTransfer.Instance != null)
         {
             SceneDataTransfer.Instance.StartSceneChange();
         }
 
-        // 2. フェードアウト（画面が暗くなる）
-        yield return StartCoroutine(FadeOut(color));
+        // ★★★ 修正箇所: タイトルシーンからの遷移かチェック ★★★
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        const string TITLE_SCENE_NAME = "title"; // タイトルシーン名に合わせて修正してください
 
-        // 3. シーンをロードする（OnSceneLoadedが呼ばれ、FadeInAfterLoad -> FadeIn が開始される）
+        // タイトルシーン以外からの遷移、またはタイトルシーンでSEを鳴らしたい特別な遷移の場合のみSEを再生
+        if (SoundManager.Instance != null && currentSceneName != TITLE_SCENE_NAME)
+        {
+            SoundManager.Instance.PlaySceneTransitionSE();
+        }
+        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+        // 3. フェードアウト（画面が暗くなる）
+        yield return StartCoroutine(FadeOut(color));
+        // 4. シーンをロードする（OnSceneLoadedが呼ばれ、FadeInAfterLoad -> FadeIn が開始される）
         SceneManager.LoadScene(sceneName);
 
         // シーンロード後は処理をOnSceneLoadedとFadeInに任せる

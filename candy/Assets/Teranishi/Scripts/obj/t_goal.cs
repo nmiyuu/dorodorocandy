@@ -1,40 +1,66 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class t_goal : MonoBehaviour
 {
-    [Header("�X�e�[�W�ݒ�")]
-    [Tooltip("���̃X�e�[�W�̃C���f�b�N�X�i��F�X�e�[�W1�Ȃ�1�A�X�e�[�W2�Ȃ�2�j")]
+    // ★追加: 最終ステージのインデックスを定義
+    [Header("ステージ設定")]
+    [Tooltip("このステージのインデックス（例：ステージ1なら1、ステージ2なら2）")]
     public int thisStageIndex = 1;
 
-    void Start()
-    {
-        // ���g�͂Ȃ�
-    }
+    [Tooltip("全ステージの数 (この値以上でゲームクリア)")]
+    public int finalStageIndex = 5;
 
-    void Update()
-    {
-        // ���g�͂Ȃ�
-    }
+    [Tooltip("ステージクリア時の画面名（リザルト画面など）")]
+    public string stageGoalSceneName = "goal";
+
+    [Tooltip("全ゲームクリア時の画面名")]
+    public string gameClearSceneName = "clear";
+
+    // Start()とUpdate()は変更なし
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // 1. プレイヤーかどうかの判定
         if (collision.gameObject.GetComponent<t_player>())
         {
-            if (SceneDataTransfer.Instance != null)
+            if (SceneDataTransfer.Instance == null || SceneFader.Instance == null)
             {
-                // 1. �y�ǉ��z�N���A���̈ړ��񐔂��ꎞ�ۑ� (�S�[����ʂ֓n��)
-                SceneDataTransfer.Instance.movesOnClear = SceneDataTransfer.Instance.currentStageMoveCount;
-
-                // 2. �X�e�[�W�N���A���L�^
-                SceneDataTransfer.Instance.RecordStageClear(thisStageIndex);
-
-                // 3. �y�C���z���̃X�e�[�W�֍s�������Ƃ��āA�v���C���[�ʒu�A�u���b�N�A�����Ĉړ��񐔁icurrentStageMoveCount�j�����Z�b�g
-                SceneDataTransfer.Instance.ClearPlayerState();
+                Debug.LogError("SceneDataTransfer または SceneFader が見つかりません。ゴール処理を中止します。");
+                return;
             }
 
-            // 4. �S�[���V�[���֑J��
-            SceneManager.LoadScene("goal");
+            // 2. シーン遷移中（既にフェードアウト開始済みなど）は処理しない
+            if (SceneDataTransfer.Instance.isChangingScene)
+            {
+                return;
+            }
+
+            // --- データ転送処理 ---
+
+            // クリア時の移動回数を一時保存 (ゴール画面へ渡す)
+            SceneDataTransfer.Instance.movesOnClear = SceneDataTransfer.Instance.currentStageMoveCount;
+
+            // ステージクリアを記録
+            SceneDataTransfer.Instance.RecordStageClear(thisStageIndex);
+
+            // 次のステージへ行く準備として、プレイヤー位置、ブロック、そして移動回数（currentStageMoveCount）をリセット
+            SceneDataTransfer.Instance.ClearPlayerState();
+
+            // --- シーン遷移の判定と実行 ---
+
+            if (thisStageIndex >= finalStageIndex)
+            {
+                // 最終ステージの場合: ゲームクリアシーンへ
+                Debug.Log($"🎉 ステージ{thisStageIndex}をクリア！ゲームクリアシーン({gameClearSceneName})へ遷移します。");
+                SceneFader.Instance.LoadSceneWithFade(gameClearSceneName, FadeColor.Black);
+            }
+            else
+            {
+                // 最終ステージでない場合: ステージゴール画面へ
+                Debug.Log($"ステージ{thisStageIndex}をクリア。ゴール画面({stageGoalSceneName})へ遷移します。");
+                SceneFader.Instance.LoadSceneWithFade(stageGoalSceneName, FadeColor.Black);
+            }
         }
     }
 }
