@@ -5,9 +5,8 @@ using System.Collections;
 public class navi31 : MonoBehaviour
 {
     public TMP_Text tmpText;
-    public float typeSpeed = 0.05f; // 1文字の表示間隔（秒）
+    public float typeSpeed = 0.05f;
 
-    // ここに最後に消したい画像オブジェクトを割り当てる
     public GameObject imageObject;
 
     string[] messages = {
@@ -20,30 +19,31 @@ public class navi31 : MonoBehaviour
     int index = 0;
     bool isTyping = false;
 
+    // ▼ ゲーム中だけ保持される共通フラグ（永続保存されない）
+    private static bool naviShownThisGame = false;
+
     void Start()
     {
-        // ▼ すでに表示済みなら即非表示にして終了
-        if (PlayerPrefs.GetInt("NaviShown31", 0) == 1)
+        // ▼ このシーン中ですでに一度表示していたら非表示にする
+        if (naviShownThisGame)
         {
             tmpText.text = "";
             if (imageObject != null) imageObject.SetActive(false);
 
-            // このスクリプトを停止（Update も動かさない）
             this.enabled = false;
             return;
         }
 
         if (tmpText == null)
             Debug.LogError("tmpText がインスペクタで割り当てられていません");
+
         StartCoroutine(TypeText(messages[index]));
     }
 
     void Update()
     {
-        // タイピング中はEnter受付しない
         if (isTyping) return;
 
-        // Enter（Return）で次の文へ
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             index++;
@@ -54,13 +54,12 @@ public class navi31 : MonoBehaviour
             }
             else
             {
-                tmpText.text = ""; // 全て終わったら消す
-                                   // ★ 画像オブジェクトも非表示にする
+                tmpText.text = "";
                 if (imageObject != null)
                     imageObject.SetActive(false);
 
-                // ★ 一度表示したことを記録
-                PlayerPrefs.SetInt("NaviShown31", 1);
+                // ▼ このゲーム中は2回目以降は表示しない
+                naviShownThisGame = true;
             }
         }
     }
@@ -71,9 +70,7 @@ public class navi31 : MonoBehaviour
 
         yield return null;
 
-        // ▼ TMP の初期化遅れ対策（最重要）
         tmpText.ForceMeshUpdate();
-
         tmpText.text = "";
 
         foreach (char c in message)
@@ -85,5 +82,3 @@ public class navi31 : MonoBehaviour
         isTyping = false;
     }
 }
-
-

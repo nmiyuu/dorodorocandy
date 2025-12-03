@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using System.IO;
 
 public class Navi52 : MonoBehaviour
 {
@@ -8,8 +7,6 @@ public class Navi52 : MonoBehaviour
 
     // 消したい画像の GameObject
     public GameObject imageObject;
-
-    private string flagPath;
 
     string[] messages = {
         "なびくん",
@@ -19,20 +16,19 @@ public class Navi52 : MonoBehaviour
 
     int index = 0;
 
+    // ▼ ゲーム中のみ保持されるフラグ（永続データではない）
+    private static bool navi52ShownThisGame = false;
+
     void Start()
     {
-        //File.Delete(Path.Combine(Application.persistentDataPath, "navi52_shown.txt"));
-
         if (tmpText == null)
         {
             Debug.LogError("tmpText が割り当てられていません");
             return;
         }
 
-        flagPath = Path.Combine(Application.persistentDataPath, "navi52_shown.txt");
-
-        // すでに表示済みなら終了
-        if (File.Exists(flagPath))
+        // すでにこのゲーム中に表示済みなら非表示で終了
+        if (navi52ShownThisGame)
         {
             tmpText.text = "";
             if (imageObject != null) imageObject.SetActive(false);
@@ -40,7 +36,7 @@ public class Navi52 : MonoBehaviour
             return;
         }
 
-        // 表示する場合
+        // 初回表示
         if (imageObject != null) imageObject.SetActive(true);
         tmpText.text = messages[index];
     }
@@ -57,11 +53,12 @@ public class Navi52 : MonoBehaviour
             }
             else
             {
+                // 全てのメッセージを表示し終わったら非表示
                 tmpText.text = "";
                 if (imageObject != null) imageObject.SetActive(false);
 
-                // 一度表示したことを記録
-                File.WriteAllText(flagPath, "shown");
+                // ▼ このゲーム中は再表示しない
+                navi52ShownThisGame = true;
             }
         }
     }
