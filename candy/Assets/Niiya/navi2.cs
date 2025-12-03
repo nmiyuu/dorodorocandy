@@ -11,6 +11,7 @@ public class navi2 : MonoBehaviour
     string[] messages = {
         "ÅHÅH",
         "Ç»Ç—Ç≠ÇÒ",
+        "Ç»Ç—Ç≠ÇÒ",
         "Ç»Ç—Ç≠ÇÒ"
     };
 

@@ -6,10 +6,20 @@ using System.Linq;
 public class TimeTravelController : MonoBehaviour
 {
     // --- シーン名設定 (Inspectorで設定) ---
+    [Header("シーン設定")]
     public string pastSceneName = "Stage1_Past";
     public string presentSceneName = "Stage1_now";
 
-    // isSwitchingScene は SceneDataTransfer.isChangingScene に統合
+    // ★★★ 時代切替SE設定 ★★★
+    [Header("時代切替SE")]
+    [Tooltip("時代切替が成功する時に再生するオーディオクリップ (フェード開始時)")]
+    public AudioClip timeTravelSuccessSE;
+
+    [Tooltip("障害物があり切り替えに失敗した時に再生するオーディオクリップ")]
+    public AudioClip timeTravelFailureSE;
+
+    private AudioSource audioSource;
+    // ★★★★★★★★★★★★★
 
     private GameObject playerObject;
     private t_pl playerScriptRef;             // スプライト制御用
@@ -18,6 +28,18 @@ public class TimeTravelController : MonoBehaviour
     private LayerMask obstacleLayer;
 
     // --- Unityライフサイクル ---
+
+    void Awake()
+    {
+        // AudioSource の初期化。このオブジェクトに AudioSource が必要
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            // なければ追加する
+            audioSource = gameObject.AddComponent<AudioSource>();
+            audioSource.playOnAwake = false;
+        }
+    }
 
     void Start()
     {
@@ -31,7 +53,6 @@ public class TimeTravelController : MonoBehaviour
     void Update()
     {
         // 1. SceneDataTransfer が初期化されていない、またはシーン切り替え中は停止
-        // isChangingScene が true の場合は、ここでリターンし、入力を受け付けません。
         if (SceneDataTransfer.Instance == null || SceneDataTransfer.Instance.isChangingScene)
         {
             return;
@@ -60,7 +81,7 @@ public class TimeTravelController : MonoBehaviour
     // Spaceキーで呼ばれるフェード付きタイムトラベルの起点
     public IEnumerator TriggerTimeTravelWithFade()
     {
-        // 1. ★ロック開始★ (最も重要: これにより t_player.cs が即座にブロックされます)
+        // 1. ロック開始
         if (SceneDataTransfer.Instance != null)
         {
             SceneDataTransfer.Instance.StartSceneChange();
@@ -68,19 +89,15 @@ public class TimeTravelController : MonoBehaviour
         else
         {
             Debug.LogError("SceneDataTransfer が見つかりません。タイムトラベルを中止します。");
-
-            // ロックフラグが設定できなかった場合、EndSceneChangeを呼んで元に戻す
             if (SceneDataTransfer.Instance != null)
                 SceneDataTransfer.Instance.EndSceneChange();
-
             yield break;
         }
 
-        // 2. ★★★ SE再生 ★★★
-        // ロック直後にSEを鳴らすことで、入力に即座に反応した演出を行う
-        if (SoundManager.Instance != null)
+        // 成功時のSE再生: ロック直後に鳴らす
+        if (audioSource != null && timeTravelSuccessSE != null)
         {
-            SoundManager.Instance.PlaySceneTransitionSE();
+            audioSource.PlayOneShot(timeTravelSuccessSE);
         }
 
         // 3. フェードアウトを開始し、完了を待つ (白フェードを指定)
@@ -94,14 +111,13 @@ public class TimeTravelController : MonoBehaviour
         yield return StartCoroutine(ExecuteTimeTravelLogic(result => success = result));
 
         // 5. シーン切り替え成功/失敗後の処理
-
         if (success)
         {
-            // 成功時: SceneFaderの OnSceneLoaded -> FadeInAfterLoad で EndSceneChange が呼ばれるため、ここでは何もしない
+            // 成功時: SceneFaderの FadeInAfterLoad で EndSceneChange が呼ばれるため、ここでは何もしない
         }
-        else
+        else // 失敗/キャンセル時
         {
-            // 失敗/キャンセル時:
+            // ExecuteTimeTravelLogic()内で失敗(衝突)が検出された場合、ここで処理する
 
             // 白画面を解除する (FadeIn)
             if (SceneFader.Instance != null)
@@ -109,7 +125,7 @@ public class TimeTravelController : MonoBehaviour
                 yield return SceneFader.Instance.FadeIn(FadeColor.White);
             }
 
-            // ロック解除 (EndSceneChange)
+            // ロック解除
             if (SceneDataTransfer.Instance != null)
             {
                 SceneDataTransfer.Instance.EndSceneChange();
@@ -219,7 +235,16 @@ public class TimeTravelController : MonoBehaviour
             // 衝突判定後の処理 (キャンセルロジック)
             if (hitCollider != null)
             {
-                Debug.LogWarning($"タイムトラベル中止: 復帰位置({nextPlayerPosition})に障害物('{hitCollider.gameObject.name}')があります。");
+                Debug.LogWarning($"タイムトラベル中止: 復帰位置に障害物('{hitCollider.gameObject.name}')があります。");
+
+                // ★★★ 失敗SE再生処理 ★★★
+                if (audioSource != null && timeTravelFailureSE != null)
+                {
+                    // 成功SEを中断し、失敗SEを鳴らす
+                    audioSource.Stop();
+                    audioSource.PlayOneShot(timeTravelFailureSE);
+                }
+                // ★★★★★★★★★★★★★★★★★
 
                 // アクティブシーンを元に戻す
                 SceneManager.SetActiveScene(currentScene);

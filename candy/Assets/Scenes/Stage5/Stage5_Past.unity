@@ -2038,6 +2038,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pastSceneName: Stage5_Past
   presentSceneName: Stage5_now
+  timeTravelSuccessSE: {fileID: 8300000, guid: 96be8c2669e81904295a083b8fde650c, type: 3}
+  timeTravelFailureSE: {fileID: 8300000, guid: 107d98abc8365334f85326c8bbfb6442, type: 3}
 --- !u!4 &765181283
 Transform:
   m_ObjectHideFlags: 0

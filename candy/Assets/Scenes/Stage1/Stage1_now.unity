@@ -165,6 +165,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pastSceneName: Stage1_Past
   presentSceneName: Stage1_now
+  timeTravelSuccessSE: {fileID: 8300000, guid: 96be8c2669e81904295a083b8fde650c, type: 3}
+  timeTravelFailureSE: {fileID: 8300000, guid: 107d98abc8365334f85326c8bbfb6442, type: 3}
 --- !u!1 &363276559
 GameObject:
   m_ObjectHideFlags: 0
@@ -598,7 +600,7 @@ MonoBehaviour:
   m_text: kt
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 32203a698755da248bc1cf902659dcca, type: 2}
-  m_sharedMaterial: {fileID: 3442773304277787970, guid: 32203a698755da248bc1cf902659dcca, type: 2}
+  m_sharedMaterial: {fileID: 7613392200097102465, guid: 32203a698755da248bc1cf902659dcca, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -777,7 +779,7 @@ MonoBehaviour:
   m_text: New Text
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 32203a698755da248bc1cf902659dcca, type: 2}
-  m_sharedMaterial: {fileID: 3442773304277787970, guid: 32203a698755da248bc1cf902659dcca, type: 2}
+  m_sharedMaterial: {fileID: 7613392200097102465, guid: 32203a698755da248bc1cf902659dcca, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2231,9 +2233,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thisStageIndex: 1
-  finalStageIndex: 5
-  stageGoalSceneName: goal
-  gameClearSceneName: clear
 --- !u!1 &1700991425
 GameObject:
   m_ObjectHideFlags: 0

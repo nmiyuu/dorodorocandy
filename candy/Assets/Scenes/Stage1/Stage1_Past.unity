@@ -831,6 +831,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pastSceneName: Stage1_Past
   presentSceneName: Stage1_now
+  timeTravelSuccessSE: {fileID: 8300000, guid: 96be8c2669e81904295a083b8fde650c, type: 3}
+  timeTravelFailureSE: {fileID: 8300000, guid: 107d98abc8365334f85326c8bbfb6442, type: 3}
 --- !u!4 &391466046
 Transform:
   m_ObjectHideFlags: 0
@@ -1216,7 +1218,7 @@ TilemapRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
+  m_ChunkCullingBounds: {x: 0.0625, y: 0.078125, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0

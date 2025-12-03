@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/op.unity
     guid: 5d632232e481eee428ce1ef7fb5c635f
   - enabled: 1
@@ -47,10 +47,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/clear.unity
     guid: d3877599a37045643919c7df5bf96f51
-  - enabled: 1
+  - enabled: 0
     path: Assets/Teranishi/Scripts/Scene/test/test_2.unity
     guid: 1a6a1af9a5eb0c54784f4f5d42374a68
-  - enabled: 1
+  - enabled: 0
     path: Assets/Teranishi/Scripts/Scene/test/test_1.unity
     guid: 3844618fc442fdd428813e2784d1f76f
   m_configObjects: {}
