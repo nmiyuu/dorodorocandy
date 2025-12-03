@@ -1,16 +1,12 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
-using System.IO;
 
 public class Navi51 : MonoBehaviour
 {
     public TMP_Text tmpText;
-    public float typeSpeed = 0.05f; // 1文字の表示間隔（秒）
+    public float typeSpeed = 0.05f;
     public GameObject imageObject;
-
-    // 表示済みフラグを保存するファイルパス
-    private string flagPath;
 
     private string[] messages = {
         "穴を埋める石が岩や木に囲まれて取れなくなってるね",
@@ -21,20 +17,19 @@ public class Navi51 : MonoBehaviour
     private int index = 0;
     private bool isTyping = false;
 
+    // ▼ ゲーム中のみ保持されるフラグ
+    private static bool navi51ShownThisGame = false;
+
     void Start()
     {
-        //File.Delete(Path.Combine(Application.persistentDataPath, "navi51_shown.txt"));
-
         if (tmpText == null)
         {
             Debug.LogError("tmpText がインスペクタで割り当てられていません");
             return;
         }
 
-        flagPath = Path.Combine(Application.persistentDataPath, "navi51_shown.txt");
-
-        // すでに表示済みなら即終了
-        if (File.Exists(flagPath))
+        // すでにこのゲーム中に表示済みなら非表示にして終了
+        if (navi51ShownThisGame)
         {
             tmpText.text = "";
             if (imageObject != null) imageObject.SetActive(false);
@@ -42,7 +37,7 @@ public class Navi51 : MonoBehaviour
             return;
         }
 
-        // 表示する場合
+        // 初回表示
         if (imageObject != null) imageObject.SetActive(true);
         StartCoroutine(TypeText(messages[index]));
     }
@@ -62,10 +57,11 @@ public class Navi51 : MonoBehaviour
             else
             {
                 tmpText.text = "";
-                if (imageObject != null) imageObject.SetActive(false);
+                if (imageObject != null)
+                    imageObject.SetActive(false);
 
-                // 表示済みフラグをファイルに保存
-                File.WriteAllText(flagPath, "shown");
+                // ▼ このゲーム中は再表示しない
+                navi51ShownThisGame = true;
             }
         }
     }
