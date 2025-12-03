@@ -323,7 +323,7 @@ TilemapRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
+  m_ChunkCullingBounds: {x: 0.0625, y: 0.078125, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
@@ -572,8 +572,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -250.47, y: -334}
-  m_SizeDelta: {x: 550.6118, y: 88.9287}
+  m_AnchoredPosition: {x: -301.67, y: -361.22}
+  m_SizeDelta: {x: 812.31, y: 125.17}
   m_Pivot: {x: 0.14443283, y: 0.5}
 --- !u!114 &559720573
 MonoBehaviour:
@@ -595,7 +595,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: kt
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 32203a698755da248bc1cf902659dcca, type: 2}
   m_sharedMaterial: {fileID: 3442773304277787970, guid: 32203a698755da248bc1cf902659dcca, type: 2}
@@ -622,8 +622,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -737,7 +737,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -259, y: -252.6}
+  m_AnchoredPosition: {x: -303, y: -272}
   m_SizeDelta: {x: 200, y: 53.88}
   m_Pivot: {x: 0.49999997, y: 0.5}
 --- !u!114 &626715991
@@ -801,8 +801,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2231,6 +2231,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thisStageIndex: 1
+  finalStageIndex: 5
+  stageGoalSceneName: goal
+  gameClearSceneName: clear
 --- !u!1 &1700991425
 GameObject:
   m_ObjectHideFlags: 0
