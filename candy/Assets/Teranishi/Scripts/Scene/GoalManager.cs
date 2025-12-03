@@ -1,51 +1,67 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GoalManager : MonoBehaviour
 {
-    [Header("ƒXƒe[ƒWİ’è")]
-    [Tooltip("ƒXƒe[ƒW–¼‚ÌƒvƒŒƒtƒBƒbƒNƒX (—á: 'Stage')")]
+    // --- è¨­å®š ---
+    [Header("ã‚¹ãƒ†ãƒ¼ã‚¸è¨­å®š")]
     public string stageNamePrefix = "Stage";
 
-    [Tooltip("‘SƒXƒe[ƒW‚Ì”")]
-    public int totalStageCount = 5;
+    // â˜…ä¿®æ­£ç®‡æ‰€: æœ€çµ‚ã‚¹ãƒ†ãƒ¼ã‚¸ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’è¨­å®š
+    public int finalStageIndex = 5;
 
-    [Tooltip("ƒ^ƒCƒgƒ‹ƒV[ƒ“–¼")]
+    [Tooltip("ã‚¿ã‚¤ãƒˆãƒ«ã‚·ãƒ¼ãƒ³å")]
     public string titleSceneName = "title";
+
+    // â˜…è¿½åŠ : ã‚²ãƒ¼ãƒ ã‚¯ãƒªã‚¢ã‚·ãƒ¼ãƒ³å
+    public string gameClearSceneName = "clear";
+
+    // --- ãƒ¡ã‚½ãƒƒãƒ‰ ---
 
     public void OnNextStageButton()
     {
-        if (SceneDataTransfer.Instance == null)
+        if (SceneDataTransfer.Instance == null || SceneFader.Instance == null)
         {
-            Debug.LogError("SceneDataTransfer ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+            Debug.LogError("SceneDataTransfer ã¾ãŸã¯ SceneFader ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
             return;
         }
 
-        // 1. Ÿ‚Éi‚Ş‚×‚«ƒXƒe[ƒWƒCƒ“ƒfƒbƒNƒX‚ğŒvZ
+        // 1. æ¬¡ã«é€²ã‚€ã¹ãã‚¹ãƒ†ãƒ¼ã‚¸ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’è¨ˆç®—
         int lastCleared = SceneDataTransfer.Instance.lastClearedStageIndex;
-        int nextStageIndex = lastCleared + 1;
+        int nextStageIndex = lastCleared + 1; // ã‚¹ãƒ†ãƒ¼ã‚¸5ã‚’ã‚¯ãƒªã‚¢ã—ãŸãªã‚‰ nextStageIndex ã¯ 6 ã«ãªã‚‹
 
-        if (nextStageIndex > totalStageCount)
+        // 2. ã‚²ãƒ¼ãƒ ã‚¯ãƒªã‚¢åˆ¤å®š 
+        if (lastCleared >= finalStageIndex) // lastClearedãŒ5ä»¥ä¸Šãªã‚‰ã‚²ãƒ¼ãƒ ã‚¯ãƒªã‚¢
         {
+            Debug.Log("ğŸ‰ å…¨ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’ã‚¯ãƒªã‚¢ã—ã¾ã—ãŸã€‚ã‚¯ãƒªã‚¢ã‚·ãƒ¼ãƒ³ã¸é·ç§»ã—ã¾ã™ã€‚");
 
-            Debug.Log("‘SƒXƒe[ƒW‚ğƒNƒŠƒA‚µ‚Ü‚µ‚½B");
-
-            SceneManager.LoadScene("clear");
+            // ã‚¯ãƒªã‚¢ã‚·ãƒ¼ãƒ³ã¸é·ç§» (é»’ãƒ•ã‚§ãƒ¼ãƒ‰)
+            SceneFader.Instance.LoadSceneWithFade(gameClearSceneName, FadeColor.Black);
+            return; // ã“ã“ã§å‡¦ç†ã‚’çµ‚äº†
         }
 
-        // 2. Ÿ‚ÌƒV[ƒ“–¼‚ğ 'Stage[N]_now' ‚ÌŒ`®‚Å¶¬
+        // 3. é€šå¸¸ã®æ¬¡ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã¸ã®é·ç§»
+
+        // æ¬¡ã®ã‚·ãƒ¼ãƒ³åã‚’ 'Stage[N]_now' ã®å½¢å¼ã§ç”Ÿæˆ
         string nextSceneName = stageNamePrefix + nextStageIndex + "_now";
 
-        // 3. Ÿ‚ÌƒXƒe[ƒW‚Ö‘JˆÚ (t_goal.cs‚ÅŠù‚ÉClearPlayerState‚ÍÀsÏ‚İ)
-        Debug.Log($"Ÿ‚ÌƒXƒe[ƒW: {nextSceneName} ‚ÉˆÚ“®‚µ‚Ü‚·B");
-        SceneManager.LoadScene(nextSceneName);
+        // æ¬¡ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã¸é·ç§» (é»’ãƒ•ã‚§ãƒ¼ãƒ‰)
+        Debug.Log($"æ¬¡ã®ã‚¹ãƒ†ãƒ¼ã‚¸: {nextSceneName} ã«ç§»å‹•ã—ã¾ã™ã€‚");
+        SceneFader.Instance.LoadSceneWithFade(nextSceneName, FadeColor.Black);
     }
 
     public void OnTitleButton()
     {
-        // Š®‘S‚ÉƒŠƒZƒbƒg‚µ‚½‚¢ê‡‚ÍˆÈ‰º‚ğg—p
-        // if (SceneDataTransfer.Instance != null) SceneDataTransfer.Instance.FullReset(); 
+        if (SceneFader.Instance == null)
+        {
+            SceneManager.LoadScene(titleSceneName);
+            return;
+        }
 
-        SceneManager.LoadScene(titleSceneName);
+        SceneFader.Instance.LoadSceneWithFade(titleSceneName, FadeColor.Black);
+        if (SceneDataTransfer.Instance != null)
+        {
+            SceneDataTransfer.Instance.FullGameReset();
+        }
     }
 }

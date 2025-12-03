@@ -1580,7 +1580,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0c5a07a12c3dc944bd3840b5bd624e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  switchID: 2
+  switchID: stage4_2
   targetLayerMask:
     serializedVersion: 2
     m_Bits: 8
@@ -1973,9 +1973,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thisStageIndex: 4
-  finalStageIndex: 5
-  stageGoalSceneName: goal
-  gameClearSceneName: clear
 --- !u!1001 &1138313431
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2031,6 +2028,10 @@ PrefabInstance:
     - target: {fileID: 3478618938926450718, guid: 1476cc855b215dd42bc47ff7289d1f39, type: 3}
       propertyPath: blockID
       value: Stage4_Rock3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7823646363508076236, guid: 1476cc855b215dd42bc47ff7289d1f39, type: 3}
+      propertyPath: m_BodyType
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3179,7 +3180,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5393385439607249204, guid: db03fd4884d90cb4c976fd75dc91d1d6, type: 3}
       propertyPath: controllingSwitchID
-      value: 2
+      value: stage4_2
       objectReference: {fileID: 0}
     - target: {fileID: 8224251680096106954, guid: db03fd4884d90cb4c976fd75dc91d1d6, type: 3}
       propertyPath: m_Name

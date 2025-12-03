@@ -3,63 +3,41 @@ using UnityEngine.SceneManagement;
 
 public class t_goal : MonoBehaviour
 {
-    // ★追加: 最終ステージのインデックスを定義
     [Header("ステージ設定")]
     [Tooltip("このステージのインデックス（例：ステージ1なら1、ステージ2なら2）")]
-    public int thisStageIndex = 1;
-
-    [Tooltip("全ステージの数 (この値以上でゲームクリア)")]
-    public int finalStageIndex = 5;
-
-    [Tooltip("ステージクリア時の画面名（リザルト画面など）")]
-    public string stageGoalSceneName = "goal";
-
-    [Tooltip("全ゲームクリア時の画面名")]
-    public string gameClearSceneName = "clear";
-
-    // Start()とUpdate()は変更なし
+    public int thisStageIndex = 1; // ステージ5では、この値を 5 に設定する
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // 1. プレイヤーかどうかの判定
         if (collision.gameObject.GetComponent<t_player>())
         {
-            if (SceneDataTransfer.Instance == null || SceneFader.Instance == null)
+            if (SceneDataTransfer.Instance != null && SceneFader.Instance != null)
             {
-                Debug.LogError("SceneDataTransfer または SceneFader が見つかりません。ゴール処理を中止します。");
-                return;
-            }
+                if (SceneDataTransfer.Instance.isChangingScene) return;
 
-            // 2. シーン遷移中（既にフェードアウト開始済みなど）は処理しない
-            if (SceneDataTransfer.Instance.isChangingScene)
-            {
-                return;
-            }
+                // 1. クリア時の移動回数を一時保存
+                SceneDataTransfer.Instance.movesOnClear = SceneDataTransfer.Instance.currentStageMoveCount;
 
-            // --- データ転送処理 ---
+                // 2. ステージクリアを記録
+                SceneDataTransfer.Instance.RecordStageClear(thisStageIndex);
 
-            // クリア時の移動回数を一時保存 (ゴール画面へ渡す)
-            SceneDataTransfer.Instance.movesOnClear = SceneDataTransfer.Instance.currentStageMoveCount;
+                // ★★★ デバッグコード: 記録後の値をコンソールに出力して確認 ★★★
+                Debug.Log($"[t_goal DEBUG] ステージ{thisStageIndex}をクリアしました。");
+                if (SceneDataTransfer.Instance.lastClearedStageIndex >= thisStageIndex)
+                {
+                    Debug.Log($"[t_goal DEBUG] ✅ 記録成功: lastClearedStageIndex は {SceneDataTransfer.Instance.lastClearedStageIndex} に更新されました。");
+                }
+                else
+                {
+                    Debug.LogError($"[t_goal DEBUG] ❌ 記録失敗: lastClearedStageIndex は {SceneDataTransfer.Instance.lastClearedStageIndex} のままです。");
+                }
+                // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
-            // ステージクリアを記録
-            SceneDataTransfer.Instance.RecordStageClear(thisStageIndex);
+                // 3. 次のステージへ行く準備として、プレイヤー状態をリセット
+                SceneDataTransfer.Instance.ClearPlayerState();
 
-            // 次のステージへ行く準備として、プレイヤー位置、ブロック、そして移動回数（currentStageMoveCount）をリセット
-            SceneDataTransfer.Instance.ClearPlayerState();
-
-            // --- シーン遷移の判定と実行 ---
-
-            if (thisStageIndex >= finalStageIndex)
-            {
-                // 最終ステージの場合: ゲームクリアシーンへ
-                Debug.Log($"🎉 ステージ{thisStageIndex}をクリア！ゲームクリアシーン({gameClearSceneName})へ遷移します。");
-                SceneFader.Instance.LoadSceneWithFade(gameClearSceneName, FadeColor.Black);
-            }
-            else
-            {
-                // 最終ステージでない場合: ステージゴール画面へ
-                Debug.Log($"ステージ{thisStageIndex}をクリア。ゴール画面({stageGoalSceneName})へ遷移します。");
-                SceneFader.Instance.LoadSceneWithFade(stageGoalSceneName, FadeColor.Black);
+                // 4. ゴールシーンへ遷移
+                SceneFader.Instance.LoadSceneWithFade("goal", FadeColor.Black);
             }
         }
     }
