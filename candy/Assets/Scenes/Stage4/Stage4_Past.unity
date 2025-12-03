@@ -2942,6 +2942,7 @@ MonoBehaviour:
     m_Bits: 192
   spriteRenderer: {fileID: 0}
   activatedSprite: {fileID: 0}
+  pressSE: {fileID: 8300000, guid: fb61aeac023d1164bacb5c77835f9f0e, type: 3}
 --- !u!1 &1187632254
 GameObject:
   m_ObjectHideFlags: 0
