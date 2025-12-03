@@ -1,14 +1,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ClearSceneController : MonoBehaviour
+public class ClearManager : MonoBehaviour
 {
     void Update()
     {
         // Enterキー（Return）を押したらタイトルへ戻る
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            SceneManager.LoadScene("TitleScene"); // ←タイトルシーン名に変更
+            SceneManager.LoadScene("title"); // ←タイトルシーン名に変更
         }
     }
 }
