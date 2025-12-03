@@ -184,11 +184,22 @@ public class SceneDataTransfer : MonoBehaviour
 
     public void SoftReset()
     {
-        // ソフトリセット: 位置とブロック状態のみリセットし、移動回数は維持
+        // --- プレイヤーの状態をリセット ---
         playerPositionToLoad = Vector3.zero;
         playerDirectionIndexToLoad = 0;
+
+        // --- ブロックの状態をリセット ---
         pastBlockStates.Clear();
-        Debug.Log("[SceneDataTransfer] ソフトリセットを実行しました (位置/ブロックリセット)。");
+
+        // --- ステージ内ギミック状態リセット ---
+        burnedObjectIDs.Clear();      // 燃やしたオブジェクトを元に戻す
+        vanishedItemIDs.Clear();      // 一時的に消えたアイテムを戻す
+        activatedSwitchIDs.Clear();   // 押されたスイッチを元に戻す
+
+        // マッチ棒をステージ内アイテム扱いにしたい場合はリセットする
+         hasMatchStick = false;
+
+        Debug.Log("[SceneDataTransfer] ソフトリセットを実行しました (位置/ギミック/ブロックリセット、移動回数維持)。");
     }
 
     public void ClearPlayerState()

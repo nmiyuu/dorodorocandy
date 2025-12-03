@@ -1,38 +1,41 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class t_PlayerItemController : MonoBehaviour
 {
-    [Header("ƒAƒCƒeƒ€g—pİ’è")]
-    [Tooltip("ƒAƒCƒeƒ€g—p‚Ì”»’è‹——£")]
+    [Header("ã‚¢ã‚¤ãƒ†ãƒ ä½¿ç”¨è¨­å®š")]
     public float interactionDistance = 1.0f;
-    [Tooltip("”R‚â‚·‘ÎÛ‚ª‚ ‚éƒŒƒCƒ„[")]
     public LayerMask burnableLayer;
 
-    // t_player ‚Æ t_pl ‚Ö‚ÌQÆ‚ğŠi”[
+    [Header("ã‚µã‚¦ãƒ³ãƒ‰è¨­å®š")]
+    public AudioClip burnSE;               // â† è¿½åŠ ï¼ˆç‡ƒãˆã‚‹åŠ¹æœéŸ³ï¼‰
+    private AudioSource audioSource;       // â† è¿½åŠ ï¼ˆSE ã‚’é³´ã‚‰ã™ AudioSourceï¼‰
+
     private t_player playerController;
-    private t_pl playerAnimator; // t_pl ‚Ì CurrentDirectionIndex ‚ğ—˜—p‚·‚é‚½‚ß
+    private t_pl playerAnimator;
 
     void Start()
     {
         playerController = GetComponent<t_player>();
         if (playerController != null)
         {
-            // t_player ƒXƒNƒŠƒvƒg‚Ì public t_pl playerAnimScript; ‚ğ‰î‚µ‚ÄQÆ‚ğæ“¾
             playerAnimator = playerController.playerAnimScript;
         }
 
         if (playerController == null || playerAnimator == null)
         {
-            Debug.LogError("[PlayerItemController] t_player ‚Ü‚½‚Í t_pl ‚ÌQÆ‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñBPlayerItemController‚ğ–³Œø‰»‚µ‚Ü‚·B");
+            Debug.LogError("[PlayerItemController] t_player ã¾ãŸã¯ t_pl ã®å‚ç…§ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚");
             enabled = false;
         }
+
+        // ğŸ”Š AudioSource ã‚’å–å¾—ï¼ˆãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã« AudioSource ãŒå¿…è¦ï¼‰
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
     {
-        // yC³zZƒL[‚ª‰Ÿ‚³‚ê‚½‚çAƒAƒCƒeƒ€g—p‚ğ‚İ‚é
-        if (Keyboard.current != null && Keyboard.current.zKey.wasPressedThisFrame)
+        // Enterã‚­ãƒ¼ã§ã‚¢ã‚¤ãƒ†ãƒ ä½¿ç”¨
+        if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame)
         {
             TryUseMatchStick();
         }
@@ -42,18 +45,15 @@ public class t_PlayerItemController : MonoBehaviour
     {
         if (SceneDataTransfer.Instance == null) return;
 
-        // ƒ}ƒbƒ`–_‚ğ‚Á‚Ä‚¢‚È‚¢ê‡‚Í‰½‚à‚µ‚È‚¢
         if (!SceneDataTransfer.Instance.hasMatchStick)
         {
-            Debug.Log("[PlayerItemController] ƒ}ƒbƒ`–_‚ğ‚Á‚Ä‚¢‚Ü‚¹‚ñB");
+            Debug.Log("[PlayerItemController] ãƒãƒƒãƒæ£’ã‚’æŒã£ã¦ã„ã¾ã›ã‚“ã€‚");
             return;
         }
 
-        // ƒvƒŒƒCƒ„[‚ÌŒ»İ’n‚ÆŒü‚«‚ğæ“¾
         Vector3 playerPos = transform.position;
         Vector3 playerForward = GetPlayerForwardDirection();
 
-        // ‘O•û‚É‚ ‚é BurnableObject ‚ğƒŒƒCƒLƒƒƒXƒg‚Åƒ`ƒFƒbƒN
         RaycastHit2D hit = Physics2D.Raycast(playerPos, playerForward, interactionDistance, burnableLayer);
 
         if (hit.collider != null)
@@ -62,33 +62,36 @@ public class t_PlayerItemController : MonoBehaviour
 
             if (burnObject != null)
             {
-                // ”RÄˆ—‚ğÀs
+                // ç‡ƒç„¼å‡¦ç†
                 burnObject.Burn();
 
-                // ƒ}ƒbƒ`–_‚ğÁ”ï‚·‚é (Á”ïŒã‚Í hasMatchStick = false ‚É‚·‚é)
+                // ğŸ”¥ã€è¿½åŠ ã€‘ç‡ƒç„¼SEã‚’é³´ã‚‰ã™
+                if (audioSource != null && burnSE != null)
+                {
+                    audioSource.PlayOneShot(burnSE);
+                }
+
+                // ãƒãƒƒãƒæ£’æ¶ˆè²»
                 SceneDataTransfer.Instance.hasMatchStick = false;
 
-                Debug.Log("[PlayerItemController] ƒ}ƒbƒ`–_‚ğg—p‚µAƒIƒuƒWƒFƒNƒg‚ğ”R‚â‚µ‚Ü‚µ‚½I");
+                Debug.Log("[PlayerItemController] ãƒãƒƒãƒæ£’ã‚’ä½¿ç”¨ã—ã€ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç‡ƒã‚„ã—ã¾ã—ãŸï¼");
             }
         }
     }
 
-    // t_plƒXƒNƒŠƒvƒg‚©‚çŒ»İ‚ÌŒü‚«‚ğæ“¾‚µAVector3‚É•ÏŠ·‚·‚é
     private Vector3 GetPlayerForwardDirection()
     {
-        if (playerAnimator == null) return Vector3.up; // QÆ‚ª‚È‚¢ê‡‚ÍˆÀ‘S‚Ì‚½‚ßãŒü‚«‚ğ•Ô‚·
+        if (playerAnimator == null) return Vector3.up;
 
-        // yC³zt_pl‚ÌŒöŠJƒvƒƒpƒeƒB CurrentDirectionIndex ‚ğg—p‚µ‚ÄA³Šm‚ÈŒü‚«‚ğæ“¾
         int dirIndex = playerAnimator.CurrentDirectionIndex;
 
-        // t_player.cs‚Ì•ûŒüƒCƒ“ƒfƒbƒNƒX‚É]‚Á‚Ä•ÏŠ·‚·‚é (1:‰º, 2:ã, 3:‰E, 4:¶)
         switch (dirIndex)
         {
             case 1: return Vector3.down;
             case 2: return Vector3.up;
             case 3: return Vector3.right;
             case 4: return Vector3.left;
-            default: return Vector3.up; // ƒfƒtƒHƒ‹ƒg‚Íã
+            default: return Vector3.up;
         }
     }
 }

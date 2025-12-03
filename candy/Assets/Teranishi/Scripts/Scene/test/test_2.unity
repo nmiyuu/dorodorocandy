@@ -473,11 +473,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5543173357386406543, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8.5
+      value: -6.51
       objectReference: {fileID: 0}
     - target: {fileID: 5543173357386406543, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.53
+      value: 1.54
       objectReference: {fileID: 0}
     - target: {fileID: 5543173357386406543, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3250,6 +3250,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pastSceneName: test_2
   presentSceneName: test_1
+  timeTravelSuccessSE: {fileID: 0}
+  timeTravelFailureSE: {fileID: 0}
 --- !u!4 &1237319444
 Transform:
   m_ObjectHideFlags: 0
