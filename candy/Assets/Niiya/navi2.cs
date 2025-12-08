@@ -3,8 +3,9 @@ using TMPro;
 
 public class navi2 : MonoBehaviour
 {
-    public TMP_Text tmpText;
+    public TMP_Text tmpText;      // 表示するテキスト
     public GameObject imageObject;
+    public navi naviInstance;     // Inspectorでnaviオブジェクトを割り当てる
 
     string[] messages = {
         "？？",
@@ -14,27 +15,39 @@ public class navi2 : MonoBehaviour
     };
 
     int index = 0;
+    bool canPressEnter = false;
 
     void Start()
     {
-        // すでに終了していれば非表示
-        if (PlayerPrefs.GetInt("Navi2Shown", 0) == 1)
-        {
-            tmpText.text = "";
-            if (imageObject != null) imageObject.SetActive(false);
-            this.enabled = false;
-            return;
-        }
-
         tmpText.text = messages[index];
+
+        if (naviInstance != null)
+        {
+            naviInstance.OnTypingFinished += OnNaviTypingFinished;
+        }
+        else
+        {
+            Debug.LogError("naviInstance が Inspector に割り当てられていません！");
+        }
+    }
+
+    void OnNaviTypingFinished(int naviIndex)
+    {
+        // 同じ行がタイピング完了したら Enter を有効
+        if (naviIndex == index)
+        {
+            canPressEnter = true;
+        }
     }
 
     void Update()
     {
+        if (!canPressEnter) return;
 
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             index++;
+            canPressEnter = false; // 次の行は navi の完了待ち
 
             if (index < messages.Length)
             {
@@ -42,13 +55,10 @@ public class navi2 : MonoBehaviour
             }
             else
             {
-                tmpText.text = ""; // 全部終わったら消す 
-                // ★ 画像オブジェクトも非表示にする
-               if (imageObject != null) imageObject.SetActive(false); // ★ 一度表示したことを記録
-               PlayerPrefs.SetInt("Navi2Shown", 1);
+                tmpText.text = "";
+                if (imageObject != null) imageObject.SetActive(false);
+                PlayerPrefs.SetInt("Navi2Shown", 1);
             }
         }
     }
-
-   
 }
