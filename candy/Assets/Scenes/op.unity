@@ -303,15 +303,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slides:
-  - image: {fileID: -3437022533778657886, guid: 01f9ebfdbbb51a6459c4e85fd4836d74, type: 3}
+  - image: {fileID: -3790531996481523250, guid: bbffe5f632404d7438c119bb216e6c9a, type: 3}
     duration: 3
     seClip: {fileID: 0}
     wipeDuration: 3
-  - image: {fileID: 25250206797975698, guid: 01ecbbb07c02cd84e982c7f51df424b9, type: 3}
+  - image: {fileID: 5455088505280642101, guid: 288c6c2b1aabf96428f3b6f5a345a543, type: 3}
     duration: 3
     seClip: {fileID: 0}
     wipeDuration: 3
-  - image: {fileID: 7733935467251439777, guid: 96d948b0f00894747972143d32a35b82, type: 3}
+  - image: {fileID: -7563825463580876206, guid: c15190914cfbba84ea95c3a3db5b3068, type: 3}
     duration: 3
     seClip: {fileID: 0}
     wipeDuration: 2
