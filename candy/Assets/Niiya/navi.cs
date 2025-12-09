@@ -4,34 +4,41 @@ using System.Collections;
 
 public class navi : MonoBehaviour
 {
-    public TMP_Text tmpText;
-    public float typeSpeed = 0.05f; // 1文字の表示間隔（秒） 
-    // ここに最後に消したい画像オブジェクトを割り当てる
+    public TMP_Text tmpText;      // 表示するテキスト
     public GameObject imageObject;
+    public float typeSpeed = 0.05f;
+
     string[] messages = {
         "初めまして\n僕はナビ！君のお助けをするよ",
         "ここは地盤沈下で穴ができてるみたいだね！",
         "過去に戻ればどうにかできるかも！",
-        "SPACEキーを押して\n時空移動装置を使ってみよう！" };
+        "SPACEキーを押して\n時空移動装置を使ってみよう！"
+    };
+
     int index = 0;
     bool isTyping = false;
 
+    // ★ タイピング完了イベント
+    public delegate void TypingFinishedHandler(int currentIndex);
+    public event TypingFinishedHandler OnTypingFinished;
+
     void Start()
     {
-        // ▼ すでに表示済みなら即非表示にして終了
         if (PlayerPrefs.GetInt("NaviShown", 0) == 1)
         {
             tmpText.text = "";
-            if (imageObject != null)
-                imageObject.SetActive(false); // このスクリプトを停止（Update も動かさない）
-            this.enabled = false; return;
+            if (imageObject != null) imageObject.SetActive(false);
+            this.enabled = false;
+            return;
         }
-        if (tmpText == null) Debug.LogError("tmpText がインスペクタで割り当てられていません");
+
         StartCoroutine(TypeText(messages[index]));
     }
+
     void Update()
-    { // タイピング中はEnter受付しない
-        if (isTyping) return; // Enter（Return）で次の文へ
+    {
+        if (isTyping) return;
+
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             index++;
@@ -41,25 +48,25 @@ public class navi : MonoBehaviour
             }
             else
             {
-                tmpText.text = ""; // 全て終わったら消す 
-                                   // ★ 画像オブジェクトも非表示にする
+                tmpText.text = "";
                 if (imageObject != null) imageObject.SetActive(false);
-
-                // ★ 一度表示したことを記録
                 PlayerPrefs.SetInt("NaviShown", 1);
             }
         }
     }
+
     IEnumerator TypeText(string message)
     {
         isTyping = true;
-        yield return null; // ▼ TMP の初期化遅れ対策（最重要）
-        tmpText.ForceMeshUpdate(); tmpText.text = "";
+        tmpText.text = "";
         foreach (char c in message)
         {
             tmpText.text += c;
             yield return new WaitForSeconds(typeSpeed);
         }
         isTyping = false;
+
+        // ★ 完了通知
+        OnTypingFinished?.Invoke(index);
     }
 }
