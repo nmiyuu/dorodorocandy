@@ -304,15 +304,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slides:
   - image: {fileID: -3790531996481523250, guid: bbffe5f632404d7438c119bb216e6c9a, type: 3}
-    duration: 3
+    duration: 4
     seClip: {fileID: 0}
     wipeDuration: 3
   - image: {fileID: 5455088505280642101, guid: 288c6c2b1aabf96428f3b6f5a345a543, type: 3}
-    duration: 3
+    duration: 5
     seClip: {fileID: 0}
     wipeDuration: 3
   - image: {fileID: -7563825463580876206, guid: c15190914cfbba84ea95c3a3db5b3068, type: 3}
-    duration: 3
+    duration: 5
     seClip: {fileID: 0}
     wipeDuration: 2
   nextSceneName: title
