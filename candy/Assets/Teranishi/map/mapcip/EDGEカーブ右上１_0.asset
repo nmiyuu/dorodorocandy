@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: "EDGE\u30AB\u30FC\u30D6\u53F3\u4E0A\uFF11_0"
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 2622783122161428148, guid: 150d0b9767be3b1458acdf87a0a3595b, type: 3}
+  m_Sprite: {fileID: 2622783122161428148, guid: 1b7d21f80c54c4043afb4eedb893d1d7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

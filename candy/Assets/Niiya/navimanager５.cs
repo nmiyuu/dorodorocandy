@@ -16,7 +16,7 @@ public class NaviManager5 : MonoBehaviour
     public string[] naviMessages = {
         "あれ？穴を埋める石が岩や木に囲まれて取れなくなってるね",
         "左上にマッチが落ちてるみたいだよ",
-        "Zキーを押すとマッチを使って木を燃やせるよ！"
+        "エンターを押すとマッチを使って木を燃やせるよ！"
     };
 
     public string[] navi2Messages = {

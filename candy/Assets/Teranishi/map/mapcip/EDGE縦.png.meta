@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f7455e62d63fb5d43b77cdc4bb4599b1
+guid: ef4321426c44fa2448efa9b0ff9ad979
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1520497520998032370
-    second: "EDGE\u9053\u5DE6_0"
+      213: -1087236715633875625
+    second: "EDGE\u7E26_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 60
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "EDGE\u9053\u5DE6_0"
+      name: "EDGE\u7E26_0"
       rect:
         serializedVersion: 2
-        x: 0
+        x: 23
         y: 0
-        width: 63
+        width: 18
         height: 64
-      alignment: 9
-      pivot: {x: 0.50116813, y: 0.50597394}
+      alignment: 0
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e0cdc038f8b16eae0800000000000000
-      internalID: -1520497520998032370
+      spriteID: 75561e1b7fb59e0f0800000000000000
+      internalID: -1087236715633875625
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 2bac5bc019ab4314d90b1ff466b6694d
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "EDGE\u9053\u5DE6_0": -1520497520998032370
+      "EDGE\u7E26_0": -1087236715633875625
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
