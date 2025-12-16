@@ -303,16 +303,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slides:
-  - image: {fileID: -3790531996481523250, guid: bbffe5f632404d7438c119bb216e6c9a, type: 3}
-    duration: 3
+  - image: {fileID: 4945239985283531135, guid: d8735074d36f7974989ca4dbb57b39cc, type: 3}
+    duration: 4
     seClip: {fileID: 0}
     wipeDuration: 3
-  - image: {fileID: 5455088505280642101, guid: 288c6c2b1aabf96428f3b6f5a345a543, type: 3}
-    duration: 3
+  - image: {fileID: -8269221487998706690, guid: 780d3ad8039acd74080c49a7c63d5ddc, type: 3}
+    duration: 8
     seClip: {fileID: 0}
     wipeDuration: 3
+  - image: {fileID: -5015517546404145680, guid: 22be738f3589f8447b3c2dc0e8bc8d80, type: 3}
+    duration: 8
+    seClip: {fileID: 0}
+    wipeDuration: 2
   - image: {fileID: -7563825463580876206, guid: c15190914cfbba84ea95c3a3db5b3068, type: 3}
-    duration: 3
+    duration: 8
     seClip: {fileID: 0}
     wipeDuration: 2
   nextSceneName: title
