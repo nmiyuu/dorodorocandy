@@ -1,34 +1,73 @@
-using UnityEngine;
+ï»¿using UnityEngine;
+using System.Collections;
 
 public class BurnableObject : MonoBehaviour
 {
-    [Tooltip("‚±‚ÌƒIƒuƒWƒFƒNƒg‚ğ“Á’è‚·‚é‚½‚ß‚Ìƒ†ƒj[ƒNID (—á: STAGE1_VINE_A)")]
+    [Tooltip("ã“ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç‰¹å®šã™ã‚‹ãŸã‚ã®ãƒ¦ãƒ‹ãƒ¼ã‚¯ID")]
     public string objectID;
+
+    [Header("ç‚ã®æ¼”å‡ºè¨­å®š")]
+    public Sprite fireSprite;      // ã‚ãªãŸãŒæã„ãŸç‚ã®ç”»åƒ
+    public float burnDuration = 1.5f; // æ¶ˆãˆã‚‹ã¾ã§ã®æ™‚é–“
+
+    private SpriteRenderer spriteRenderer;
+    private SpriteMask spriteMask;
+    private bool isBurning = false;
+
+    void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        // å­è¦ç´ ã«SpriteMaskãŒã‚ã‚‹ã‹ç¢ºèªã€ãªã‘ã‚Œã°è¿½åŠ 
+        spriteMask = GetComponentInChildren<SpriteMask>();
+    }
 
     void Start()
     {
-        // ƒV[ƒ“ƒ[ƒhAŠù‚É”R‚â‚³‚ê‚½‹L˜^‚ª‚ ‚é‚©ƒ`ƒFƒbƒN‚·‚é
         if (SceneDataTransfer.Instance != null && SceneDataTransfer.Instance.IsObjectBurned(objectID))
         {
-            // Šù‚É”R‚â‚³‚ê‚Ä‚¢‚éê‡‚ÍA‚±‚ÌƒIƒuƒWƒFƒNƒg‚ğ”ñ•\¦‚É‚·‚é
             gameObject.SetActive(false);
         }
     }
 
-    /// <summary>
-    /// ŠO•”iƒvƒŒƒCƒ„[j‚©‚ç”R‚â‚³‚ê‚éˆ—‚ğŒÄ‚Ño‚·
-    /// </summary>
     public void Burn()
     {
-        if (SceneDataTransfer.Instance != null)
+        if (isBurning) return;
+        StartCoroutine(BurnSequence());
+    }
+
+    private IEnumerator BurnSequence()
+    {
+        isBurning = true;
+        if (fireSprite != null) spriteRenderer.sprite = fireSprite;
+
+        if (spriteMask != null)
         {
-            // ”R‚â‚³‚ê‚½‹L˜^‚ğƒVƒ“ƒOƒ‹ƒgƒ“‚É•Û‘¶
+            spriteMask.enabled = true;
+
+            // â–¼â–¼â–¼ ä¿®æ­£ãƒã‚¤ãƒ³ãƒˆ â–¼â–¼â–¼
+
+            // ã‚¹ã‚¿ãƒ¼ãƒˆåœ°ç‚¹ï¼šä¸­å¿ƒï¼ˆå…¨éƒ¨è¦‹ãˆã¦ã„ã‚‹çŠ¶æ…‹ï¼‰
+            Vector3 startPos = Vector3.zero;
+
+            // ã‚´ãƒ¼ãƒ«åœ°ç‚¹ï¼šã€å¤‰æ›´ã€‘ä¸Šæ–¹å‘ï¼ˆãƒ—ãƒ©ã‚¹ï¼‰ã¸ç§»å‹•ã•ã›ã‚‹
+            // 2.0f ãã‚‰ã„ã®å€¤ã§ã€ç”»åƒãŒå®Œå…¨ã«éš ã‚Œã‚‹é«˜ã•ã¾ã§ä¸Šã’ã‚‹
+            Vector3 endPos = new Vector3(0, 2.5f, 0);
+
+            // â–²â–²â–² ä¿®æ­£ãƒã‚¤ãƒ³ãƒˆ â–²â–²â–²
+
+            float elapsed = 0;
+            while (elapsed < burnDuration)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / burnDuration;
+                spriteMask.transform.localPosition = Vector3.Lerp(startPos, endPos, t);
+                yield return null;
+            }
+        }
+
+        if (SceneDataTransfer.Instance != null)
             SceneDataTransfer.Instance.RecordBurnedObject(objectID);
 
-            // ‚±‚ÌƒIƒuƒWƒFƒNƒg‚ğ”ñ•\¦‚É‚·‚é
-            gameObject.SetActive(false);
-
-            Debug.Log($"[BurnableObject] ID:{objectID} ‚ª”R‚â‚³‚êAó‘Ô‚ª‹L˜^‚³‚ê‚Ü‚µ‚½B");
-        }
+        gameObject.SetActive(false);
     }
 }

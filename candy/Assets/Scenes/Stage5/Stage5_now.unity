@@ -677,9 +677,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ef9d9b31ef6ae14d8ab624f86d0b8cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tmpText: {fileID: 667075186}
-  typeSpeed: 0.05
-  imageObject: {fileID: 2136754762}
 --- !u!114 &667075184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -704,9 +701,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 440403cc17e95f94eb06b6016b3fa214, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tmpText: {fileID: 667075186}
-  imageObject: {fileID: 0}
-  typeSpeed: 0.05
 --- !u!114 &667075186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2289,7 +2283,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 4
-      m_TileSpriteIndex: 8
+      m_TileSpriteIndex: 10
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -2329,7 +2323,7 @@ Tilemap:
     second:
       serializedVersion: 2
       m_TileIndex: 8
-      m_TileSpriteIndex: 7
+      m_TileSpriteIndex: 9
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -2544,14 +2538,14 @@ Tilemap:
     m_Data: {fileID: 9140681019475592075, guid: 174a9fbcfe3215f429ff3f255caef104, type: 3}
   - m_RefCount: 0
     m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
+  - m_RefCount: 0
+    m_Data: {fileID: 0}
   - m_RefCount: 1
     m_Data: {fileID: -1520497520998032370, guid: f7455e62d63fb5d43b77cdc4bb4599b1, type: 3}
   - m_RefCount: 1
     m_Data: {fileID: 6667561963783609072, guid: 59c00f25ebd80704281679f790c91589, type: 3}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
   - m_RefCount: 4
     m_Data: {fileID: -6018292954699619216, guid: 157a7fcf528a3c74da038862ff85ba04, type: 3}
   - m_RefCount: 9
@@ -4588,8 +4582,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3aad53ebfd005404a9d64904d4fecc6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tmpText: {fileID: 1487853524}
-  imageObject: {fileID: 512392512}
 --- !u!114 &1487853522
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4614,9 +4606,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75bf0fa42a7db6f47a202c868375382e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tmpText: {fileID: 1487853524}
-  imageObject: {fileID: 0}
-  naviInstance: {fileID: 0}
 --- !u!114 &1487853524
 MonoBehaviour:
   m_ObjectHideFlags: 0
