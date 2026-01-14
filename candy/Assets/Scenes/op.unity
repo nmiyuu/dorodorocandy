@@ -303,7 +303,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slides:
-  - image: {fileID: 4945239985283531135, guid: d8735074d36f7974989ca4dbb57b39cc, type: 3}
+  - image: {fileID: 2738577844032149819, guid: 14dd052848084a54e9cc96343c31199f, type: 3}
     duration: 4
     seClip: {fileID: 0}
     wipeDuration: 3
