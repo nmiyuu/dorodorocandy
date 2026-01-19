@@ -9,6 +9,7 @@ public class NaviManager : MonoBehaviour
     public TMP_Text navi2Text;   // タイピングなし
     public GameObject naviImage; // 任意の画像
 
+
     [Header("Settings")]
     public float typeSpeed = 0.05f;
 
@@ -40,7 +41,7 @@ public class NaviManager : MonoBehaviour
             this.enabled = false;
             return;
         }
-
+       
         StartCoroutine(TypeNaviText(naviMessages[index]));
         navi2Text.text = navi2Messages[index];
     }
