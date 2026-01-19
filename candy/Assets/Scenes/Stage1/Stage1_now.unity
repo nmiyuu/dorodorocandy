@@ -2314,7 +2314,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1700991426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2329,6 +2329,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadePanel: {fileID: 1238025772}
   fadeDuration: 0.4
+  excludedScenes:
+  - Title
 --- !u!4 &1700991427
 Transform:
   m_ObjectHideFlags: 0
