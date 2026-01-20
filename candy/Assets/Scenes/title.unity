@@ -976,7 +976,8 @@ MonoBehaviour:
   fadePanel: {fileID: 2091484851}
   fadeDuration: 0.8
   excludedScenes:
-  - 
+  - goal
+  - clear
 --- !u!4 &1175349330
 Transform:
   m_ObjectHideFlags: 0

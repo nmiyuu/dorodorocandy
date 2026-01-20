@@ -79,7 +79,7 @@ public class t_player : MonoBehaviour
     void Update()
     {
         // シーン切り替え中は移動入力を無視するガードロジック
-        if (SceneDataTransfer.Instance != null && SceneDataTransfer.Instance.isChangingScene)
+        if (SceneDataTransfer.Instance != null && (SceneDataTransfer.Instance.isChangingScene || SceneDataTransfer.Instance.isTalking))
         {
             return;
         }
@@ -203,7 +203,7 @@ public class t_player : MonoBehaviour
     {
         if (SceneDataTransfer.Instance != null)
         {
-            // ★ソフトリセットを呼び出し、移動回数を維持する★
+            // ソフトリセットを呼び出し、移動回数を維持する★
             SceneDataTransfer.Instance.SoftReset();
         }
 

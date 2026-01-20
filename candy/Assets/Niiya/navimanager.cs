@@ -38,10 +38,17 @@ public class NaviManager : MonoBehaviour
         if (PlayerPrefs.GetInt("NaviShown", 0) == 1)
         {
             HideAll();
+            if (SceneDataTransfer.Instance != null) SceneDataTransfer.Instance.isTalking = false;
             this.enabled = false;
             return;
         }
-       
+
+        //会話開始：フラグを true にしてプレイヤーの動きを止める
+        if (SceneDataTransfer.Instance != null)
+        {
+            SceneDataTransfer.Instance.isTalking = true;
+        }
+
         StartCoroutine(TypeNaviText(naviMessages[index]));
         navi2Text.text = navi2Messages[index];
     }
@@ -64,6 +71,12 @@ public class NaviManager : MonoBehaviour
             {
                 HideAll();
                 PlayerPrefs.SetInt("NaviShown", 1);
+
+                //全会話終了：フラグを false にしてプレイヤーを動けるようにする
+                if (SceneDataTransfer.Instance != null)
+                {
+                    SceneDataTransfer.Instance.isTalking = false;
+                }
             }
         }
     }
