@@ -28,21 +28,19 @@ public class GoalManager : MonoBehaviour
 
         // 1. 次に進むべきステージインデックスを計算
         int lastCleared = SceneDataTransfer.Instance.lastClearedStageIndex;
-        int nextStageIndex = lastCleared + 1; // ステージ5をクリアしたなら nextStageIndex は 6 になる
+        int nextStageIndex = lastCleared + 1;
 
         // 2. ゲームクリア判定 
-        if (lastCleared >= finalStageIndex) // lastClearedが5以上ならゲームクリア
+        if (lastCleared >= finalStageIndex)
         {
             Debug.Log("🎉 全ステージをクリアしました。クリアシーンへ遷移します。");
 
             // クリアシーンへ遷移 (黒フェード)
             SceneFader.Instance.LoadSceneWithFade(gameClearSceneName, FadeColor.Black);
-            return; // ここで処理を終了
+            return;
         }
 
         // 3. 通常の次のステージへの遷移
-
-        // 次のシーン名を 'Stage[N]_now' の形式で生成
         string nextSceneName = stageNamePrefix + nextStageIndex + "_now";
 
         // 次のステージへ遷移 (黒フェード)
@@ -52,16 +50,25 @@ public class GoalManager : MonoBehaviour
 
     public void OnTitleButton()
     {
-        if (SceneFader.Instance == null)
-        {
-            SceneManager.LoadScene(titleSceneName);
-            return;
-        }
+        // ★修正点: FullGameResetを呼び出さないようにします。
+        // 代わりに、シーン上のプレイヤー位置などの一時データだけを消す
+        // ClearPlayerState を呼び出し、フェード演出でタイトルへ戻ります。
 
-        SceneFader.Instance.LoadSceneWithFade(titleSceneName, FadeColor.Black);
         if (SceneDataTransfer.Instance != null)
         {
-            SceneDataTransfer.Instance.FullGameReset();
+            // クリア状況(lastClearedStageIndex)は維持し、
+            // 現在の歩数やブロックの位置情報だけをリセットします。
+            SceneDataTransfer.Instance.ClearPlayerState();
+            Debug.Log("[GoalManager] プレイヤーの一時データをリセットしました（クリア状況は維持）。");
+        }
+
+        if (SceneFader.Instance != null)
+        {
+            SceneFader.Instance.LoadSceneWithFade(titleSceneName, FadeColor.Black);
+        }
+        else
+        {
+            SceneManager.LoadScene(titleSceneName);
         }
     }
 }

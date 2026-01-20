@@ -1,8 +1,5 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-// using System.Threading; // 不要なため削除
-
-// FadeColor enumがTitleManagerクラスの外側（グローバル）に定義されていることを前提とします
 
 public class t_title : MonoBehaviour
 {
@@ -46,11 +43,8 @@ public class t_title : MonoBehaviour
             // SceneFaderがない場合のフォールバック
             SceneManager.LoadScene(firstStage);
         }
-
-        // 【注意】手動カウントによるシーンロードは削除しました。
     }
 
-    // 「つづきから」
     public void OnContinueButton()
     {
         int startStageIndex = 1; // デフォルトはステージ1
