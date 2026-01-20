@@ -56,10 +56,9 @@ public class t_pl : MonoBehaviour
 
     // --- 外部連携用メソッド ---
 
-    /// <summary>
+
     /// t_player.csから呼ばれ、計算された最新の向きをセットし、アニメーターを更新する。
-    /// ★ t_player.csとの連携に必須のメソッド
-    /// </summary>
+    /// t_player.csとの連携に必須のメソッド
     /// <param name="newIndex">t_playerが決定した新しい向きインデックス</param>
     public void SetDirectionFromExternal(int newIndex)
     {

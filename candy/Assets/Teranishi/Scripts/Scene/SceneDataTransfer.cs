@@ -45,13 +45,16 @@ public class SceneDataTransfer : MonoBehaviour
     [HideInInspector] public List<string> burnedObjectIDs = new List<string>();      // 燃やされて消えたオブジェクトのIDリスト (過去の変化)
     [HideInInspector] public List<string> vanishedItemIDs = new List<string>();      // 恒久的に消滅したアイテムのIDリスト (永続的な取得)
 
-    // ★スイッチと橋の状態★
+    // スイッチと橋の状態
     [Header("スイッチと橋の状態")]
     [HideInInspector] public List<string> activatedSwitchIDs = new List<string>();       // 押されたスイッチのユニークIDを保存するリスト
 
-    // ★シーン遷移の状態 (追加)★
+    // シーン遷移の状態
     [Header("シーン状態")]
     [HideInInspector] public bool isChangingScene = false; // ★このフラグが t_player.cs で参照されます★
+
+    //ナビキャラクターの会話フラグ
+    [HideInInspector] public bool isTalking = false;
 
     // ----------------------------------------
 
@@ -197,7 +200,10 @@ public class SceneDataTransfer : MonoBehaviour
         activatedSwitchIDs.Clear();   // 押されたスイッチを元に戻す
 
         // マッチ棒をステージ内アイテム扱いにしたい場合はリセットする
-         hasMatchStick = false;
+        hasMatchStick = false;
+
+        //リセットしたときに会話フラグをオフに
+        isTalking = false;
 
         Debug.Log("[SceneDataTransfer] ソフトリセットを実行しました (位置/ギミック/ブロックリセット、移動回数維持)。");
     }
@@ -225,10 +231,11 @@ public class SceneDataTransfer : MonoBehaviour
         lastClearedStageIndex = 0;
 
         // ギミックの状態もリセット
-        hasMatchStick = false;
-        burnedObjectIDs.Clear();
-        vanishedItemIDs.Clear();
-        activatedSwitchIDs.Clear();
+       hasMatchStick = false;
+       isTalking = false;
+       burnedObjectIDs.Clear();
+       vanishedItemIDs.Clear();
+       activatedSwitchIDs.Clear();
 
         Debug.Log("[SceneDataTransfer] フルゲームリセットを実行しました (全データ初期化)。");
     }

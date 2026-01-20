@@ -264,7 +264,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 999
   m_TargetDisplay: 0
 --- !u!1 &275419175
 GameObject:
@@ -975,6 +975,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fadePanel: {fileID: 2091484851}
   fadeDuration: 0.8
+  excludedScenes:
+  - goal
+  - clear
 --- !u!4 &1175349330
 Transform:
   m_ObjectHideFlags: 0

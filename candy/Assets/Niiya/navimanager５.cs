@@ -35,8 +35,14 @@ public class NaviManager5 : MonoBehaviour
         if (PlayerPrefs.GetInt("NaviShown5", 0) == 1)
         {
             HideAll();
+            if (SceneDataTransfer.Instance != null) SceneDataTransfer.Instance.isTalking = false;
             this.enabled = false;
             return;
+        }
+
+        if (SceneDataTransfer.Instance != null)
+        {
+            SceneDataTransfer.Instance.isTalking = true;
         }
 
         StartCoroutine(TypeNaviText(naviMessages[index]));
@@ -61,6 +67,13 @@ public class NaviManager5 : MonoBehaviour
             {
                 HideAll();
                 PlayerPrefs.SetInt("NaviShown5", 1);
+
+
+                //全会話終了：フラグを false にしてプレイヤーを動けるようにする
+                if (SceneDataTransfer.Instance != null)
+                {
+                    SceneDataTransfer.Instance.isTalking = false;
+                }
             }
         }
     }

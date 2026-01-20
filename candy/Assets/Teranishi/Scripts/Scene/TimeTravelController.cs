@@ -53,7 +53,7 @@ public class TimeTravelController : MonoBehaviour
     void Update()
     {
         // 1. SceneDataTransfer ‚ª‰Šú‰»‚³‚ê‚Ä‚¢‚È‚¢A‚Ü‚½‚ÍƒV[ƒ“Ø‚è‘Ö‚¦’†‚Í’â~
-        if (SceneDataTransfer.Instance == null || SceneDataTransfer.Instance.isChangingScene)
+        if (SceneDataTransfer.Instance == null || SceneDataTransfer.Instance.isChangingScene || SceneDataTransfer.Instance.isTalking)
         {
             return;
         }

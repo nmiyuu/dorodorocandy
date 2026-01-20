@@ -1,2 +1,15 @@
 fileFormatVersion: 2
 guid: 0304cb6de1755a84eaba052c6fd87903
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - naviText: {instanceID: 0}
+  - navi2Text: {instanceID: 0}
+  - naviImage: {instanceID: 0}
+  - playerController: {fileID: 6606493509502384704, guid: 6887432bd20e44345a89f285f07052b2, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
