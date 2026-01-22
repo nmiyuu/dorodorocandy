@@ -11,7 +11,7 @@ public class NaviManager : MonoBehaviour
 
 
     [Header("Settings")]
-    public float typeSpeed = 0.05f;
+    public float typeSpeed = 0.05f;// 文字が表示されるスピード
 
     [Header("Messages")]
     public string[] naviMessages = {
@@ -29,8 +29,8 @@ public class NaviManager : MonoBehaviour
     };
 
     int index = 0;
-    bool isTyping = false;
-    bool canPressEnter = false;
+    bool isTyping = false;// 現在タイピング中かどうか
+    bool canPressEnter = false;// Enterキーを押せる状態か
 
     void Start()
     {
@@ -55,13 +55,16 @@ public class NaviManager : MonoBehaviour
 
     void Update()
     {
+        // Enterを押せない状態なら何もしない
         if (!canPressEnter) return;
 
+        // Enterキーが押されたら次のセリフへ
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             index++;
             canPressEnter = false;
 
+            // まだセリフが残っている場合
             if (index < naviMessages.Length)
             {
                 StartCoroutine(TypeNaviText(naviMessages[index]));
@@ -69,7 +72,7 @@ public class NaviManager : MonoBehaviour
             }
             else
             {
-                HideAll();
+                HideAll();// 全部のセリフを表示し終わったらUIを消す
                 PlayerPrefs.SetInt("NaviShown", 1);
 
                 //全会話終了：フラグを false にしてプレイヤーを動けるようにする
