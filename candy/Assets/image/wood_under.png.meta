@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: e6ef39ee603d2614ba03b969a51fd347
+guid: 329caff8b0803894a8e4f34bea274bd2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 694894105003484391
-    second: "\u6728_0"
+      213: -1387162397522196149
+    second: wood_under_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u6728_0"
+      name: wood_under_0
       rect:
         serializedVersion: 2
-        x: 1
+        x: 0
         y: 0
-        width: 63
-        height: 62
+        width: 64
+        height: 64
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 7e4ee3db182c4a900800000000000000
-      internalID: 694894105003484391
+      spriteID: b4909e1262fcfbce0800000000000000
+      internalID: -1387162397522196149
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: f6dbfbcb4f1c177458e9a3b053157461
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\u6728_0": 694894105003484391
+      wood_under_0: -1387162397522196149
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
