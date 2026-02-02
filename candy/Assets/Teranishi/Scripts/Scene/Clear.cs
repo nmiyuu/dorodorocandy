@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class ClearManager : MonoBehaviour
+public class Clear : MonoBehaviour
 {
     void Update()
     {
