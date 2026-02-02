@@ -304,19 +304,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slides:
   - image: {fileID: 2738577844032149819, guid: 14dd052848084a54e9cc96343c31199f, type: 3}
-    duration: 4
+    duration: 10
     seClip: {fileID: 0}
     wipeDuration: 3
   - image: {fileID: -8269221487998706690, guid: 780d3ad8039acd74080c49a7c63d5ddc, type: 3}
-    duration: 8
+    duration: 20
     seClip: {fileID: 0}
     wipeDuration: 3
   - image: {fileID: -5015517546404145680, guid: 22be738f3589f8447b3c2dc0e8bc8d80, type: 3}
-    duration: 8
+    duration: 20
     seClip: {fileID: 0}
     wipeDuration: 2
   - image: {fileID: -7563825463580876206, guid: c15190914cfbba84ea95c3a3db5b3068, type: 3}
-    duration: 8
+    duration: 20
     seClip: {fileID: 0}
     wipeDuration: 2
   nextSceneName: title

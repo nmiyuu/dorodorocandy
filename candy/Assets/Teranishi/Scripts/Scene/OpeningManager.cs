@@ -11,7 +11,7 @@ public class OpeningManager : MonoBehaviour
     public struct OpeningSlide
     {
         public Sprite image;
-        [Range(1f, 10f)]
+       // [Range(1f, 10f)]
         public float duration;
 
         [Header("エフェクト")]
