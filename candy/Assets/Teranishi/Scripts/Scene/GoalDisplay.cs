@@ -39,7 +39,7 @@ public class GoalDisplay : MonoBehaviour
     private IEnumerator Start()
 
     {
-
+       
         if (movesTextDisplay == null)
 
         {
