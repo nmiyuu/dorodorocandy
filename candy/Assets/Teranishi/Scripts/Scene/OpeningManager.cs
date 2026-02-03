@@ -5,7 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// 左右キーによるページ送りと双方向ワイプ演出、操作ガイドの表示制御を行うクラス
-/// 展示会向けに、1枚目のみ操作説明を表示し、手動で読み進める形式を実装
 public class OpeningManager : MonoBehaviour
 {
     // ======================================================================================
@@ -52,7 +51,6 @@ public class OpeningManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
 
-        /// ワイプ計算用のキャンバス幅取得
         if (displayImage != null && displayImage.canvas != null)
         {
             canvasWidth = displayImage.canvas.GetComponent<RectTransform>().rect.width;
@@ -82,22 +80,21 @@ public class OpeningManager : MonoBehaviour
     // 入力制御
     // ======================================================================================
 
-    /// ユーザー入力の監視
     private void HandleInput()
     {
         if (isPageChanging) return;
 
-        /// 右キー：次のページへ
+        // 右キー：次のページへ
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             NextPage();
         }
-        /// 左キー：前のページへ
+        // 左キー：前のページへ
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             PrevPage();
         }
-        /// エンターキー：タイトルシーンへスキップ
+        // エンターキー：タイトルシーンへ（フェード付き）
         else if (Input.GetKeyDown(KeyCode.Return))
         {
             LoadNextScene();
@@ -108,7 +105,6 @@ public class OpeningManager : MonoBehaviour
     // ページ遷移ロジック
     // ======================================================================================
 
-    /// 順方向へのページ更新
     private void NextPage()
     {
         if (currentIndex + 1 < slides.Count)
@@ -122,7 +118,6 @@ public class OpeningManager : MonoBehaviour
         }
     }
 
-    /// 逆方向へのページ更新
     private void PrevPage()
     {
         if (currentIndex - 1 >= 0)
@@ -132,38 +127,29 @@ public class OpeningManager : MonoBehaviour
         }
     }
 
-    /// ワイプを伴うスライド切り替えシーケンス
-    /// isForwardが真なら「新しい紙を被せる」、偽なら「今の紙を剥がす」演出を実行
     private IEnumerator TransitionSequence(int index, bool isForward)
     {
         isPageChanging = true;
 
-        /// 1枚目(index 0)の時のみ操作ガイドを表示
+        // 操作ガイド表示制御
         if (guideUI != null) guideUI.gameObject.SetActive(index == 0);
 
         OpeningSlide targetSlide = slides[index];
 
         if (isForward)
         {
-            /// 順送り演出：前面画像を準備し、右から左へワイプ
             wipeImage.sprite = targetSlide.image;
             if (targetSlide.seClip != null) audioSource.PlayOneShot(targetSlide.seClip);
-
             yield return StartCoroutine(WipeAnimation(targetSlide.wipeDuration, 0f, 1f));
-
             displayImage.sprite = targetSlide.image;
         }
         else
         {
-            /// 逆送り演出：背面を先に更新し、前面にある「現在の画像」を左から右へ剥がす
             wipeImage.sprite = slides[index + 1].image;
             displayImage.sprite = targetSlide.image;
-
-            SetWipeMaskWidth(1f); // 全表示状態から開始
+            SetWipeMaskWidth(1f);
             wipeMaskPanel.gameObject.SetActive(true);
-
             if (targetSlide.seClip != null) audioSource.PlayOneShot(targetSlide.seClip);
-
             yield return StartCoroutine(WipeAnimation(targetSlide.wipeDuration, 1f, 0f));
         }
 
@@ -172,15 +158,11 @@ public class OpeningManager : MonoBehaviour
         isPageChanging = false;
     }
 
-    /// 演出を介さない即時の画像切り替え
     private void ShowSlideImmediate(int index)
     {
         currentIndex = index;
         displayImage.sprite = slides[index].image;
-
-        /// 操作ガイドの初期表示制御
         if (guideUI != null) guideUI.gameObject.SetActive(index == 0);
-
         wipeMaskPanel.gameObject.SetActive(false);
         isPageChanging = false;
     }
@@ -189,8 +171,6 @@ public class OpeningManager : MonoBehaviour
     // UI演出・計算
     // ======================================================================================
 
-    /// マスクパネルのオフセット計算
-    /// progress 0:完全に隠れた状態 / progress 1:画面全体を表示した状態
     private void SetWipeMaskWidth(float progress)
     {
         if (wipeMaskPanel == null) return;
@@ -199,7 +179,7 @@ public class OpeningManager : MonoBehaviour
         wipeMaskPanel.offsetMax = new Vector2(0f, wipeMaskPanel.offsetMax.y);
     }
 
-    /// 線形補間によるワイプアニメーション
+    /// 改良版：後半に加速するワイプ演出
     private IEnumerator WipeAnimation(float duration, float start, float end)
     {
         wipeMaskPanel.gameObject.SetActive(true);
@@ -207,14 +187,21 @@ public class OpeningManager : MonoBehaviour
         while (time < duration)
         {
             time += Time.unscaledDeltaTime;
-            float progress = Mathf.Lerp(start, end, time / duration);
+
+            // 0.0 ~ 1.0 の進捗率
+            float t = Mathf.Clamp01(time / duration);
+
+            // 【イージングの追加：Cubic In】
+            // 後半に向けて加速させるため、t を 3乗します
+            float easedT = t * t * t;
+
+            float progress = Mathf.Lerp(start, end, easedT);
             SetWipeMaskWidth(progress);
             yield return null;
         }
         SetWipeMaskWidth(end);
     }
 
-    /// 初期UIステータスの構築
     private void InitializeUI()
     {
         if (displayImage != null && displayImage.rectTransform != null)
@@ -226,10 +213,16 @@ public class OpeningManager : MonoBehaviour
         wipeMaskPanel.gameObject.SetActive(false);
     }
 
-    /// 遷移先シーンへのロード実行
     private void LoadNextScene()
     {
-        if (!string.IsNullOrEmpty(nextSceneName))
+        if (string.IsNullOrEmpty(nextSceneName)) return;
+
+        // SceneFader があればフェード付きでタイトルへ
+        if (SceneFader.Instance != null)
+        {
+            SceneFader.Instance.LoadSceneWithFade(nextSceneName, FadeColor.Black);
+        }
+        else
         {
             SceneManager.LoadScene(nextSceneName);
         }
