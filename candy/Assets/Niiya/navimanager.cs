@@ -39,6 +39,7 @@ public class NaviManager : MonoBehaviour
         {
             HideAll();
             if (SceneDataTransfer.Instance != null) SceneDataTransfer.Instance.isTalking = false;
+
             this.enabled = false;
             return;
         }

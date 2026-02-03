@@ -4,279 +4,234 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
+/// 左右キーによるページ送りと双方向ワイプ演出、操作ガイドの表示制御を行うクラス
+/// 展示会向けに、1枚目のみ操作説明を表示し、手動で読み進める形式を実装
 public class OpeningManager : MonoBehaviour
 {
-    // --- データ構造 ---
+    // ======================================================================================
+    // データ構造
+    // ======================================================================================
+
     [System.Serializable]
     public struct OpeningSlide
     {
         public Sprite image;
-       // [Range(1f, 10f)]
-        public float duration;
-
-        [Header("エフェクト")]
         public AudioClip seClip;
-        [Tooltip("このスライドへの切り替え時に使うワイプ（左から徐々に表示）の時間。")]
-        public float wipeDuration; // ワイプにかかる時間
+        [Tooltip("ページ切り替え時のワイプ演出時間")]
+        public float wipeDuration;
     }
 
-    // --- インスペクター設定 ---
+    // ======================================================================================
+    // 設定項目
+    // ======================================================================================
 
     [Header("スライド設定")]
-    public List<OpeningSlide> slides;
-
-    [Header("遷移設定")]
-    public string nextSceneName = "title"; // 遷移先シーン名
+    [SerializeField] private List<OpeningSlide> slides;
+    [SerializeField] private string nextSceneName = "title";
 
     [Header("UI要素参照")]
-    [Tooltip("現在表示中の画像を担うUI.Imageコンポーネント。")]
-    public Image displayImage; // 現在表示中の画像
+    [SerializeField] private Image displayImage;     // 背面：現在確定している画像
+    [SerializeField] private RectTransform wipeMaskPanel; // 前面：ワイプ演出用マスクパネル
+    [SerializeField] private Image wipeImage;        // 前面：ワイプ演出用画像
+    [SerializeField] private CanvasGroup guideUI;    // 操作ガイド（1枚目のみ表示）
 
-    [Tooltip("新しい画像をマスクで徐々に表示するための親パネル（Maskコンポーネント付き）。RectTransform型で参照します。")]
-    public RectTransform wipeMaskPanel; // Maskコンポーネントを持つGameObjectのRectTransform
+    // ======================================================================================
+    // 内部変数
+    // ======================================================================================
 
-    [Tooltip("マスクされて徐々に表示される側の画像UI.Imageコンポーネント。")]
-    public Image wipeImage; // マスクされて表示される次の画像
-
-    // --- 内部変数 ---
     private AudioSource audioSource;
-    private Coroutine openingCoroutine;
-    private float canvasWidth; // ワイプ計算に使用するキャンバスの幅
-    private bool isSkipping = false; // スキップ中かどうかのフラグ
+    private float canvasWidth;
+    private int currentIndex = 0;
+    private bool isPageChanging = false;
 
-    void Awake()
+    // ======================================================================================
+    // ライフサイクル
+    // ======================================================================================
+
+    private void Awake()
     {
-        // AudioSourceの取得/追加
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
+        audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
 
-        // キャンバスの幅を取得 (Awake時に実行し、Start/Updateで頻繁にGetComponentしないようにする)
+        /// ワイプ計算用のキャンバス幅取得
         if (displayImage != null && displayImage.canvas != null)
         {
-            // CanvasのRectTransformから幅を取得
             canvasWidth = displayImage.canvas.GetComponent<RectTransform>().rect.width;
         }
         else
         {
-            Debug.LogError("Canvasの幅を取得できません。Display ImageまたはそのCanvasが正しく設定されていません。幅の計算はデフォルト値(1600)を使用します。");
             canvasWidth = 1600f;
         }
 
-        // 初期設定：displayImageには最初のスライドを設定
-        if (slides.Count > 0 && slides[0].image != null)
-        {
-            displayImage.sprite = slides[0].image;
-        }
+        InitializeUI();
+    }
 
-        // DisplayImageのRectTransformのオフセットを強制ゼロにリセット
-        if (displayImage != null && displayImage.rectTransform != null)
+    private void Start()
+    {
+        if (slides.Count > 0)
         {
-            displayImage.rectTransform.offsetMin = Vector2.zero;
-            displayImage.rectTransform.offsetMax = Vector2.zero;
-        }
-
-        // ワイプパネルを初期状態で完全に隠す (Right Offset = canvasWidth)
-        SetWipeMaskWidth(0f);
-        if (wipeMaskPanel != null)
-        {
-            // Awake時点ではパネルを非アクティブにしておく (UIの初期描画負荷を減らすため)
-            wipeMaskPanel.gameObject.SetActive(false);
+            ShowSlideImmediate(0);
         }
     }
 
-    void Start()
+    private void Update()
     {
-        // UI参照のチェック
-        if (displayImage == null || wipeMaskPanel == null || wipeImage == null)
-        {
-            Debug.LogError("UI要素の参照が不足しています。オープニングを開始できません。");
-            return;
-        }
-
-        // 最初のスライド表示からコルーチンを開始
-        openingCoroutine = StartCoroutine(PlayOpeningSlides());
+        HandleInput();
     }
 
-    // --- スキップ機能 ---
-    void Update()
+    // ======================================================================================
+    // 入力制御
+    // ======================================================================================
+
+    /// ユーザー入力の監視
+    private void HandleInput()
     {
-        // 任意のキーが押されたか、またはマウスがクリックされたらスキップ
-        if (Input.anyKeyDown || Input.GetMouseButtonDown(0))
+        if (isPageChanging) return;
+
+        /// 右キー：次のページへ
+        if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if (!isSkipping && openingCoroutine != null)
-            {
-                SkipOpening();
-            }
+            NextPage();
         }
-    }
-
-    private void SkipOpening()
-    {
-        isSkipping = true;
-
-        // 実行中のコルーチンを停止
-        if (openingCoroutine != null)
+        /// 左キー：前のページへ
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            StopCoroutine(openingCoroutine);
-            openingCoroutine = null;
+            PrevPage();
         }
-
-        // タイトルシーンへ遷移
-        LoadNextScene();
-    }
-
-    // --- メインロジック ---
-
-    private IEnumerator PlayOpeningSlides()
-    {
-        // 最初のスライドはワイプなしで表示済みとして扱う
-        if (slides.Count > 0 && slides[0].seClip != null)
-        {
-            audioSource.PlayOneShot(slides[0].seClip);
-        }
-        // 最初のスライドの表示時間
-        yield return new WaitForSeconds(slides[0].duration);
-
-        // 2枚目以降のスライドをワイプで表示
-        for (int i = 1; i < slides.Count; i++) // i=1から開始
-        {
-            // スキップ中であれば即座に終了
-            if (isSkipping) yield break;
-
-            OpeningSlide currentSlide = slides[i];
-
-            if (currentSlide.image != null)
-            {
-                // 1. 新しい画像をwipeImageに設定し、パネルをアクティブにする
-                wipeImage.sprite = currentSlide.image;
-                // ワイプ開始前に必ず幅を0に戻し、完全に隠す 
-                SetWipeMaskWidth(0f);
-                wipeMaskPanel.gameObject.SetActive(true); // パネルをアクティブ化
-
-                // 2. SEの再生
-                if (currentSlide.seClip != null)
-                {
-                    audioSource.PlayOneShot(currentSlide.seClip);
-                }
-
-                // 3. ワイプアニメーションを実行
-                yield return StartCoroutine(WipeAnimation(currentSlide.wipeDuration));
-
-                // スキップ中であればワイプアニメーション後に即座に終了
-                if (isSkipping) yield break;
-
-                // 4. ワイプ完了後の描画処理（残像対策 - 座標変化を遅延させる）
-
-                // (A) Display Imageを新しいスライドに更新 (奥の画像を更新)
-                displayImage.sprite = currentSlide.image;
-
-                // (B) 描画を強制的に確定
-                Canvas.ForceUpdateCanvases();
-
-                // (C) スプライトをクリア (残像対策)
-                ResetWipePanel();
-
-                // (D) ワイプパネルを完全に画面外へ移動させる
-                SetWipeMaskWidth(0f); // 右端に移動 (隠れた状態に戻す)
-
-                // (E) SetWipeMaskWidthによる座標変化を処理するため2フレーム待機
-                yield return null;
-                yield return null;
-
-                // (F) パネルを非アクティブ化 (完全にHierarchyから要素を削除)
-                wipeMaskPanel.gameObject.SetActive(false);
-
-                // (G) 描画システムがリセットを処理し終えるまで1フレーム待機
-                yield return null;
-
-                // 5. 指定された時間だけ待機
-                yield return new WaitForSeconds(currentSlide.duration);
-            }
-        }
-
-        // スキップ中でなければ、すべて完了後に次のシーンへ遷移
-        if (!isSkipping)
+        /// エンターキー：タイトルシーンへスキップ
+        else if (Input.GetKeyDown(KeyCode.Return))
         {
             LoadNextScene();
         }
     }
 
-    // ワイプアニメーションを実行するコルーチン (マスクの幅を広げる)
-    private IEnumerator WipeAnimation(float duration)
+    // ======================================================================================
+    // ページ遷移ロジック
+    // ======================================================================================
+
+    /// 順方向へのページ更新
+    private void NextPage()
     {
-        if (duration <= 0.01f)
+        if (currentIndex + 1 < slides.Count)
         {
-            SetWipeMaskWidth(1f); // 即座に完全に表示 (Left Offset = 0)
-            Canvas.ForceUpdateCanvases(); // duration=0の場合でも強制的に描画を確定させる
-            yield return null; // 描画確定後に1フレーム待機
-            yield break;
+            currentIndex++;
+            StartCoroutine(TransitionSequence(currentIndex, true));
         }
-
-        float time = 0;
-        // Time.unscaledDeltaTimeを使用し、実行時間を安定化させる
-        while (time < duration)
+        else
         {
-            // スキップ中であればアニメーションを中断
-            if (isSkipping) yield break;
-
-            time += Time.unscaledDeltaTime;
-            float progress = time / duration; // 0から1へ
-            SetWipeMaskWidth(progress); // マスクの幅を更新 (Left Offset: canvasWidth -> 0)
-            yield return null; // 次のフレームまで待機
+            LoadNextScene();
         }
-        SetWipeMaskWidth(1f); // 終了時にターゲット値 (Left Offset = 0) を保証
-        Canvas.ForceUpdateCanvases(); // アニメーション終了時にも強制描画を確定させる
     }
 
-    // wipeMaskPanelの幅を制御するヘルパー関数
+    /// 逆方向へのページ更新
+    private void PrevPage()
+    {
+        if (currentIndex - 1 >= 0)
+        {
+            currentIndex--;
+            StartCoroutine(TransitionSequence(currentIndex, false));
+        }
+    }
+
+    /// ワイプを伴うスライド切り替えシーケンス
+    /// isForwardが真なら「新しい紙を被せる」、偽なら「今の紙を剥がす」演出を実行
+    private IEnumerator TransitionSequence(int index, bool isForward)
+    {
+        isPageChanging = true;
+
+        /// 1枚目(index 0)の時のみ操作ガイドを表示
+        if (guideUI != null) guideUI.gameObject.SetActive(index == 0);
+
+        OpeningSlide targetSlide = slides[index];
+
+        if (isForward)
+        {
+            /// 順送り演出：前面画像を準備し、右から左へワイプ
+            wipeImage.sprite = targetSlide.image;
+            if (targetSlide.seClip != null) audioSource.PlayOneShot(targetSlide.seClip);
+
+            yield return StartCoroutine(WipeAnimation(targetSlide.wipeDuration, 0f, 1f));
+
+            displayImage.sprite = targetSlide.image;
+        }
+        else
+        {
+            /// 逆送り演出：背面を先に更新し、前面にある「現在の画像」を左から右へ剥がす
+            wipeImage.sprite = slides[index + 1].image;
+            displayImage.sprite = targetSlide.image;
+
+            SetWipeMaskWidth(1f); // 全表示状態から開始
+            wipeMaskPanel.gameObject.SetActive(true);
+
+            if (targetSlide.seClip != null) audioSource.PlayOneShot(targetSlide.seClip);
+
+            yield return StartCoroutine(WipeAnimation(targetSlide.wipeDuration, 1f, 0f));
+        }
+
+        Canvas.ForceUpdateCanvases();
+        wipeMaskPanel.gameObject.SetActive(false);
+        isPageChanging = false;
+    }
+
+    /// 演出を介さない即時の画像切り替え
+    private void ShowSlideImmediate(int index)
+    {
+        currentIndex = index;
+        displayImage.sprite = slides[index].image;
+
+        /// 操作ガイドの初期表示制御
+        if (guideUI != null) guideUI.gameObject.SetActive(index == 0);
+
+        wipeMaskPanel.gameObject.SetActive(false);
+        isPageChanging = false;
+    }
+
+    // ======================================================================================
+    // UI演出・計算
+    // ======================================================================================
+
+    /// マスクパネルのオフセット計算
+    /// progress 0:完全に隠れた状態 / progress 1:画面全体を表示した状態
     private void SetWipeMaskWidth(float progress)
     {
         if (wipeMaskPanel == null) return;
-
-        // 右から左へ広がるワイプを実現
-        // progress 0 (隠れる - 右端に幅0) のとき Left Offset = canvasWidth (1600)
-        // progress 1 (表示完了 - 画面全体) のとき Left Offset = 0
-
-        float targetLeftOffset = Mathf.Lerp(canvasWidth, 0f, progress); // 1600 -> 0
-
-        // 左端のオフセットを設定 (アニメーションさせる側)
-        // offsetMin.x が 1600 から 0 に減ることで、マスクは右から左へ広がる
+        float targetLeftOffset = Mathf.Lerp(canvasWidth, 0f, progress);
         wipeMaskPanel.offsetMin = new Vector2(targetLeftOffset, wipeMaskPanel.offsetMin.y);
-
-        // 右端は固定 (マージン 0)
         wipeMaskPanel.offsetMax = new Vector2(0f, wipeMaskPanel.offsetMax.y);
     }
 
-    /// <summary>
-    /// ワイプパネルを非表示後の初期状態にリセットします。（スプライトをクリア）
-    /// </summary>
-    private void ResetWipePanel()
+    /// 線形補間によるワイプアニメーション
+    private IEnumerator WipeAnimation(float duration, float start, float end)
     {
-        if (wipeMaskPanel != null)
+        wipeMaskPanel.gameObject.SetActive(true);
+        float time = 0;
+        while (time < duration)
         {
-            // ワイプイメージのスプライトをクリア (残像対策) 
-            if (wipeImage != null)
-            {
-                wipeImage.sprite = null;
-            }
+            time += Time.unscaledDeltaTime;
+            float progress = Mathf.Lerp(start, end, time / duration);
+            SetWipeMaskWidth(progress);
+            yield return null;
         }
+        SetWipeMaskWidth(end);
     }
 
+    /// 初期UIステータスの構築
+    private void InitializeUI()
+    {
+        if (displayImage != null && displayImage.rectTransform != null)
+        {
+            displayImage.rectTransform.offsetMin = Vector2.zero;
+            displayImage.rectTransform.offsetMax = Vector2.zero;
+        }
+        SetWipeMaskWidth(0f);
+        wipeMaskPanel.gameObject.SetActive(false);
+    }
+
+    /// 遷移先シーンへのロード実行
     private void LoadNextScene()
     {
-        if (string.IsNullOrEmpty(nextSceneName))
+        if (!string.IsNullOrEmpty(nextSceneName))
         {
-            Debug.LogError("遷移先シーン名が設定されていません！処理を中断します。");
-            return;
+            SceneManager.LoadScene(nextSceneName);
         }
-        string logMessage = isSkipping ?
-            $"キー操作によりシーン '{nextSceneName}' へスキップ遷移します。" :
-            $"シーン '{nextSceneName}' へ遷移します。";
-
-        Debug.Log(logMessage);
-        SceneManager.LoadScene(nextSceneName);
     }
 }
