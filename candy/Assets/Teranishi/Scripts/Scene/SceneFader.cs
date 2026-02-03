@@ -4,51 +4,33 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
-/// 画面フェードの色彩定義
 public enum FadeColor { Black, White }
 
-/// シーン間の画面遷移およびフェードイン・アウトの制御クラス
-/// 手動配置されたCanvas要素を用い、DontDestroyOnLoadによる全シーン常駐管理を実行
 public class SceneFader : MonoBehaviour
 {
-    // ======================================================================================
-    // シングルトン・ステータス
-    // ======================================================================================
-
     public static SceneFader Instance { get; private set; }
-
-    /// フェード処理の実行中フラグ
     public bool IsFading { get; private set; } = false;
 
-    // ======================================================================================
-    // 設定項目
-    // ======================================================================================
-
     [Header("UI Components")]
-    [SerializeField] private Image fadePanel; // フェード演出用パネル画像
+    [SerializeField] private Image fadePanel;
 
     [Header("Fade Settings")]
-    public float fadeDuration = 0.8f; // フェードの所要時間
+    public float fadeDuration = 0.8f;
 
     [Header("Excluded Scenes")]
-    public List<string> excludedScenes = new List<string>(); // フェード処理をスキップするシーンリスト
+    public List<string> excludedScenes = new List<string>();
 
-    private FadeColor lastFadeColor = FadeColor.Black; // 遷移時の色記憶用
-
-    // ======================================================================================
-    // ライフサイクル
-    // ======================================================================================
+    private FadeColor lastFadeColor = FadeColor.Black;
 
     private void Awake()
     {
-        /// 重複インスタンスの破棄と常駐設定
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-
-            /// シーン読み込みイベントの購読
             SceneManager.sceneLoaded += OnSceneLoaded;
+
+            // 【重要】起動時も、まずはパネルを準備（初期は透明でも良いが、念のため）
             InitializeFadePanel();
         }
         else
@@ -59,56 +41,53 @@ public class SceneFader : MonoBehaviour
 
     private void OnDestroy()
     {
-        /// メモリリーク防止のためのイベント購読解除
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    // ======================================================================================
-    // 内部セットアップ
-    // ======================================================================================
-
-    /// 起動時におけるフェードパネルの初期化
     private void InitializeFadePanel()
     {
         if (fadePanel != null)
         {
             fadePanel.gameObject.SetActive(true);
-            fadePanel.color = new Color(0, 0, 0, 0); // 初期透明状態
-            fadePanel.raycastTarget = false;         // 背後のUI操作を許可
+            // 初期状態は、あえて真っ暗から始めるか透明にするかは好みですが、
+            // 起動時のロゴなどを見せたい場合は(0,0,0,0)でOK
+            fadePanel.color = new Color(0, 0, 0, 0);
+            fadePanel.raycastTarget = false;
         }
     }
 
-    /// シーンロード完了直後の自動シーケンス
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (fadePanel == null) return;
 
-        /// 指定された除外シーンでの処理スキップ
         if (excludedScenes.Contains(scene.name))
         {
             fadePanel.gameObject.SetActive(false);
             IsFading = false;
-
-            /// 遷移中フラグの強制解除
             if (SceneDataTransfer.Instance != null) SceneDataTransfer.Instance.EndSceneChange();
             return;
         }
 
-        /// ロード完了時の画面点滅を防止するための不透明度維持
+        // 【最強の点滅対策】
+        // コルーチンが動く「前」のこの瞬間に、物理的に色を100%不透明にする
+        StopAllCoroutines(); // 実行中のフェードアウト等を強制停止
+
         fadePanel.gameObject.SetActive(true);
         Color c = (lastFadeColor == FadeColor.Black) ? Color.black : Color.white;
-        fadePanel.color = new Color(c.r, c.g, c.b, 1f);
+        fadePanel.color = new Color(c.r, c.g, c.b, 1f); // 強制的にアルファ1
         fadePanel.raycastTarget = true;
 
-        /// シーン開始時の明転演出実行
-        StartCoroutine(FadeInAfterLoad(lastFadeColor));
+        // 1フレーム待ってから明転を開始することで、ロード直後のガタつきを吸収
+        StartCoroutine(WaitAndFadeIn(lastFadeColor));
     }
 
-    // ======================================================================================
-    // 外部インターフェース（シーン遷移）
-    // ======================================================================================
+    private IEnumerator WaitAndFadeIn(FadeColor color)
+    {
+        // ロード直後の1フレームは処理が重いので、少しだけ待ってからフェード開始
+        yield return null;
+        yield return StartCoroutine(FadeInAfterLoad(color));
+    }
 
-    /// 指定シーンへのフェード遷移実行
     public void LoadSceneWithFade(string sceneName, FadeColor color)
     {
         if (IsFading) return;
@@ -116,25 +95,13 @@ public class SceneFader : MonoBehaviour
         StartCoroutine(LoadSceneSequence(sceneName, color));
     }
 
-    // ======================================================================================
-    // 演出ロジック（コルーチン）
-    // ======================================================================================
-
-    /// ロード後の明転およびプレイヤー操作権限の復旧
     private IEnumerator FadeInAfterLoad(FadeColor color)
     {
         yield return StartCoroutine(FadeIn(color));
-
-        /// 遷移完了による入力ロックの解除
-        if (SceneDataTransfer.Instance != null)
-        {
-            SceneDataTransfer.Instance.EndSceneChange();
-        }
-
+        if (SceneDataTransfer.Instance != null) SceneDataTransfer.Instance.EndSceneChange();
         IsFading = false;
     }
 
-    /// 暗転（透明 → 不透明）の補間処理
     public IEnumerator FadeOut(FadeColor color)
     {
         IsFading = true;
@@ -152,7 +119,6 @@ public class SceneFader : MonoBehaviour
         fadePanel.color = new Color(targetColor.r, targetColor.g, targetColor.b, 1f);
     }
 
-    /// 明転（不透明 → 透明）の補間処理
     public IEnumerator FadeIn(FadeColor color)
     {
         IsFading = true;
@@ -170,18 +136,13 @@ public class SceneFader : MonoBehaviour
         fadePanel.raycastTarget = false;
     }
 
-    /// 操作制限、暗転、物理ロードを統括する遷移シーケンス
     private IEnumerator LoadSceneSequence(string sceneName, FadeColor color)
     {
-        /// 入力ロックの開始
-        if (SceneDataTransfer.Instance != null)
-        {
-            SceneDataTransfer.Instance.StartSceneChange();
-        }
+        if (SceneDataTransfer.Instance != null) SceneDataTransfer.Instance.StartSceneChange();
 
         yield return StartCoroutine(FadeOut(color));
 
-        /// ロード処理中の画面維持
+        // シーン切り替え直前、色を完全に固定
         fadePanel.color = (color == FadeColor.Black) ? Color.black : Color.white;
 
         SceneManager.LoadScene(sceneName);
